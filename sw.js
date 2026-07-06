@@ -5,7 +5,8 @@ const PRECACHE_ASSETS = [
     'manifest.json',
     'icon-192.png',
     'icon-512.png',
-     'index.html'
+     'index.html',
+    'timetable.json'
 ];
 
 function isTimetableJsonUrl(url) {
@@ -47,9 +48,19 @@ self.addEventListener('fetch', (event) => {
     const { request } = event;
 
     if (isTimetableJsonUrl(request.url)) {
-        event.respondWith(fetch(request, { cache: 'no-store' }));
-        return;
-    }
+    event.respondWith(
+        fetch(request)
+            .then(response => {
+                if (response.ok) {
+                    const copy = response.clone();
+                    caches.open(SHELL_CACHE).then(cache => cache.put(request, copy));
+                }
+                return response;
+            })
+            .catch(() => caches.match(request))
+    );
+    return;
+}
 
     if (isHtmlRequest(request)) {
         event.respondWith(
