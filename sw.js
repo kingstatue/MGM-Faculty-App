@@ -53,7 +53,7 @@ self.addEventListener('fetch', (event) => {
 
     if (isHtmlRequest(request)) {
         event.respondWith(
-            fetch(request).catch(() => caches.match(request))
+            fetch(request).catch(() => caches.match('index.html'))
         );
         return;
     }
