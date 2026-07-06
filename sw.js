@@ -1,10 +1,11 @@
-const CACHE_VERSION = 'mgm-timetable-v1';
+const CACHE_VERSION = 'mgm-timetable-v2';
 const SHELL_CACHE = CACHE_VERSION + '-shell';
 
 const PRECACHE_ASSETS = [
-    './manifest.json',
-    './icon-192.png',
-    './icon-512.png',
+    'manifest.json',
+    'icon-192.png',
+    'icon-512.png',
+     'index.html'
 ];
 
 function isTimetableJsonUrl(url) {
