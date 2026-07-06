@@ -34,7 +34,7 @@
       "name": "My Timetable",
       "short_name": "Timetable",
       "description": "View your personal timetable",
-      "url": "./index.html",
+      "url": "index.html",
       "icons": [
         {
           "src": "icon-192.png",
@@ -47,7 +47,7 @@
       "name": "Leave Request",
       "short_name": "Leave",
       "description": "Submit leave request",
-      "url": "./index.html#leave",
+      "url": "index.html#leave",
       "icons": [
         {
           "src": "icon-192.png",
