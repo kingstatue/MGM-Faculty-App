@@ -4,11 +4,11 @@ const RUNTIME_CACHE = `mgm-student-portal-runtime-${APP_VERSION}`;
 const CACHE_PREFIX = 'mgm-student-portal-';
 
 const CORE_ASSETS = [
-  './',
-  './index.html',
-  './student-manifest.json',
-  './timetable.json',
-  './subject.json',
+  '.',
+  'index.html',
+  'student-manifest.json',
+  'timetable.json',
+  'subject.json',
   
 ];
 
@@ -52,7 +52,7 @@ async function networkFirst(request) {
   } catch (error) {
     const cached = await caches.match(request, { ignoreSearch: true });
     if (cached) return cached;
-    const appShell = await caches.match(toScopeUrl('./index.html'), { ignoreSearch: true });
+    const appShell = await caches.match(toScopeUrl('index.html'), { ignoreSearch: true });
     if (appShell) return appShell;
     return new Response('App is offline and no cached copy is available.', {
       status: 503,
