@@ -1,0 +1,4166 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="apple-touch-icon" href="./icons/icon-192.png">
+    <link rel="manifest" href="./manifest.json">
+    <title>MGM College Mobile</title>
+    <style>
+        :root {
+            --bg: #f1f5f9;
+            --surface: #fff;
+            --border: #e2e8f0;
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --accent: #0f766e;
+            --text: #1e293b;
+            --muted: #64748b;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            background: linear-gradient(165deg, #dbeafe 0%, var(--bg) 38%, #f8fafc 100%);
+            background-attachment: fixed;
+            color: var(--text);
+            line-height: 1.45;
+            padding: 12px;
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
+            -webkit-font-smoothing: antialiased;
+        }
+        .wrap { max-width: 720px; margin: 0 auto; }
+        h1 {
+            font-size: 1.15rem;
+            margin: 0 0 4px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #0f172a;
+        }
+        .sub { color: var(--muted); font-size: 0.8rem; margin: 0 0 14px; line-height: 1.4; }
+        .card {
+            background: var(--surface);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+        }
+        .card h2 { font-size: 0.95rem; margin: 0 0 10px; }
+        .my-timetable-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .my-timetable-header h2 { margin: 0; flex: 1; min-width: 0; }
+        .view-toggle-btn {
+            width: auto;
+            flex-shrink: 0;
+            margin: 0;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 999px;
+            background: #fff;
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+        }
+        .view-toggle-btn.active {
+            background: var(--primary);
+            color: #fff;
+        }
+        #my-timetable { margin: 0; }
+        .faculty-timetable-block {
+            border: 2px solid #1e293b;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+        }
+        .faculty-block-head {
+            margin: 0;
+            padding: 8px 14px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #fff;
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 55%, #2dd4bf 100%);
+            border-bottom: 2px solid #1e293b;
+        }
+        .faculty-grid-table--attached {
+            margin-top: 0;
+            border-top: 2px solid #1e293b;
+        }
+        .faculty-shift-subhead {
+            margin: 0;
+            padding: 5px 12px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #475569;
+            background: #f1f5f9;
+            border-top: 1px solid #cbd5e1;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .faculty-grid-table td.faculty-sat-label {
+            font-weight: 800;
+        }
+        .faculty-grid-table td.slot-gap {
+            background: #f8fafc;
+            color: #e2e8f0;
+        }
+        .faculty-grid-table td.slot-sat-afternoon-pad {
+            background: #dbeafe;
+            color: #93c5fd;
+            text-align: center;
+            border-color: #bfdbfe;
+        }
+        .faculty-sat-evening-shell {
+            padding: 0 !important;
+            vertical-align: top;
+            background: #f8fafc;
+        }
+        .faculty-grid-table tbody tr.faculty-sat-row td.slot-sat-afternoon-pad.slot-day-end {
+            border-right: none !important;
+            position: relative;
+        }
+        .faculty-grid-table tbody tr.faculty-sat-row td.slot-sat-afternoon-pad.slot-day-end::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 1px;
+            bottom: 0;
+            width: 3px;
+            background: #9f1239;
+            pointer-events: none;
+        }
+        .faculty-grid-table tbody tr.faculty-sat-row td.faculty-sat-evening-shell {
+            padding: 0 !important;
+            vertical-align: top;
+            border-left: none !important;
+        }
+        .faculty-grid-table tbody tr.faculty-sat-row td.faculty-sat-evening-shell.slot-table-end {
+            border-right: 2px solid #1e293b;
+        }
+        .faculty-sat-evening-grid {
+            border-collapse: collapse;
+            width: 100%;
+            table-layout: fixed;
+            font-size: 9px;
+            margin: 0;
+        }
+        .faculty-sat-evening-grid thead th.faculty-eve-slot-mini {
+            background: #64748b;
+            color: #fff;
+            font-size: 7.5px;
+            font-weight: 700;
+            text-align: center;
+            padding: 5px 4px;
+            white-space: normal;
+            line-height: 1.2;
+            word-break: break-word;
+            border: 1px solid #475569;
+            min-width: 94px;
+        }
+        .faculty-sat-evening-grid thead th.faculty-eve-pad {
+            background: #64748b;
+            opacity: 0.6;
+        }
+        .faculty-sat-evening-grid tbody td {
+            border: 1px solid #e2e8f0;
+            padding: 6px 4px;
+            vertical-align: top;
+            background: #fff;
+            min-width: 94px;
+        }
+        .faculty-sat-evening-grid tbody td.busy {
+            background: #eff6ff;
+            color: #1e3a8a;
+            white-space: pre-line;
+            line-height: 1.3;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+            font-size: 8.5px;
+        }
+        .faculty-sat-evening-grid tbody td.slot-free {
+            color: #cbd5e1;
+            text-align: center;
+            background: #fff;
+        }
+        .faculty-sat-evening-grid tbody td.lab-block {
+            background: #dbeafe;
+            color: #1e3a8a;
+            font-weight: 700;
+        }
+        .faculty-scroll-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+        }
+        .faculty-scroll-hint {
+            margin: 0;
+            padding: 6px 10px 0;
+        }
+        .faculty-grid-table {
+            border-collapse: collapse;
+            width: max-content;
+            min-width: 100%;
+            font-size: 10px;
+            margin: 0;
+        }
+        .faculty-grid-table.faculty-week-grid {
+            width: max-content;
+            min-width: 100%;
+        }
+        .faculty-grid-table th.slot-table-end,
+        .faculty-grid-table td.slot-table-end {
+            border-right: 2px solid #1e293b;
+        }
+        .faculty-grid-table th.slot-evening-col,
+        .faculty-grid-table td.slot-evening-col {
+            min-width: 94px;
+            max-width: 148px;
+        }
+        .faculty-grid-table thead th.slot-evening-col {
+            white-space: normal;
+            line-height: 1.2;
+            font-size: 7.5px;
+            padding: 6px 4px;
+            word-break: break-word;
+        }
+        .faculty-grid-table tbody td.slot-evening-col.busy,
+        .faculty-grid-table tbody td.slot-evening-col.lab-block {
+            font-size: 8.5px;
+            line-height: 1.3;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+            padding: 6px 4px;
+        }
+        .faculty-grid-table thead tr.faculty-sat-eve-head-row th.faculty-sat-eve-slot-head {
+            background: #475569 !important;
+            color: #fff !important;
+            border-color: #334155;
+            font-size: 8px;
+            font-weight: 700;
+            white-space: normal;
+            line-height: 1.2;
+            padding: 5px 4px;
+        }
+        .faculty-grid-table thead tr.faculty-sat-eve-head-row th.slot-sat-head-pad {
+            background: #64748b !important;
+            border-color: #475569;
+            padding: 4px 2px;
+        }
+        .faculty-sat-eve-label-row td.faculty-sat-eve-label {
+            background: #475569;
+            color: #fff;
+            font-size: 8px;
+            font-weight: 700;
+            text-align: center;
+            padding: 5px 4px;
+            white-space: normal;
+            line-height: 1.2;
+            border: 1px solid #334155;
+            vertical-align: middle;
+        }
+        .faculty-sat-eve-label-row td.slot-sat-label-pad {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            padding: 0;
+        }
+        .faculty-sat-eve-label-row td.faculty-sat-eve-label-day {
+            background: #f1f5f9;
+            border-right: 2px solid #1e293b;
+        }
+        .faculty-grid-table .slot-range-tag {
+            display: block;
+            font-size: 6px;
+            font-weight: 600;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 2px;
+        }
+        .faculty-sat-eve-cell {
+            padding: 0 !important;
+            vertical-align: top;
+        }
+        .faculty-sat-slot-label {
+            display: block;
+            background: #475569;
+            color: #fff;
+            font-size: 7.5px;
+            font-weight: 700;
+            text-align: center;
+            padding: 4px 3px;
+            line-height: 1.2;
+            white-space: normal;
+            word-break: break-word;
+            border-bottom: 1px solid #334155;
+        }
+        .faculty-sat-slot-body {
+            display: block;
+            padding: 6px 4px;
+            min-height: 24px;
+        }
+        .faculty-sat-eve-cell.busy .faculty-sat-slot-body,
+        .faculty-sat-eve-cell.lab-block .faculty-sat-slot-body {
+            background: #eff6ff;
+            color: #1e3a8a;
+            font-size: 8.5px;
+            white-space: pre-line;
+            line-height: 1.3;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
+        .faculty-sat-eve-cell.slot-free .faculty-sat-slot-body {
+            color: #cbd5e1;
+            text-align: center;
+        }
+        .faculty-grid-table th.slot-head-col,
+        .faculty-grid-table tbody td:not(.faculty-day-col) {
+            min-width: 72px;
+            max-width: 120px;
+        }
+        .faculty-grid-table thead th {
+            padding: 9px 6px;
+            font-size: 9px;
+            font-weight: 700;
+            text-align: center;
+            white-space: nowrap;
+            border: 1px solid #1d4ed8;
+        }
+        .faculty-grid-table thead th.faculty-head-day,
+        .faculty-grid-table thead th.slot-head-col.faculty-head-day {
+            background: #2563eb;
+            color: #fff;
+            border-color: #1d4ed8;
+        }
+        .faculty-grid-table thead th.faculty-head-evening,
+        .faculty-grid-table thead th.faculty-weekday-evening-band,
+        .faculty-grid-table thead th.faculty-evening-slot-head {
+            background: #64748b !important;
+            color: #fff !important;
+            border-color: #475569;
+        }
+        .faculty-grid-table th.faculty-day-col,
+        .faculty-grid-table td.faculty-day-col {
+            border-left: 2px solid #1e293b;
+            border-right: 2px solid #1e293b;
+            text-align: left;
+            font-size: 10px;
+            font-weight: 700;
+            color: #0f172a;
+            background: #f1f5f9;
+            padding: 8px 10px;
+            white-space: nowrap;
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            box-shadow: 3px 0 6px rgba(15, 23, 42, 0.07);
+        }
+        .faculty-grid-table thead th.faculty-day-col {
+            background: #1e40af;
+            color: #fff;
+            z-index: 3;
+            border-color: #1e3a8a;
+        }
+        .faculty-grid-table thead th.slot-head-col:last-child,
+        .faculty-grid-table tbody td:last-child {
+            border-right: 2px solid #1e293b;
+        }
+        .faculty-grid-table tbody td {
+            border: 1px solid #e2e8f0;
+            padding: 7px 5px;
+            vertical-align: top;
+        }
+        .faculty-grid-table tbody tr:nth-child(even) td:not(.faculty-day-col):not(.busy):not(.lab-block):not(.slot-free) {
+            background: #fafbfc;
+        }
+        .faculty-grid-table td.busy {
+            background: #eff6ff;
+            color: #1e3a8a;
+            white-space: pre-line;
+            line-height: 1.35;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
+        .faculty-grid-table td.lab-block {
+            background: #dbeafe;
+            color: #1e3a8a;
+            border-left: 3px solid #2563eb;
+            font-weight: 700;
+        }
+        .faculty-grid-table td.slot-free {
+            color: #cbd5e1;
+            text-align: center;
+            background: #fff;
+        }
+        .faculty-grid-table th.slot-day-end,
+        .faculty-grid-table td.slot-day-end {
+            border-right: 3px solid #9f1239;
+        }
+        .faculty-grid-table th.faculty-weekday-day-band {
+            font-size: 7px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 3px 4px;
+        }
+        .faculty-grid-table th.faculty-weekday-evening-band {
+            font-size: 7px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 3px 4px;
+        }
+        .faculty-grid-table th.faculty-evening-slot-head {
+            font-size: 8px;
+            border-top: 1px solid #475569;
+        }
+        .faculty-grid-table th.slot-evening-start,
+        .faculty-grid-table td.slot-evening-start {
+            border-left: 3px solid #9f1239;
+        }
+        .faculty-grid-table th.slot-day-end + th.faculty-weekday-evening-band,
+        .faculty-grid-table td.slot-day-end + td.slot-evening-start,
+        .faculty-grid-table td.slot-sat-afternoon-pad.slot-day-end + td.slot-evening-start {
+            border-left: none !important;
+        }
+        .faculty-grid-table tbody tr.faculty-sat-row td.slot-sat-afternoon-pad.slot-day-end + td.faculty-sat-evening-shell {
+            border-left: none !important;
+        }
+        .sections-card {
+            padding: 0;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.07);
+            margin-top: 0;
+            margin-bottom: 14px;
+        }
+        .sections-picker-bar {
+            padding: 10px 14px;
+            margin: 0 0 8px;
+            background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
+            border: 1px solid #cbd5e1;
+            border-radius: 12px 12px 0 0;
+            border-bottom: none;
+            box-shadow: none;
+        }
+        .sections-picker-bar label {
+            margin: 0 0 6px;
+            font-size: 0.72rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .sections-picker-bar select {
+            margin-bottom: 0;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .sections-card-header {
+            margin: 0;
+            padding: 12px 14px 8px;
+            font-size: 0.88rem;
+            font-weight: 800;
+            color: #0f172a;
+            background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
+            border-bottom: 1px solid #e2e8f0;
+            letter-spacing: -0.01em;
+        }
+        .controls-card label { margin-top: 2px; }
+        .controls-card .day-tabs { margin-bottom: 10px; }
+        .free-rooms-table td.free-room-list {
+            font-size: 10px;
+            line-height: 1.4;
+            white-space: pre-line;
+            color: #166534;
+            background: #ecfdf5;
+            font-weight: 600;
+        }
+        .free-rooms-table td.free-room-none {
+            color: #94a3b8;
+            text-align: center;
+            font-style: italic;
+        }
+        .free-rooms-table td.free-room-pad {
+            background: #e2e8f0;
+            color: #94a3b8;
+            text-align: center;
+        }
+        #sections-timetable { padding: 12px; background: #f8fafc; }
+        #sections-timetable > .table-wrap { margin: 0; }
+        .sections-scroll-hint {
+            font-size: 10px;
+            font-weight: 700;
+            color: #64748b;
+            text-align: right;
+            padding: 6px 10px 0;
+            letter-spacing: 0.02em;
+        }
+        label { display: block; font-size: 0.72rem; font-weight: 700; color: var(--muted); margin-bottom: 4px; letter-spacing: 0.03em; text-transform: uppercase; }
+        select, input[type=file], button {
+            font-size: 14px;
+            padding: 9px 12px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        #faculty-select, #sections-filter {
+            font-size: 13px;
+            font-weight: 600;
+            background: #f8fafc;
+        }
+        button {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: #fff;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+        }
+        button.secondary { background: #fff; color: var(--text); border: 1px solid var(--border); box-shadow: none; }
+        button:disabled { opacity: 0.5; }
+        .day-tabs {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .day-select { display: none; }
+        .tab-btn {
+            width: 100%;
+            min-width: 0;
+            padding: 10px 4px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #f8fafc;
+            font-size: 12px;
+            font-weight: 700;
+            color: #475569;
+            cursor: pointer;
+            text-align: center;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        .tab-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+        .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -4px; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 480px; }
+        th, td { border: 1px solid var(--border); padding: 6px 5px; vertical-align: top; }
+        th { background: #1e293b; color: #fff; font-weight: 700; text-align: center; white-space: nowrap; }
+        td.slot-free { color: #94a3b8; text-align: center; }
+        td.busy { background: #eff6ff; white-space: pre-line; font-size: 10px; }
+        td.lab-block { background: #dbeafe; border-left: 3px solid #2563eb; font-weight: 700; }
+        td.section-name { font-weight: 700; background: #f8fafc; white-space: nowrap; }
+        tr.group-row td { background: #e2e8f0; font-weight: 700; font-size: 11px; color: #475569; }
+        tbody tr.section-data-row td { border-top: 1px solid #475569; }
+        tbody tr.section-data-row:first-child td { border-top: none; }
+        tbody tr.section-data-row.stream-break td {
+            border-top: 3px solid #1e293b;
+            padding-top: 7px;
+        }
+        .sections-block {
+            margin-bottom: 14px;
+            border: 2px solid #1e293b;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+        }
+        .sections-scroll-wrap {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+            border-top: 1px solid #e2e8f0;
+        }
+        .sections-scroll-wrap::after {
+            content: '';
+            display: block;
+            height: 1px;
+        }
+        .sections-block:last-child { margin-bottom: 0; }
+        .sections-block h3 {
+            margin: 0;
+            padding: 10px 14px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            border-bottom: 2px solid #1e293b;
+        }
+        .sections-block--day h3 {
+            color: #fff;
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+        }
+        .sections-block--evening h3 {
+            color: #fff;
+            background: linear-gradient(135deg, #334155 0%, #475569 55%, #64748b 100%);
+        }
+        .sections-block .sections-grid-table {
+            border-collapse: collapse;
+            margin: 0;
+            width: max-content;
+            min-width: 100%;
+            font-size: 10px;
+        }
+        .sections-block .sections-grid-table th.slot-head-col,
+        .sections-block .sections-grid-table tbody td:not(.section-name) {
+            min-width: 76px;
+            max-width: 120px;
+        }
+        .sections-block .sections-grid-table thead th {
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            padding: 9px 6px;
+            font-size: 9px;
+            font-weight: 700;
+            text-align: center;
+            white-space: nowrap;
+            border: 1px solid #334155;
+        }
+        .sections-block .sections-grid-table th.section-head-col,
+        .sections-block .sections-grid-table td.section-name {
+            border-left: 2px solid #1e293b;
+            border-right: 2px solid #1e293b;
+            text-align: left;
+            font-size: 10px;
+            font-weight: 700;
+            color: #0f172a;
+            background: #f1f5f9;
+            padding: 8px 10px;
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            box-shadow: 3px 0 6px rgba(15, 23, 42, 0.07);
+        }
+        .sections-block .sections-grid-table thead th.section-head-col {
+            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+            color: #fff;
+            z-index: 3;
+        }
+        .sections-block .sections-grid-table thead th.slot-head-col:last-child,
+        .sections-block .sections-grid-table tbody td:last-child {
+            border-right: 2px solid #1e293b;
+        }
+        .sections-block .sections-grid-table tbody td {
+            border: 1px solid #e2e8f0;
+            padding: 7px 5px;
+            vertical-align: top;
+        }
+        .sections-block .sections-grid-table tbody tr.section-data-row:nth-child(even) td:not(.section-name):not(.busy):not(.lab-block):not(.slot-free) {
+            background: #fafbfc;
+        }
+        .sections-block .sections-grid-table td.busy {
+            background: #eff6ff;
+            color: #1e3a8a;
+            line-height: 1.35;
+            white-space: pre-line;
+            font-size: 10px;
+        }
+        .sections-block .sections-grid-table td.lab-block {
+            background: #dbeafe;
+            color: #1e3a8a;
+            border-left: 3px solid #2563eb;
+            font-weight: 700;
+        }
+        .sections-block .sections-grid-table td.slot-free {
+            color: #cbd5e1;
+            text-align: center;
+            background: #fff;
+        }
+        .sections-block + .sections-block { margin-top: 16px; }
+        .pill { display: inline-block; background: #dbeafe; color: #1d4ed8; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+        .empty { text-align: center; color: var(--muted); padding: 24px 12px; font-size: 0.9rem; }
+        #admin-panel { border: 2px dashed #93c5fd; background: #f0f9ff; }
+        #admin-panel summary { cursor: pointer; font-weight: 700; color: #0369a1; }
+        .hidden { display: none !important; }
+        .status { font-size: 12px; color: #059669; margin-top: 8px; }
+        .err { color: #dc2626; font-size: 13px; margin: 8px 0; }
+        #install-hint {
+            display: none;
+            position: fixed;
+            left: 12px; right: 12px; bottom: max(12px, env(safe-area-inset-bottom));
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            box-shadow: 0 8px 24px rgba(15,23,42,.35);
+            z-index: 100;
+        }
+        #install-hint strong { color: #93c5fd; }
+        #install-hint button {
+            margin: 10px 0 0;
+            width: auto;
+            padding: 8px 14px;
+            font-size: 13px;
+            background: #334155;
+        }
+        body.has-app-dock { padding-bottom: max(76px, calc(64px + env(safe-area-inset-bottom))); }
+        .app-panel.hidden { display: none !important; }
+        .app-dock {
+            position: fixed;
+            left: 0; right: 0; bottom: 0;
+            z-index: 90;
+            display: flex;
+            gap: 8px;
+            padding: 8px 12px max(8px, env(safe-area-inset-bottom));
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border);
+            box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.08);
+        }
+        .dock-btn {
+            flex: 1;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #f8fafc;
+            color: var(--muted);
+            padding: 8px 6px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            -webkit-tap-highlight-color: transparent;
+            transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+        }
+        .dock-btn:active { transform: scale(0.97); }
+        .dock-btn.active {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-color: #93c5fd;
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
+        }
+        .dock-btn--leave.active {
+            background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+            border-color: #c4b5fd;
+            color: #6d28d9;
+        }
+        .dock-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            line-height: 1;
+        }
+        .dock-icon--tt { background: #dbeafe; color: #1d4ed8; }
+        .dock-icon--lv { background: #ede9fe; color: #6d28d9; }
+        .panel-heading {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .panel-heading-badge {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        .panel-heading-badge--leave { background: #ede9fe; color: #6d28d9; }
+        .panel-heading-badge--report { background: #ccfbf1; color: #0f766e; }
+        /* Leave / substitution panel */
+        .leave-app .card { margin-bottom: 12px; }
+        .leave-app .card--accent { border-top: 3px solid var(--primary); }
+        .leave-app .card--results { border-top: 3px solid #0d9488; }
+        .leave-app h3, .leave-app h4 {
+            margin-top: 0;
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+        .leave-app label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 6px;
+            font-size: 0.72rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .leave-app .form-group { margin-bottom: 14px; }
+        .leave-app input[type="date"].form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            background: #fff;
+            margin-bottom: 0;
+        }
+        .leave-day-display {
+            padding: 11px 14px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 800;
+            background: #eff6ff;
+            border: 1px solid #93c5fd;
+            color: #1d4ed8;
+            text-align: center;
+            letter-spacing: 0.02em;
+        }
+        .leave-day-display--off {
+            background: #fff7ed;
+            border-color: #fdba74;
+            color: #9a3412;
+        }
+        .leave-app .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            background: #fff;
+        }
+        .btn-leave-primary {
+            width: 100%;
+            padding: 12px 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+        .btn-leave-wa {
+            background: #25d366;
+            color: #fff;
+            margin-top: 8px;
+            font-size: 13px;
+            padding: 11px 12px;
+            border-radius: 10px;
+            font-weight: 700;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-leave-wa--inline {
+            width: auto;
+            display: inline-flex;
+            padding: 7px 12px;
+            font-size: 11px;
+            background: #34b7f1;
+            border-radius: 999px;
+        }
+        .btn-dispatch-official {
+            width: 100%;
+            margin-top: 10px;
+            padding: 14px 14px 12px;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-align: left;
+            background: linear-gradient(135deg, #0d9488 0%, #059669 45%, #25d366 100%);
+            color: #fff;
+            box-shadow: 0 6px 20px rgba(13, 148, 136, 0.35);
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn-dispatch-official:active {
+            transform: scale(0.98);
+            box-shadow: 0 3px 12px rgba(13, 148, 136, 0.28);
+        }
+        .btn-dispatch-official__icon {
+            flex-shrink: 0;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.22);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+        }
+        .btn-dispatch-official__body {
+            flex: 1;
+            min-width: 0;
+        }
+        .btn-dispatch-official__title {
+            display: block;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .btn-dispatch-official__recipients {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .btn-dispatch-official__recipients span {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 3px 7px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            white-space: nowrap;
+        }
+        .leave-app .slot-row {
+            background: linear-gradient(180deg, #f8fafc 0%, #fff 100%);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        .leave-shift-head {
+            margin: 16px 0 10px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #1e3a8a;
+        }
+        .leave-shift-head--evening { color: #6d28d9; }
+        .leave-app .slot-title { font-weight: 800; font-size: 0.82rem; margin-bottom: 4px; }
+        .leave-app .slot-meta { font-size: 0.72rem; color: var(--muted); margin-bottom: 10px; }
+        .leave-app .picker-label {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #475569;
+            margin: 0 0 6px;
+        }
+        .leave-app .picker-label--lab { color: #047857; }
+        .leave-app .option-list {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            max-height: 168px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .leave-app .replacement-opt {
+            width: 100%;
+            text-align: left;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #fff;
+            padding: 8px 9px;
+            cursor: pointer;
+            display: block;
+        }
+        .leave-app .replacement-opt.selected {
+            border-color: var(--primary);
+            background: #eff6ff;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+        }
+        .leave-app .opt-head { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 5px; }
+        .leave-app .opt-code { font-size: 12px; font-weight: 800; color: #1e3a8a; }
+        .leave-app .opt-badge {
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            border-radius: 999px;
+        }
+        .leave-app .opt-badge--today { background: #dbeafe; color: #1d4ed8; }
+        .leave-app .opt-badge--exchange { background: #ede9fe; color: #6d28d9; }
+        .leave-app .timeline-label {
+            display: block;
+            font-size: 8px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #94a3b8;
+            margin-bottom: 3px;
+        }
+        .leave-app .timeline-chips { display: flex; flex-wrap: wrap; gap: 3px; }
+        .leave-app .slot-chip {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 5px;
+        }
+        .leave-app .slot-chip--same { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+        .leave-app .slot-chip--other { background: #fff7ed; color: #9a3412; border: 1px solid #fdba74; }
+        .leave-app .slot-chip--exchange { background: #f5f3ff; color: #6d28d9; border: 1px solid #c4b5fd; }
+        .leave-app .slot-chip--free { background: #ecfdf5; color: #047857; border: 1px solid #86efac; }
+        .leave-hint-text { font-size: 10px; color: var(--muted); margin: 0 0 6px; line-height: 1.5; }
+        .leave-empty-options {
+            font-size: 11px;
+            color: #b45309;
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 8px;
+            padding: 8px 10px;
+            margin: 0;
+        }
+        .leave-empty-options--ok { color: #047857; background: #ecfdf5; border-color: #86efac; }
+        .leave-dispatch-divider {
+            margin: 18px 0 10px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            border-top: 2px dashed var(--border);
+            padding-top: 14px;
+        }
+        .leave-status {
+            display: none;
+            margin: 0 0 12px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        .leave-status--err {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+        }
+        .leave-status--ok {
+            background: #ecfdf5;
+            border: 1px solid #86efac;
+            color: #047857;
+        }
+        .btn-leave-primary.is-busy {
+            opacity: 0.72;
+            pointer-events: none;
+        }
+        #leave_module_missing {
+            display: none;
+            margin-bottom: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            background: #fff7ed;
+            border: 1px solid #fdba74;
+            color: #9a3412;
+            font-size: 12px;
+            line-height: 1.45;
+        }
+    </style>
+    <script>
+/**
+ * MGM Leave & Substitution — shared with mobile-timetable.html
+ */
+(function (global) {
+    const LEAVE_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const DAY_SHORT = {
+        Monday: 'Mon', Tuesday: 'Tue', Wednesday: 'Wed',
+        Thursday: 'Thu', Friday: 'Fri', Saturday: 'Sat',
+    };
+    const WEEKDAY_ORDER = LEAVE_DAYS.slice();
+    const campusLabList = ['Lab1', 'Lab2', 'Lab3', 'Lab4', 'Lab5', 'SLab1', 'SLab2', 'MScLab'];
+
+    let timetableDatabase = emptyDayMap([]);
+    let orderedSlotsByDay = emptyDayMap([]);
+    let orderedSlotsByShift = emptyShiftSlotMap();
+    let globalMasterFacultyRoster = [];
+    let collegeDisplayName = 'MGM COLLEGE, UDUPI';
+    let activeMobileStore = null;
+
+    function staffNamesMap() {
+        return (activeMobileStore && activeMobileStore.staffNames) || {};
+    }
+
+    function staffDisplayName(code) {
+        const c = String(code || '').trim();
+        if (!c) return '';
+        const names = staffNamesMap();
+        if (names[c]) return names[c];
+        const base = c.replace(/_E$/i, '');
+        if (base !== c && names[base]) return names[base];
+        return c;
+    }
+
+    function staffDisplayLabel(code) {
+        const c = String(code || '').trim();
+        const name = staffDisplayName(c);
+        return name === c ? c : `${name} (${c})`;
+    }
+
+    function compareStaffCodes(a, b) {
+        const labelCmp = staffDisplayLabel(a).localeCompare(staffDisplayLabel(b), undefined, { sensitivity: 'base' });
+        return labelCmp !== 0 ? labelCmp : a.localeCompare(b);
+    }
+
+    function staffProfLabel(code) {
+        const c = String(code || '').trim();
+        if (!c) return '';
+        if (c.startsWith('Self Study')) return c;
+        const name = staffDisplayName(c);
+        if (name !== c) return name.startsWith('Prof.') ? name : `Prof. ${name}`;
+        return `Prof. ${c}`;
+    }
+
+    function emptyDayMap(val) {
+        const o = {};
+        LEAVE_DAYS.forEach(d => { o[d] = Array.isArray(val) ? val.slice() : val; });
+        return o;
+    }
+
+    function emptyShiftSlotMap() {
+        const o = {};
+        LEAVE_DAYS.forEach(d => { o[d] = { day: [], evening: [] }; });
+        return o;
+    }
+
+    function shiftForLeaveEntry(entry) {
+        return entry && entry.shift === 'evening' ? 'evening' : 'day';
+    }
+
+    function slotsTimelineForLeave(day, entry) {
+        const byShift = orderedSlotsByShift[day];
+        if (byShift && (byShift.day?.length || byShift.evening?.length)) {
+            return byShift[shiftForLeaveEntry(entry)] || [];
+        }
+        const flat = orderedSlotsByDay[day];
+        return Array.isArray(flat) ? flat : [];
+    }
+
+    function leaveSlotSortIndex(day, shift, slot) {
+        const timeline = (orderedSlotsByShift[day] && orderedSlotsByShift[day][shift]) || [];
+        const s = String(slot || '').trim();
+        let i = timeline.indexOf(s);
+        if (i >= 0) return i;
+        const norm = s.replace(/:/g, '.');
+        i = timeline.findIndex(t => t === s || String(t).replace(/:/g, '.') === norm);
+        return i >= 0 ? i : 9999;
+    }
+
+    function sortAffectedBySlot(entries, day, shift) {
+        return entries.slice().sort((a, b) => {
+            const d = leaveSlotSortIndex(day, shift, a.slot) - leaveSlotSortIndex(day, shift, b.slot);
+            if (d) return d;
+            return String(a.section || '').localeCompare(String(b.section || ''));
+        });
+    }
+
+    function escapeHtml(s) {
+        return String(s ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    function leavePackHasData(pack) {
+        if (!pack || !pack.db) return false;
+        return LEAVE_DAYS.some(d => (pack.db[d] || []).length > 0);
+    }
+
+    function showLeaveMessage(msg, isError) {
+        const el = document.getElementById('leave_status');
+        if (!el) {
+            if (isError) alert(msg);
+            return;
+        }
+        el.textContent = msg;
+        el.className = 'leave-status' + (isError ? ' leave-status--err' : ' leave-status--ok');
+        el.style.display = msg ? 'block' : 'none';
+    }
+
+    function parseStaffCodes(raw) {
+        return String(raw || '')
+            .split(/[\/,&+]+/)
+            .map(s => s.trim())
+            .filter(s => s && !s.toLowerCase().includes('sans') && !s.toLowerCase().includes('kan'));
+    }
+
+    function isIndividualFacultyCode(code) {
+        const s = String(code || '').trim();
+        return s && !/[\/,&+]/.test(s);
+    }
+
+    function leaveFacultyDropdownList() {
+        return globalMasterFacultyRoster.filter(isIndividualFacultyCode);
+    }
+
+    function staffMatchesAbsent(entryStaff, absentStaff) {
+        if (!absentStaff) return false;
+        if (entryStaff === absentStaff) return true;
+        return parseStaffCodes(entryStaff).includes(absentStaff);
+    }
+
+    function busyStaffAtSlot(dailySchedule, slot) {
+        const busy = new Set();
+        dailySchedule.filter(e => e.slot === slot).forEach(e => {
+            parseStaffCodes(e.staff).forEach(s => busy.add(s));
+        });
+        return busy;
+    }
+
+    function parseScheduleCell(cellContent) {
+        const cell = String(cellContent || '').trim();
+        if (!cell || !cell.includes('(')) return null;
+        const staffExtractor = cell.match(/\(([^)]+)\)/);
+        const roomExtractor = cell.match(/\[([^\]]+)\]/);
+        if (!staffExtractor || !staffExtractor[1]) return null;
+        const staffCodes = parseStaffCodes(staffExtractor[1]);
+        if (!staffCodes.length) return null;
+        return {
+            subject: cell.split('(')[0].trim(),
+            staff: staffCodes[0],
+            staffAll: staffCodes,
+            room: roomExtractor ? roomExtractor[1].trim() : 'N/A',
+        };
+    }
+
+    function ingestSectionCells(sec, dayKey, db, roster, shift) {
+        const useShift = shift || sec.group || 'day';
+        Object.keys(sec.cells || {}).forEach(slot => {
+            const parsed = parseScheduleCell(sec.cells[slot]);
+            if (!parsed) return;
+            const staffList = parsed.staffAll || [parsed.staff];
+            staffList.forEach(staffCode => {
+                db[dayKey].push({
+                    section: sec.name,
+                    slot,
+                    subject: parsed.subject,
+                    staff: staffCode,
+                    room: parsed.room,
+                    shift: useShift,
+                });
+                roster.add(staffCode);
+            });
+        });
+    }
+
+    function buildLeavePackFromMobileStore(mobileStore) {
+        const db = emptyDayMap([]);
+        const slots = emptyDayMap([]);
+        const slotsByShift = emptyShiftSlotMap();
+        const roster = new Set();
+
+        Object.keys(mobileStore.daywise || {}).forEach(day => {
+            if (!LEAVE_DAYS.includes(day)) return;
+            const dw = mobileStore.daywise[day];
+            const daySlotList = (dw.daySlots || []).filter(Boolean);
+            const eveningSlotList = (dw.eveningSlots || []).filter(Boolean);
+            if (daySlotList.length) slotsByShift[day].day = [...daySlotList];
+            if (eveningSlotList.length) slotsByShift[day].evening = [...eveningSlotList];
+            slots[day] = [...daySlotList, ...eveningSlotList.filter(s => !daySlotList.includes(s))];
+
+            (dw.sections || []).forEach(sec => ingestSectionCells(sec, day, db, roster, 'day'));
+            (dw.eveningSections || []).forEach(sec => ingestSectionCells(sec, day, db, roster, 'evening'));
+
+            if (!slots[day].length) {
+                const fromEntries = new Set();
+                db[day].forEach(e => fromEntries.add(e.slot));
+                slots[day] = Array.from(fromEntries);
+            }
+        });
+
+        return {
+            db,
+            slots,
+            slotsByShift,
+            roster: Array.from(roster).filter(isIndividualFacultyCode).sort((a, b) => a.localeCompare(b)),
+        };
+    }
+
+    function hydrateLeavePack(pack) {
+        timetableDatabase = pack.db || emptyDayMap([]);
+        orderedSlotsByDay = pack.slots || emptyDayMap([]);
+        orderedSlotsByShift = pack.slotsByShift || emptyShiftSlotMap();
+        globalMasterFacultyRoster = pack.roster || [];
+        populateFacultyDropdown();
+        initLeaveDatePicker();
+    }
+
+    function setCollegeDisplayName(mobileStore) {
+        const name = String(mobileStore?.college || '').trim();
+        collegeDisplayName = name || 'MGM COLLEGE, UDUPI';
+    }
+
+    function initFromMobileStore(mobileStore) {
+        activeMobileStore = mobileStore || {};
+        setCollegeDisplayName(mobileStore);
+        const fresh = buildLeavePackFromMobileStore(mobileStore || {});
+        if (leavePackHasData(fresh)) {
+            hydrateLeavePack(fresh);
+            return fresh;
+        }
+        if (mobileStore?.leave && leavePackHasData(mobileStore.leave)) {
+            hydrateLeavePack(mobileStore.leave);
+            return mobileStore.leave;
+        }
+        hydrateLeavePack(fresh);
+        return fresh;
+    }
+
+    function populateFacultyDropdown() {
+        const dropdown = document.getElementById('absent_faculty_select');
+        if (!dropdown) return;
+        const previous = dropdown.value;
+        dropdown.innerHTML = '<option value="">-- Choose Faculty --</option>';
+        leaveFacultyDropdownList().slice().sort(compareStaffCodes).forEach(teacher => {
+            const opt = document.createElement('option');
+            opt.value = teacher;
+            opt.textContent = staffDisplayLabel(teacher);
+            dropdown.appendChild(opt);
+        });
+        if (previous && leaveFacultyDropdownList().includes(previous)) {
+            dropdown.value = previous;
+        } else {
+            resetAnalysisCard();
+        }
+    }
+
+    function resetAnalysisCard() {
+        const card = document.getElementById('results_card');
+        if (card) card.style.display = 'none';
+    }
+
+    function pickReplacement(index, btn) {
+        const row = btn.closest('.slot-row');
+        if (!row) return;
+        row.querySelectorAll('.replacement-opt').forEach(el => el.classList.remove('selected'));
+        btn.classList.add('selected');
+        const hidden = document.getElementById(`pick_value_${index}`);
+        if (hidden) {
+            hidden.value = btn.getAttribute('data-value') || '';
+            hidden.setAttribute('data-info-text', btn.getAttribute('data-info-text') || '');
+            const subSubject = btn.getAttribute('data-sub-subject') || '';
+            if (subSubject) hidden.setAttribute('data-sub-subject', subSubject);
+            else hidden.removeAttribute('data-sub-subject');
+        }
+        renderIndividualWhatsAppButton(index, row.getAttribute('data-slot'), row.getAttribute('data-section'));
+    }
+
+    function substituteSubjectInSection(teacher, leaveDay, section, slot) {
+        const daySchedule = timetableDatabase[leaveDay] || [];
+        const sameSlotToday = daySchedule.find(e =>
+            e.staff === teacher && e.section === section && e.slot === slot
+        );
+        if (sameSlotToday?.subject) return sameSlotToday.subject;
+        const sameSectionToday = daySchedule.find(e =>
+            e.staff === teacher && e.section === section
+        );
+        if (sameSectionToday?.subject) return sameSectionToday.subject;
+        for (const d of WEEKDAY_ORDER) {
+            if (d === leaveDay) continue;
+            const entries = timetableDatabase[d] || [];
+            const sameSlot = entries.find(e =>
+                e.staff === teacher && e.section === section && e.slot === slot
+            );
+            if (sameSlot?.subject) return sameSlot.subject;
+            const sameSection = entries.find(e =>
+                e.staff === teacher && e.section === section
+            );
+            if (sameSection?.subject) return sameSection.subject;
+        }
+        return '';
+    }
+
+    function buildStaffOptionHtml(index, teacher, leaveDay, targetSection, slot, teachesToday, teachesOtherDays, shift) {
+        let badges = '';
+        if (teachesToday) badges += '<span class="opt-badge opt-badge--today">Today</span>';
+        if (teachesOtherDays) badges += '<span class="opt-badge opt-badge--exchange">Day swap</span>';
+        const subSubject = substituteSubjectInSection(teacher, leaveDay, targetSection, slot);
+        const timelineHtml = buildTeacherTimelineHtml(teacher, leaveDay, targetSection, teachesToday, teachesOtherDays, shift);
+        const profLabel = staffProfLabel(teacher);
+        const subAttr = subSubject ? ` data-sub-subject="${escapeHtml(subSubject)}"` : '';
+        return `<button type="button" class="replacement-opt" data-value="${escapeHtml(profLabel)}" data-info-text="${escapeHtml(profLabel)}"${subAttr} onclick="LeaveApp.pickReplacement(${index}, this)">
+            <div class="opt-head">
+                <span class="opt-code">${escapeHtml(staffDisplayLabel(teacher))}</span>
+                ${badges}
+            </div>
+            <div class="opt-timeline">${timelineHtml}</div>
+        </button>`;
+    }
+
+    function buildLabOptionHtml(lab, index) {
+        const label = `Self Study in ${lab}`;
+        return `<button type="button" class="replacement-opt replacement-opt--lab" data-value="${escapeHtml(label)}" data-info-text="${escapeHtml(label)}" onclick="LeaveApp.pickReplacement(${index}, this)">
+            <div class="opt-head">
+                <span class="opt-code">${escapeHtml(lab)}</span>
+                <span class="opt-badge opt-badge--exchange">Lab</span>
+            </div>
+            <div class="opt-timeline"><span class="slot-chip slot-chip--free">2-hour free lab block</span></div>
+        </button>`;
+    }
+
+    function teacherEntriesOnDay(teacher, day, section, shift) {
+        return (timetableDatabase[day] || []).filter(e => {
+            if (e.staff !== teacher) return false;
+            if (section && e.section !== section) return false;
+            if (shift && shiftForLeaveEntry(e) !== shift) return false;
+            return true;
+        });
+    }
+
+    function teacherOtherSectionEntriesOnDay(teacher, day, targetSection, shift) {
+        return (timetableDatabase[day] || []).filter(e => {
+            if (e.staff !== teacher) return false;
+            if (e.section === targetSection) return false;
+            if (shift && shiftForLeaveEntry(e) !== shift) return false;
+            return true;
+        });
+    }
+
+    function buildTeacherTimelineHtml(teacher, leaveDay, targetSection, teachesToday, teachesOtherDays, shift) {
+        const parts = [];
+        const leaveShift = shift || 'day';
+
+        if (teachesToday) {
+            const sameSectionToday = teacherEntriesOnDay(teacher, leaveDay, targetSection, leaveShift);
+            const otherClassesToday = teacherOtherSectionEntriesOnDay(teacher, leaveDay, targetSection, leaveShift);
+
+            if (sameSectionToday.length) {
+                parts.push(`<div class="timeline-row">
+                    <span class="timeline-label">Today · same section (${escapeHtml(targetSection)})</span>
+                    <span class="timeline-chips">`);
+                sameSectionToday.forEach(e => {
+                    parts.push(`<span class="slot-chip slot-chip--same">${escapeHtml(e.slot)}</span>`);
+                });
+                parts.push('</span></div>');
+            }
+
+            if (otherClassesToday.length) {
+                parts.push(`<div class="timeline-row">
+                    <span class="timeline-label">Today · other sections</span>
+                    <span class="timeline-chips">`);
+                otherClassesToday.forEach(e => {
+                    parts.push(`<span class="slot-chip slot-chip--other">${escapeHtml(e.slot)} · ${escapeHtml(e.section)}</span>`);
+                });
+                parts.push('</span></div>');
+            }
+        }
+
+        if (teachesOtherDays) {
+            const exchangeSlots = [];
+            WEEKDAY_ORDER.forEach(d => {
+                if (d === leaveDay) return;
+                teacherEntriesOnDay(teacher, d, targetSection, leaveShift).forEach(e => {
+                    exchangeSlots.push({ day: d, slot: e.slot, subject: e.subject });
+                });
+            });
+
+            if (exchangeSlots.length) {
+                parts.push(`<div class="timeline-row">
+                    <span class="timeline-label">Other days · same section (can swap)</span>
+                    <span class="timeline-chips">`);
+                exchangeSlots.forEach(e => {
+                    const dayLabel = DAY_SHORT[e.day] || e.day;
+                    const sub = e.subject ? ` · ${e.subject}` : '';
+                    parts.push(`<span class="slot-chip slot-chip--exchange">${escapeHtml(dayLabel)} ${escapeHtml(e.slot)}${escapeHtml(sub)}</span>`);
+                });
+                parts.push('</span></div>');
+            }
+
+            if (!teachesToday) {
+                parts.push(`<div class="timeline-row">
+                    <span class="slot-chip slot-chip--free">Free on ${escapeHtml(leaveDay)} at this hour</span>
+                </div>`);
+            }
+        }
+
+        if (!parts.length) {
+            parts.push('<span class="slot-chip slot-chip--free">No matching schedule</span>');
+        }
+
+        return parts.join('');
+    }
+
+    function todayIsoDate() {
+        const d = new Date();
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+    }
+
+    function formatLeaveDateDisplay(iso) {
+        if (!iso) return '';
+        const parts = iso.split('-').map(Number);
+        if (parts.length !== 3 || parts.some(n => Number.isNaN(n))) return iso;
+        const [y, m, d] = parts;
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return `${d} ${months[m - 1]} ${y}`;
+    }
+
+    function weekdayFromIso(iso) {
+        if (!iso) return '';
+        const parts = iso.split('-').map(Number);
+        if (parts.length !== 3) return '';
+        const [y, m, d] = parts;
+        const dt = new Date(y, m - 1, d);
+        return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][dt.getDay()];
+    }
+
+    function getLeaveDate() {
+        const input = document.getElementById('leave_date_input');
+        if (!input) return '';
+        return input.value || todayIsoDate();
+    }
+
+    function syncLeaveDayFromDate() {
+        const iso = getLeaveDate();
+        const weekday = weekdayFromIso(iso);
+        const hidden = document.getElementById('leave_day_value');
+        const display = document.getElementById('leave_day_display');
+        if (!weekday) {
+            if (hidden) hidden.value = '';
+            if (display) {
+                display.textContent = '—';
+                display.classList.remove('leave-day-display--off');
+            }
+            return false;
+        }
+        if (LEAVE_DAYS.includes(weekday)) {
+            if (hidden) hidden.value = weekday;
+            if (display) {
+                display.textContent = weekday;
+                display.classList.remove('leave-day-display--off');
+            }
+            showLeaveMessage('');
+            return true;
+        }
+        if (hidden) hidden.value = '';
+        if (display) {
+            display.textContent = weekday + ' (no timetable)';
+            display.classList.add('leave-day-display--off');
+        }
+        showLeaveMessage('Sunday has no college timetable. Choose a Mon–Sat date.', true);
+        return false;
+    }
+
+    function initLeaveDatePicker() {
+        const input = document.getElementById('leave_date_input');
+        if (!input) return;
+        if (!input.value) input.value = todayIsoDate();
+        syncLeaveDayFromDate();
+    }
+
+    function classAdjustmentDateLine() {
+        const dateLabel = formatLeaveDateDisplay(getLeaveDate());
+        const day = getLeaveDay();
+        if (dateLabel && day) return `${dateLabel} (${day})`;
+        if (dateLabel) return dateLabel;
+        return day || '';
+    }
+
+    function leaveReportHeaderLine() {
+        const when = classAdjustmentDateLine();
+        return when ? `Date: ${when}` : '';
+    }
+
+    function buildMasterArrangementLine(index, hidden, val) {
+        const slot = hidden.getAttribute('data-slot') || '';
+        const section = hidden.getAttribute('data-section') || '';
+        const absentSubject = hidden.getAttribute('data-subject') || '';
+        const subSubject = hidden.getAttribute('data-sub-subject') || '';
+        const sub = formatSubLine(val, subSubject);
+        const subjectPart = absentSubject ? ` | ${absentSubject}` : '';
+        return `${index}) ${slot} | ${section}${subjectPart} → ${sub}\n`;
+    }
+
+    function getLeaveDay() {
+        const weekday = weekdayFromIso(getLeaveDate());
+        return LEAVE_DAYS.includes(weekday) ? weekday : '';
+    }
+
+    function getAbsentFaculty() {
+        const dropdown = document.getElementById('absent_faculty_select');
+        if (!dropdown) return '';
+        if (dropdown.value) return dropdown.value;
+        const opt = dropdown.options[dropdown.selectedIndex];
+        return opt && opt.value ? opt.value : '';
+    }
+
+    function processMGMSubstitutions() {
+        syncLeaveDayFromDate();
+        const absentStaff = getAbsentFaculty();
+        const day = getLeaveDay();
+        if (!day) {
+            showLeaveMessage('Pick a weekday date (Mon–Sat). Sunday has no timetable.', true);
+            return false;
+        }
+        if (!absentStaff) {
+            showLeaveMessage('Please select faculty unavailable.', true);
+            return false;
+        }
+        showLeaveMessage('');
+
+        const dailySchedule = timetableDatabase[day] || [];
+        const affectedClasses = dailySchedule.filter(e => staffMatchesAbsent(e.staff, absentStaff));
+        const listContainer = document.getElementById('adjustment_list_container');
+        const resultsCard = document.getElementById('results_card');
+        if (!listContainer || !resultsCard) return false;
+
+        if (!globalMasterFacultyRoster.length) {
+            showLeaveMessage('No faculty loaded. Re-build timetable data in Admin, then try again.', true);
+            return false;
+        }
+
+        let rowsHtml = '';
+
+        if (!affectedClasses.length) {
+            rowsHtml = "<p class='leave-empty-options leave-empty-options--ok'>🎉 Free day — no classes scheduled for this faculty.</p>";
+            listContainer.innerHTML = rowsHtml;
+            resultsCard.style.display = 'block';
+            resultsCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            return true;
+        }
+
+        function renderAffectedClass(cls, idx) {
+            const busyStaffList = busyStaffAtSlot(dailySchedule, cls.slot);
+            const freeStaffList = globalMasterFacultyRoster.filter(t =>
+                isIndividualFacultyCode(t) && !busyStaffList.has(t) && t !== absentStaff);
+
+            const activeSlotsTimeline = slotsTimelineForLeave(day, cls);
+            const currentSlotIdx = activeSlotsTimeline.indexOf(cls.slot);
+            const nextSlotLabel = (currentSlotIdx !== -1 && currentSlotIdx + 1 < activeSlotsTimeline.length)
+                ? activeSlotsTimeline[currentSlotIdx + 1] : null;
+
+            const activeRoomsThisHour = dailySchedule.filter(e => e.slot === cls.slot).map(e => e.room);
+            const activeRoomsNextHour = nextSlotLabel
+                ? dailySchedule.filter(e => e.slot === nextSlotLabel).map(e => e.room) : [];
+
+            const openLabsTwoHourBlock = campusLabList.filter(lab => {
+                const busyNow = activeRoomsThisHour.some(r => r.toLowerCase().includes(lab.toLowerCase()));
+                const busyNext = activeRoomsNextHour.some(r => r.toLowerCase().includes(lab.toLowerCase()));
+                return !busyNow && !busyNext;
+            });
+
+            const matchingFacultyRosterList = [];
+
+            const clsShift = shiftForLeaveEntry(cls);
+
+            freeStaffList.forEach(teacher => {
+                const teachesThisClassToday = dailySchedule.some(e =>
+                    e.staff === teacher && e.section === cls.section && shiftForLeaveEntry(e) === clsShift);
+                let teachesThisClassOnOtherDays = false;
+                Object.keys(timetableDatabase).forEach(d => {
+                    if (d !== day && timetableDatabase[d].some(e =>
+                        e.staff === teacher && e.section === cls.section && shiftForLeaveEntry(e) === clsShift)) {
+                        teachesThisClassOnOtherDays = true;
+                    }
+                });
+
+                if (teachesThisClassToday || teachesThisClassOnOtherDays) {
+                    matchingFacultyRosterList.push({
+                        code: teacher,
+                        teachesToday: teachesThisClassToday,
+                        teachesOtherDays: teachesThisClassOnOtherDays,
+                    });
+                }
+            });
+
+            matchingFacultyRosterList.sort((a, b) => {
+                if (a.teachesToday && !b.teachesToday) return -1;
+                if (!a.teachesToday && b.teachesToday) return 1;
+                if (a.teachesOtherDays && !b.teachesOtherDays) return -1;
+                if (!a.teachesOtherDays && b.teachesOtherDays) return 1;
+                return a.code.localeCompare(b.code);
+            });
+
+            const shiftLabel = shiftForLeaveEntry(cls) === 'evening' ? 'Evening' : 'Day';
+            let rowHtml = `
+                <div class="slot-row" data-slot="${escapeHtml(cls.slot)}" data-section="${escapeHtml(cls.section)}">
+                    <div class="slot-title">${escapeHtml(cls.slot)} · ${escapeHtml(cls.section)} <span class="slot-chip">${shiftLabel}</span></div>
+                    <div class="slot-meta">${escapeHtml(cls.subject)} · Room ${escapeHtml(cls.room)}</div>
+                    <input type="hidden" id="pick_value_${idx}" class="hidden-pick" value=""
+                        data-slot="${escapeHtml(cls.slot)}" data-section="${escapeHtml(cls.section)}"
+                        data-subject="${escapeHtml(cls.subject)}" data-info-text="">
+            `;
+
+            if (matchingFacultyRosterList.length) {
+                rowHtml += `<div class="picker-section">
+                    <div class="picker-label">Eligible staff</div>
+                    <p class="leave-hint-text">
+                        <span class="slot-chip slot-chip--same">Blue</span> same section today ·
+                        <span class="slot-chip slot-chip--other">Orange</span> other class today ·
+                        <span class="slot-chip slot-chip--exchange">Purple</span> swap day
+                    </p>
+                    <div class="option-list">`;
+                matchingFacultyRosterList.forEach(t => {
+                    rowHtml += buildStaffOptionHtml(idx, t.code, day, cls.section, cls.slot, t.teachesToday, t.teachesOtherDays, clsShift);
+                });
+                rowHtml += '</div></div>';
+            } else {
+                rowHtml += '<p class="leave-empty-options">No eligible staff found for this slot.</p>';
+            }
+
+            if (openLabsTwoHourBlock.length) {
+                rowHtml += '<div class="picker-section"><div class="picker-label picker-label--lab">Lab alternatives</div><div class="option-list">';
+                openLabsTwoHourBlock.sort().forEach(lab => {
+                    rowHtml += buildLabOptionHtml(lab, idx);
+                });
+                rowHtml += '</div></div>';
+            }
+
+            rowHtml += `<div id="wa_individual_container_${idx}"></div></div>`;
+            return rowHtml;
+        }
+
+        const dayClasses = sortAffectedBySlot(
+            affectedClasses.filter(c => shiftForLeaveEntry(c) !== 'evening'),
+            day,
+            'day',
+        );
+        const eveningClasses = sortAffectedBySlot(
+            affectedClasses.filter(c => shiftForLeaveEntry(c) === 'evening'),
+            day,
+            'evening',
+        );
+        let rowIdx = 0;
+
+        if (dayClasses.length) {
+            rowsHtml += '<h4 class="leave-shift-head">Day College</h4>';
+            dayClasses.forEach(cls => {
+                rowsHtml += renderAffectedClass(cls, rowIdx);
+                rowIdx += 1;
+            });
+        }
+        if (eveningClasses.length) {
+            rowsHtml += '<h4 class="leave-shift-head leave-shift-head--evening">Evening College</h4>';
+            eveningClasses.forEach(cls => {
+                rowsHtml += renderAffectedClass(cls, rowIdx);
+                rowIdx += 1;
+            });
+        }
+
+        listContainer.innerHTML = rowsHtml;
+        resultsCard.style.display = 'block';
+        resultsCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        return true;
+    }
+
+    function formatProfName(selectedText) {
+        let raw = String(selectedText || '').trim();
+        if (!raw) return '';
+        if (raw.startsWith('Self Study')) return raw;
+        if (raw.startsWith('Prof. ')) raw = raw.slice(6).trim();
+        return staffProfLabel(raw);
+    }
+
+    function formatSubLine(selectedText, subSubject) {
+        const prof = formatProfName(selectedText);
+        if (String(selectedText || '').startsWith('Self Study')) return prof;
+        return subSubject ? `${prof} (${subSubject})` : prof;
+    }
+
+    function buildIndividualWaMessage(slot, section, absentSubject, selectedText, subSubject) {
+        const when = leaveReportHeaderLine();
+        const subjectLine = absentSubject ? `🔹 *Subject:* ${absentSubject}\n` : '';
+        const subLine = formatSubLine(selectedText, subSubject);
+        return `*${collegeDisplayName.toUpperCase()}*\n${when}\n\nDear Sir/Madam,\n\nYou are requested to take class:\n🔹 *Slot:* ${slot}\n🔹 *Section:* ${section}\n${subjectLine}🔹 *Sub:* ${subLine}\n\nKindly do the needful. Thank you!`;
+    }
+
+    function renderIndividualWhatsAppButton(index, slot, section) {
+        const hidden = document.getElementById(`pick_value_${index}`);
+        const container = document.getElementById(`wa_individual_container_${index}`);
+        if (!container) return;
+        container.innerHTML = '';
+        if (!hidden || !hidden.value) return;
+
+        const selectedText = hidden.getAttribute('data-info-text') || hidden.value;
+        const absentSubject = hidden.getAttribute('data-subject') || '';
+        const subSubject = hidden.getAttribute('data-sub-subject') || '';
+        const textMessage = buildIndividualWaMessage(slot, section, absentSubject, selectedText, subSubject);
+        const waUrl = `https://wa.me/?text=${encodeURIComponent(textMessage)}`;
+
+        container.innerHTML = `
+            <a href="${waUrl}" target="_blank" class="btn-leave-wa btn-leave-wa--inline">
+                💬 Message ${escapeHtml(selectedText)}
+            </a>
+        `;
+    }
+
+    function slotSectionLabel(hidden) {
+        const slot = hidden.getAttribute('data-slot') || '';
+        const section = hidden.getAttribute('data-section') || '';
+        if (slot && section) return `${slot} · ${section}`;
+        return slot || section || '—';
+    }
+
+    function generateFullReportText() {
+        const absent = getAbsentFaculty();
+        if (!absent) return '';
+        const when = classAdjustmentDateLine();
+        const college = collegeDisplayName.toUpperCase();
+        let txt = `*${college}*\n*CLASS ADJUSTMENT — ${when}*\n\nFaculty Unavailable: ${formatProfName(absent)}\n\nArrangements:\n`;
+
+        let count = 0;
+        document.querySelectorAll('[id^="pick_value_"]').forEach(hidden => {
+            const val = hidden.value;
+            if (!val) return;
+            count++;
+            txt += buildMasterArrangementLine(count, hidden, val);
+        });
+        return count === 0 ? '' : txt;
+    }
+
+    function dispatchMasterReport() {
+        const textReport = generateFullReportText();
+        if (!textReport) {
+            showLeaveMessage('Please select at least one substitution option first.', true);
+            return;
+        }
+        showLeaveMessage('');
+        window.open(`https://wa.me/?text=${encodeURIComponent(textReport)}`, '_blank');
+    }
+
+    function attachLeavePackToStore(mobileStore) {
+        mobileStore.leave = buildLeavePackFromMobileStore(mobileStore);
+        return mobileStore;
+    }
+
+    global.LeaveApp = {
+        initFromMobileStore,
+        attachLeavePackToStore,
+        buildLeavePackFromMobileStore,
+        populateFacultyDropdown,
+        resetAnalysisCard,
+        pickReplacement,
+        processMGMSubstitutions,
+        dispatchMasterReport,
+        showLeaveMessage,
+        initLeaveDatePicker,
+        syncLeaveDayFromDate,
+    };
+}(window));
+
+</script>
+    <script>
+    window.addEventListener('load', function () {
+        if (window.LeaveApp) return;
+        var miss = document.getElementById('leave_module_missing');
+        if (miss) miss.style.display = 'block';
+    });
+    </script>
+</head>
+<body class="has-app-dock">
+<!-- TT_EMBED_MARKER -->
+<div class="wrap">
+    <h1 id="college-title">College — MGM Mobile</h1>
+    <p class="sub" id="college-sub">Timetable · leave &amp; substitution — tap tabs below</p>
+
+    <div id="faculty-app" class="">
+    <div id="panel-timetable" class="app-panel">
+        <div class="card controls-card">
+            <label for="faculty-select">Faculty name</label>
+            <select id="faculty-select"><option value="ABJ">Abhijna (ABJ)</option><option value="AKN_E">AkshathaNayak (AKN_E)</option><option value="AKS">AkshathaShettigar (AKS)</option><option value="ANJ_E">Anjalin (ANJ_E)</option><option value="AA">Anupama (AA)</option><option value="ANV_E">Anvitha (ANV_E)</option><option value="DP">Damodar (DP)</option><option value="DK">Deepali (DK)</option><option value="JRP">Jayanthi (JRP)</option><option value="MIT">Mithun (MIT)</option><option value="NL1">NL1</option><option value="NL1_E">NL1_E</option><option value="PRJ">Prajnashree (PRJ)</option><option value="PRK">Prakash (PRK)</option><option value="RMR">Rajamoorthy (RMR)</option><option value="RAK">Rakshitha (RAK)</option><option value="RAM">Ramya (RAM)</option><option value="RAS">Rashmi (RAS)</option><option value="RNC">RekhaChandra (RNC)</option><option value="SAN">Sanath (SAN)</option><option value="SAJ_E">Sanjana (SAJ_E)</option><option value="SHI">Shilpa (SHI)</option><option value="SUSH">Sushma (SUSH)</option><option value="VAR_E">Varshini (VAR_E)</option><option value="MVP">Vishwanath (MVP)</option><option value="VVK">Vivek (VVK)</option></select>
+            <label>Day</label>
+            <div class="day-tabs" id="day-tabs"><button type="button" class="tab-btn active" data-day="Monday">Mon</button><button type="button" class="tab-btn" data-day="Tuesday">Tue</button><button type="button" class="tab-btn" data-day="Wednesday">Wed</button><button type="button" class="tab-btn" data-day="Thursday">Thu</button><button type="button" class="tab-btn" data-day="Friday">Fri</button><button type="button" class="tab-btn" data-day="Saturday">Sat</button></div>
+            <select id="day-select" class="day-select" aria-hidden="true" tabindex="-1"><option value="Monday">Monday</option><option value="Tuesday">Tuesday</option><option value="Wednesday">Wednesday</option><option value="Thursday">Thursday</option><option value="Friday">Friday</option><option value="Saturday">Saturday</option></select>
+            <span class="pill" id="hours-pill">4 hr(s) on Monday</span>
+        </div>
+
+        <div class="card">
+            <div class="my-timetable-header">
+                <h2 id="my-title">Abhijna (ABJ) — Monday</h2>
+                <button type="button" id="btn-faculty-view" class="view-toggle-btn" aria-pressed="false">Whole week</button>
+            </div>
+            <div id="my-timetable"><div class="faculty-timetable-block"><div class="faculty-block-head">Monday</div><p class="sections-scroll-hint faculty-scroll-hint">Swipe left for all time slots →</p><div class="faculty-scroll-wrap"><table class="faculty-grid-table"><thead><tr><th class="faculty-day-col">Time</th><th class="slot-head-col faculty-head-day">9-9.50</th><th class="slot-head-col faculty-head-day">9.55-10.45</th><th class="slot-head-col faculty-head-day">11-11.50</th><th class="slot-head-col faculty-head-day">11.55-12.45</th><th class="slot-head-col faculty-head-day">12.45-1.30</th><th class="slot-head-col faculty-head-day">1.30-2.20</th><th class="slot-head-col faculty-head-day">2.25-3.15</th><th class="slot-head-col faculty-head-day">3.20-4.10</th><th class="slot-head-col faculty-head-day">4.15-5.05</th><th class="slot-head-col faculty-head-day slot-evening-start">1.30-2.15(3rdBCAOnly)</th><th class="slot-head-col faculty-head-day">2:15-3</th><th class="slot-head-col faculty-head-day">3-3:45</th><th class="slot-head-col faculty-head-day">3:45-4:30</th><th class="slot-head-col faculty-head-day">4:45-5:30</th><th class="slot-head-col faculty-head-day">5:30-6:15</th></tr></thead><tbody><tr><td class="faculty-day-col">Classes</td><td class="busy">2BCA A
+C# [LH4]</td><td class="busy">1BCA B
+DISC.MATHS [LH7]</td><td class="slot-free">—</td><td class="busy">1BCA C(AIML)
+COMP.MATHS [LH5]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">2BSc
+COA_EL [SH2]</td><td class="slot-free slot-evening-start slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td></tr></tbody></table></div></div></div>
+        </div>
+
+        <div class="sections-picker-bar">
+            <label for="sections-filter">Section timetable</label>
+            <select id="sections-filter" aria-label="Section timetable"><option value="">All sections · Monday</option><optgroup label="Whole week — day college"><option value="section:day:1st BCA A">1st BCA A</option><option value="section:day:1st BCA B">1st BCA B</option><option value="section:day:1st BCA C(AIML)">1st BCA C(AIML)</option><option value="section:day:1st BSc">1st BSc</option><option value="section:day:2nd BCA A">2nd BCA A</option><option value="section:day:2nd BCA B">2nd BCA B</option><option value="section:day:2nd BCA C">2nd BCA C</option><option value="section:day:2nd BSc">2nd BSc</option><option value="section:day:3rd BCA A">3rd BCA A</option><option value="section:day:3rd BCA B">3rd BCA B</option><option value="section:day:3rd BCA C">3rd BCA C</option><option value="section:day:3rd BSc">3rd BSc</option></optgroup><optgroup label="Whole week — evening college"><option value="section:evening:1st BCA A (Eve)">1st BCA A (Eve)</option><option value="section:evening:1st BCA B (Eve)">1st BCA B (Eve)</option><option value="section:evening:2nd BCA A (Eve)">2nd BCA A (Eve)</option><option value="section:evening:2nd BCA B (Eve)">2nd BCA B (Eve)</option><option value="section:evening:3rd BCA A (Eve)">3rd BCA A (Eve)</option><option value="section:evening:3rd BCA B (Eve)">3rd BCA B (Eve)</option></optgroup></select>
+        </div>
+
+        <div class="card sections-card">
+            <h2 class="sections-card-header" id="sections-title">Sections · Monday</h2>
+            <div id="sections-timetable" class="table-wrap"><div class="sections-block sections-block--day"><h3>Day College</h3><p class="sections-scroll-hint">Swipe left for all time slots →</p><div class="sections-scroll-wrap"><table class="sections-grid-table"><thead><tr><th class="section-head-col">Section</th><th class="slot-head-col">9-9.50</th><th class="slot-head-col">9.55-10.45</th><th class="slot-head-col">11-11.50</th><th class="slot-head-col">11.55-12.45</th><th class="slot-head-col">12.45-1.30</th><th class="slot-head-col">1.30-2.20</th><th class="slot-head-col">2.25-3.15</th><th class="slot-head-col">3.20-4.10</th><th class="slot-head-col">4.15-5.05</th></tr></thead><tbody><tr class="section-data-row"><td class="section-name">1st BCA A</td><td class="busy">FOC (RAK) [SH3]</td><td class="busy">DISC.MATHS (AKS) [SH3]</td><td colspan="2" class="busy lab-block">C LAB (RNC) [Lab1+Lab2]</td><td class="slot-free">—</td><td class="busy">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5]</td><td class="busy">CONST [SH3]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">1st BCA B</td><td class="busy">FOC (RAS) [LH7]</td><td class="busy">DISC.MATHS (ABJ) [LH7]</td><td colspan="2" class="busy lab-block">FOC LAB (RAS) [Lab5+MScLab]</td><td class="slot-free">—</td><td class="busy">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5]</td><td class="busy">CONST [LH7]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">1st BCA C(AIML)</td><td colspan="2" class="busy lab-block">C LAB (JRP) [SLab2+SLab3]</td><td class="busy">FOC (SAN) [LH5]</td><td class="busy">COMP.MATHS (ABJ) [LH5]</td><td class="slot-free">—</td><td class="busy">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5]</td><td class="busy">CONST [LH5]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">1st BSc</td><td colspan="2" class="busy lab-block">F_C LAB (RAM) [Lab5]</td><td class="slot-free">—</td><td class="busy">F_C (RAM) [SH1]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">2nd BCA A</td><td class="busy">C# (ABJ) [LH4]</td><td class="busy">CN (MIT) [LH4]</td><td class="busy">ENG [LH4]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">2nd BCA B</td><td class="slot-free">—</td><td class="busy">CN (RAK) [LH6]</td><td class="busy">ENG [LH6]</td><td class="busy">C# (AKS) [LH6]</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">C# LAB (AKS) [Lab4]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">2nd BCA C</td><td class="busy">DBMS (RMR) [SH4]</td><td class="busy">C# (DK) [SH4]</td><td class="busy">ENG [SH4]</td><td class="busy">CN (SHI) [SH4]</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">DBMS LAB (RMR) [Lab1+Lab2]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">2nd BSc</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">COA_EL (ABJ) [SH2]</td></tr><tr class="section-data-row stream-break"><td class="section-name">3rd BCA A</td><td class="busy">CRYPT (PRJ) [LH1]</td><td class="busy">WEB (NL1) [LH1]</td><td colspan="2" class="busy lab-block">WEB LAB (NL1) [Lab4]</td><td class="slot-free">—</td><td class="busy">SE (JRP) [LH1]</td><td class="busy">CLOUD (RAS) [LH1]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">3rd BCA B</td><td class="busy">CRYPT (SUSH) [SH2]</td><td class="busy">R PROG (RAS) [SH2]</td><td colspan="2" class="busy lab-block">WEB LAB (MIT) [SLab2+SLab3]</td><td class="slot-free">—</td><td class="busy">SE (RNC) [SH2]</td><td class="busy">CLOUD (PRK) [SH2]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">3rd BCA C</td><td class="busy">DAA (PRK) [SH1]</td><td class="busy">SE (SUSH) [SH1]</td><td class="busy">CRYPT (RMR) [SH1]</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">WEB LAB (DK) [Lab5+MScLab]</td><td class="busy">R PROG (AA) [SH1]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">3rd BSc</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">OS (PRJ) [SH2]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">PYTHON (JRP) [SH1]</td><td class="slot-free">—</td></tr></tbody></table></div></div><div class="sections-block sections-block--evening"><h3>Evening College</h3><p class="sections-scroll-hint">Swipe left for all time slots →</p><div class="sections-scroll-wrap"><table class="sections-grid-table"><thead><tr><th class="section-head-col">Section</th><th class="slot-head-col">1.30-2.15(3rdBCAOnly)</th><th class="slot-head-col">2:15-3</th><th class="slot-head-col">3-3:45</th><th class="slot-head-col">3:45-4:30</th><th class="slot-head-col">4:45-5:30</th><th class="slot-head-col">5:30-6:15</th></tr></thead><tbody><tr class="section-data-row"><td class="section-name">1st BCA A (Eve)</td><td class="slot-free">—</td><td class="busy">ENG</td><td class="busy">PROG in C (VAR_E)</td><td class="busy">FOC (AKN_E)</td><td colspan="2" class="busy lab-block">FOC LAB (AKN_E) [Lab5]</td></tr><tr class="section-data-row"><td class="section-name">1st BCA B (Eve)</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">C LAB (DP) [Lab5]</td><td class="busy">DISC.MATHS (RAM)</td><td class="busy">ENG</td><td class="busy">PROG in C (DP)</td></tr><tr class="section-data-row stream-break"><td class="section-name">2nd BCA A (Eve)</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">C# LAB (DK + ANJ_E) [SLab2+SLab3]</td><td class="busy">DBMS (RMR)</td><td class="busy">ELECTIVE: KAN · HND</td><td class="busy">CN (SHI)</td></tr><tr class="section-data-row"><td class="section-name">2nd BCA B (Eve)</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">DBMS LAB (SUSH + SAJ_E) [Lab2+Lab3]</td><td class="busy">DBMS (SAJ_E)</td><td class="busy">ELECTIVE: KAN · HND</td><td class="busy">CN (MVP)</td></tr><tr class="section-data-row stream-break"><td class="section-name">3rd BCA A (Eve)</td><td class="busy lab-block">AITOOLS LAB [SLab2]</td><td class="busy">R PROG (ANV_E)</td><td class="busy">CRYPT (AKN_E)</td><td class="busy">CLOUD (NL1_E)</td><td colspan="2" class="busy lab-block">DAA LAB (PRK + RAM) [SLab2+SLab3]</td></tr><tr class="section-data-row"><td class="section-name">3rd BCA B (Eve)</td><td class="busy lab-block">AITOOLS LAB [SLab3]</td><td class="busy">DAA (VAR_E)</td><td class="busy">CRYPT (ANV_E)</td><td class="busy">SE (RNC)</td><td colspan="2" class="busy lab-block">DAA LAB (VAR_E + AKS) [Lab4]</td></tr></tbody></table></div></div></div>
+        </div>
+    </div>
+
+    <div id="panel-leave" class="app-panel leave-app hidden">
+        <div id="leave_module_missing" style="display: none;">
+            Leave module did not load. Open from <strong>/mobile</strong> on the server, or re-download the faculty app (Admin → Download faculty-only app).
+        </div>
+        <div class="card card--accent">
+            <h3 class="panel-heading"><span class="panel-heading-badge panel-heading-badge--leave">Leave</span> Faculty leave</h3>
+            <p class="sub" style="margin:0 0 12px;">Match substitutes for absent staff — uses the same timetable data.</p>
+            <div id="leave_status" class="leave-status leave-status--ok" role="status" aria-live="polite" style="display: none;"></div>
+            <div class="form-group">
+                <label for="leave_date_input">Leave date</label>
+                <input type="date" id="leave_date_input" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Day</label>
+                <div id="leave_day_display" class="leave-day-display" aria-live="polite">Monday</div>
+                <input type="hidden" id="leave_day_value" value="Monday">
+            </div>
+            <div class="form-group">
+                <label for="absent_faculty_select">Faculty unavailable</label>
+                <select id="absent_faculty_select" class="form-control"><option value="">-- Choose Faculty --</option><option value="ABJ">Abhijna (ABJ)</option><option value="AKN_E">AkshathaNayak (AKN_E)</option><option value="AKS">AkshathaShettigar (AKS)</option><option value="ANJ_E">Anjalin (ANJ_E)</option><option value="AA">Anupama (AA)</option><option value="ANV_E">Anvitha (ANV_E)</option><option value="DP">Damodar (DP)</option><option value="DK">Deepali (DK)</option><option value="JRP">Jayanthi (JRP)</option><option value="MIT">Mithun (MIT)</option><option value="NL1">NL1</option><option value="NL1_E">NL1_E</option><option value="PRJ">Prajnashree (PRJ)</option><option value="PRK">Prakash (PRK)</option><option value="RMR">Rajamoorthy (RMR)</option><option value="RAK">Rakshitha (RAK)</option><option value="RAM">Ramya (RAM)</option><option value="RAS">Rashmi (RAS)</option><option value="RNC">RekhaChandra (RNC)</option><option value="SAN">Sanath (SAN)</option><option value="SAJ_E">Sanjana (SAJ_E)</option><option value="SHI">Shilpa (SHI)</option><option value="SUSH">Sushma (SUSH)</option><option value="VAR_E">Varshini (VAR_E)</option><option value="MVP">Vishwanath (MVP)</option><option value="VVK">Vivek (VVK)</option></select>
+            </div>
+            <button type="button" class="btn-leave-primary" id="btn-analyze-leave">Analyze &amp; match staff</button>
+        </div>
+        <div class="card card--results" id="results_card" style="display:none;">
+            <h3 class="panel-heading"><span class="panel-heading-badge panel-heading-badge--leave">Swap</span> Replacements</h3>
+            <div id="adjustment_list_container"></div>
+            <h4 class="leave-dispatch-divider panel-heading"><span class="panel-heading-badge panel-heading-badge--report">WA</span> Dispatch to officials</h4>
+            <button type="button" class="btn-dispatch-official" id="btn-dispatch-leave" aria-label="Send arrangement report on WhatsApp to Group, Principal, Vice Principal, or HOD">
+                <span class="btn-dispatch-official__icon" aria-hidden="true">WA</span>
+                <span class="btn-dispatch-official__body">
+                    <span class="btn-dispatch-official__title">SEND</span>
+                    <span class="btn-dispatch-official__recipients">
+                        <span>Group</span>
+                        <span>Principal</span>
+                        <span>Vice Principal</span>
+                        <span>HOD</span>
+                    </span>
+                </span>
+            </button>
+        </div>
+    </div>
+    </div>
+
+    <nav id="app-dock" class="app-dock" aria-label="App sections">
+        <button type="button" class="dock-btn active" data-panel="timetable" id="dock-timetable">
+            <span class="dock-icon dock-icon--tt" aria-hidden="true">TT</span>
+            <span>Timetable</span>
+        </button>
+        <button type="button" class="dock-btn dock-btn--leave" data-panel="leave" id="dock-leave">
+            <span class="dock-icon dock-icon--lv" aria-hidden="true">LV</span>
+            <span>Leave</span>
+        </button>
+    </nav>
+
+    <div id="no-data" class="card empty hidden">
+        No timetable loaded yet. Admin must upload Excel files above, or open a published <strong>Faculty_Mobile.html</strong> file.
+    </div>
+
+    <div id="install-hint" role="note">
+        <strong>Add to Home screen:</strong> Chrome menu <strong>⋮</strong> (top right) → <strong>Add to Home screen</strong> or <strong>Install app</strong>.
+        If you opened this from WhatsApp, tap <strong>⋮</strong> → <strong>Open in Chrome</strong> first.
+        <button type="button" id="install-hint-dismiss">Got it</button>
+    </div>
+</div>
+
+<script>
+window.TimetableMobile = { activeDay: 'Monday' };
+(function () {
+    const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const DAY_SHEET_MAP = { Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday', Fri: 'Friday', Sat: 'Saturday' };
+
+    /** Section day-wise columns — match Excel / app.py slot lists */
+    const SECTION_SLOT_SETS = {
+        day_weekday: [
+            '9-9.50', '9.55-10.45', '11-11.50', '11.55-12.45',
+            '12.45-1.30', '1.30-2.20', '2.25-3.15', '3.20-4.10', '4.15-5.05',
+        ],
+        day_saturday: ['9-9.50', '9.55-10.45', '11-11.50', '11.55-12.45'],
+        evening_weekday: [
+            '1.30-2.15(3rdBCAOnly)',
+            '2:15-3', '3-3:45', '3:45-4:30', '4:45-5:30', '5:30-6:15',
+        ],
+        evening_saturday: [
+            '1-1.45', '1.45-2.30', '2.30-3.15', '3.15-4',
+            '4.15-5', '5-5.45', '5.45-6.30',
+        ],
+    };
+
+    const FACULTY_SHIFT_BOUNDARIES = {
+        weekday: { dayEnd: '4.15-5.05', eveningStart: '1.30-2.15(3rdBCAOnly)' },
+        saturday: { dayEnd: '11.55-12.45', eveningStart: '1-1.45' },
+    };
+
+    function facultyEveningSlotSet(dayKind) {
+        return dayKind === 'saturday'
+            ? SECTION_SLOT_SETS.evening_saturday
+            : SECTION_SLOT_SETS.evening_weekday;
+    }
+
+    function facultyFirstEveningSlot(slots, dayKind) {
+        const list = (slots || []).filter(Boolean);
+        const eveOrder = facultyEveningSlotSet(dayKind);
+        for (const e of eveOrder) {
+            if (list.some(s => facultySlotsMatch(s, e))) return e;
+        }
+        const bounds = dayKind === 'saturday'
+            ? FACULTY_SHIFT_BOUNDARIES.saturday
+            : FACULTY_SHIFT_BOUNDARIES.weekday;
+        return bounds.eveningStart;
+    }
+
+    function isEveningSlot(slot, dayKind) {
+        if (!slot) return false;
+        const nk = normalizeSlotKey(slot);
+        return facultyEveningSlotSet(dayKind).some(e =>
+            facultySlotsMatch(slot, e) || normalizeSlotKey(e) === nk,
+        );
+    }
+
+    function slotEveningColClass(slot, dayKind) {
+        return isEveningSlot(slot, dayKind) ? ' slot-evening-col' : '';
+    }
+
+    function facultySlotsMatch(slot, target) {
+        const a = String(slot || '').trim();
+        const b = String(target || '').trim();
+        if (!a || !b) return false;
+        if (a === b) return true;
+        const norm = s => s.replace(/:/g, '.');
+        return norm(a) === norm(b);
+    }
+
+    function facultyShiftHasDivider(slots, dayKind) {
+        const bounds = dayKind === 'saturday'
+            ? FACULTY_SHIFT_BOUNDARIES.saturday
+            : FACULTY_SHIFT_BOUNDARIES.weekday;
+        const list = (slots || []).filter(Boolean);
+        const eveningStart = facultyFirstEveningSlot(list, dayKind);
+        return list.some(s => facultySlotsMatch(s, bounds.dayEnd))
+            && eveningStart && list.some(s => facultySlotsMatch(s, eveningStart));
+    }
+
+    function facultySlotBoundaryClasses(slot, dayKind, showDivider, allSlots, slotIndex) {
+        if (!showDivider || !slot) return '';
+        const bounds = dayKind === 'saturday'
+            ? FACULTY_SHIFT_BOUNDARIES.saturday
+            : FACULTY_SHIFT_BOUNDARIES.weekday;
+        const list = allSlots || [];
+        const eveningStart = facultyFirstEveningSlot(list.length ? list : [slot], dayKind);
+        const nextSlot = slotIndex != null && list.length ? list[slotIndex + 1] : null;
+        const eveningFollows = nextSlot && facultySlotsMatch(nextSlot, eveningStart);
+        let cls = '';
+        if (facultySlotsMatch(slot, bounds.dayEnd) && !eveningFollows) cls += ' slot-day-end';
+        if (facultySlotsMatch(slot, eveningStart)) cls += ' slot-evening-start';
+        return cls;
+    }
+
+    function facultyDayKind(day) {
+        return day === 'Saturday' ? 'saturday' : 'weekday';
+    }
+
+    function applySectionSlotSetsFromDaywise(daywise) {
+        const mon = daywise && daywise.Monday;
+        const sat = daywise && daywise.Saturday;
+        if (mon) {
+            if (mon.daySlots?.length) SECTION_SLOT_SETS.day_weekday = mon.daySlots.slice();
+            if (mon.eveningSlots?.length) SECTION_SLOT_SETS.evening_weekday = mon.eveningSlots.slice();
+        }
+        if (sat) {
+            if (sat.daySlots?.length) SECTION_SLOT_SETS.day_saturday = sat.daySlots.slice();
+            if (sat.eveningSlots?.length) SECTION_SLOT_SETS.evening_saturday = sat.eveningSlots.slice();
+        }
+    }
+
+    function allCanonicalSectionSlots() {
+        return [
+            ...SECTION_SLOT_SETS.day_weekday,
+            ...SECTION_SLOT_SETS.day_saturday,
+            ...SECTION_SLOT_SETS.evening_weekday,
+            ...SECTION_SLOT_SETS.evening_saturday,
+        ];
+    }
+
+    function normalizeSlotKey(slot) {
+        const s = String(slot || '').trim();
+        if (!s) return s;
+        const canon = allCanonicalSectionSlots();
+        if (canon.includes(s)) return s;
+        const dotForm = s.replace(/:/g, '.');
+        const colonForm = s.replace(/\.(?=\d)/g, ':');
+        for (const c of canon) {
+            if (c === dotForm || c === colonForm) return c;
+            if (c.replace(/:/g, '.') === dotForm) return c;
+        }
+        return s;
+    }
+
+    function splitFacultySlotsByCollege(slots, dayKind) {
+        const list = (slots || []).filter(Boolean).map(normalizeSlotKey);
+        if (dayKind === 'saturday') {
+            const daySet = new Set(SECTION_SLOT_SETS.day_saturday);
+            const eveSet = new Set(SECTION_SLOT_SETS.evening_saturday);
+            return {
+                daySlots: list.filter(s => daySet.has(s)),
+                eveningSlots: list.filter(s => eveSet.has(s)),
+            };
+        }
+        const daySet = new Set(SECTION_SLOT_SETS.day_weekday);
+        const eveSet = new Set(SECTION_SLOT_SETS.evening_weekday);
+        return {
+            daySlots: list.filter(s => daySet.has(s)),
+            eveningSlots: list.filter(s => eveSet.has(s)),
+        };
+    }
+
+    function facultySaturdaySlotSets(fac) {
+        if (fac.saturdayDaySlots?.length || fac.saturdayEveningSlots?.length) {
+            return {
+                daySlots: (fac.saturdayDaySlots || []).filter(Boolean),
+                eveningSlots: (fac.saturdayEveningSlots || []).filter(Boolean),
+            };
+        }
+        return splitFacultySlotsByCollege(fac.saturdaySlots || [], 'saturday');
+    }
+
+    function facultyCellValue(dayCells, slot) {
+        if (!slot) return '';
+        const direct = dayCells[slot];
+        if (direct) return direct;
+        const nk = normalizeSlotKey(slot);
+        return dayCells[nk] || '';
+    }
+
+    function slotActiveInSet(slot, activeSlots) {
+        const ns = normalizeSlotKey(slot);
+        return (activeSlots || []).some(s => normalizeSlotKey(s) === ns || facultySlotsMatch(s, slot));
+    }
+
+    function partitionFacultyWeekSlots(weekdaySlots, satDaySlots) {
+        const slots = (weekdaySlots || []).filter(Boolean);
+        const satDay = (satDaySlots || []).filter(Boolean);
+        if (!slots.length) return { shared: [], weekdayTail: [] };
+        if (!satDay.length) return { shared: [], weekdayTail: slots };
+        let lastSatIdx = -1;
+        satDay.forEach(sd => {
+            slots.forEach((s, i) => {
+                if (facultySlotsMatch(s, sd) || normalizeSlotKey(s) === normalizeSlotKey(sd)) {
+                    lastSatIdx = Math.max(lastSatIdx, i);
+                }
+            });
+        });
+        if (lastSatIdx < 0) {
+            const dayEnd = FACULTY_SHIFT_BOUNDARIES.saturday.dayEnd;
+            slots.forEach((s, i) => {
+                if (facultySlotsMatch(s, dayEnd)) lastSatIdx = i;
+            });
+        }
+        if (lastSatIdx < 0) return { shared: slots, weekdayTail: [] };
+        return {
+            shared: slots.slice(0, lastSatIdx + 1),
+            weekdayTail: slots.slice(lastSatIdx + 1),
+        };
+    }
+
+    function partitionWeekdayColumns(weekdaySlots, satDaySlots) {
+        const { shared, weekdayTail } = partitionFacultyWeekSlots(weekdaySlots, satDaySlots);
+        const { daySlots: afternoon, eveningSlots: weekdayEvening } = splitFacultySlotsByCollege(
+            weekdayTail,
+            'weekday',
+        );
+        return { shared, afternoon, weekdayEvening };
+    }
+
+    function facultyEveningColSpan(weekdayEvening, satEve, hasSaturday) {
+        const wd = (weekdayEvening || []).filter(Boolean).length;
+        const sat = hasSaturday ? (satEve || []).filter(Boolean).length : 0;
+        return Math.max(wd, sat, 0);
+    }
+
+    function facultyWeekdayRowEveningPad(weekdayEvening, eveningColSpan) {
+        const wd = (weekdayEvening || []).filter(Boolean).length;
+        const pad = eveningColSpan - wd;
+        if (pad <= 0) return '';
+        let html = '';
+        for (let i = 0; i < pad; i++) {
+            const endCls = i === pad - 1 ? ' slot-table-end' : '';
+            html += `<td class="slot-free slot-gap slot-weekday-eve-pad slot-evening-col${endCls}">—</td>`;
+        }
+        return html;
+    }
+
+    function lastVisibleSlotIndex(dayCells, slots, isLabSpanFn) {
+        let last = -1;
+        const skip = new Set();
+        (slots || []).forEach((s, si) => {
+            if (!s || skip.has(si)) return;
+            last = si;
+            if (isLabSpanFn(dayCells, slots, si)) skip.add(si + 1);
+        });
+        return last;
+    }
+
+    function renderSaturdayEveningLabelRow(parts, satEve, eveningColSpan) {
+        const shared = (parts.shared || []).filter(Boolean);
+        const afternoon = (parts.afternoon || []).filter(Boolean);
+        const eve = (satEve || []).filter(Boolean);
+        const padCount = Math.max(0, eveningColSpan - eve.length);
+        if (!eve.length) return '';
+        let html = '<tr class="faculty-sat-eve-label-row">';
+        html += '<td class="faculty-day-col faculty-sat-eve-label-day"></td>';
+        const dayPad = shared.length + afternoon.length;
+        for (let i = 0; i < dayPad; i++) {
+            html += '<td class="slot-sat-label-pad"></td>';
+        }
+        eve.forEach((s, i) => {
+            let cls = 'faculty-sat-eve-label slot-evening-col';
+            if (i === eve.length - 1 && padCount === 0) cls += ' slot-table-end';
+            const rangeTag = i === 0 ? '<span class="slot-range-tag">Saturday</span> ' : '';
+            html += `<td class="${cls}">${rangeTag}${escapeHtml(s)}</td>`;
+        });
+        for (let i = 0; i < padCount; i++) {
+            const end = i === padCount - 1 ? ' slot-table-end' : '';
+            html += `<td class="slot-sat-label-pad slot-sat-eve-pad slot-evening-col${end}"></td>`;
+        }
+        html += '</tr>';
+        return html;
+    }
+
+    function renderSaturdayEveningRowCells(dayCells, eveSlots, eveningColSpan) {
+        const eve = (eveSlots || []).filter(Boolean);
+        const span = Math.max(eveningColSpan || 0, eve.length, 0);
+        if (!span) return { html: '', hours: 0 };
+        let html = '';
+        let hours = 0;
+        let ci = 0;
+        while (ci < span) {
+            let bc = ' slot-evening-col faculty-sat-eve-cell';
+            if (ci === 0) bc += ' slot-evening-start';
+            if (ci === span - 1) bc += ' slot-table-end';
+
+            if (ci >= eve.length) {
+                html += `<td class="slot-free slot-gap slot-sat-eve-pad${bc}"><div class="faculty-sat-slot-body">—</div></td>`;
+                ci += 1;
+                continue;
+            }
+
+            const slot = eve[ci];
+            const labelTag = ci === 0 ? '<span class="slot-range-tag">Saturday</span> ' : '';
+            const labelHtml = `<div class="faculty-sat-slot-label">${labelTag}${escapeHtml(slot)}</div>`;
+            const v = facultyCellValue(dayCells, slot);
+            const labSpan = ci + 1 < eve.length && ci + 1 < span && isFacultyLabSpan(dayCells, eve, ci);
+
+            if (labSpan) {
+                if (v) hours += 2;
+                const inner = v ? escapeHtml(v) : '—';
+                const cls = v ? 'busy lab-block' : 'slot-free';
+                html += `<td colspan="2" class="${cls}${bc}">${labelHtml}<div class="faculty-sat-slot-body">${inner}</div></td>`;
+                ci += 2;
+            } else if (v) {
+                hours += 1;
+                html += `<td class="busy${bc}">${labelHtml}<div class="faculty-sat-slot-body">${escapeHtml(v)}</div></td>`;
+                ci += 1;
+            } else {
+                html += `<td class="slot-free${bc}">${labelHtml}<div class="faculty-sat-slot-body">—</div></td>`;
+                ci += 1;
+            }
+        }
+        return { html, hours };
+    }
+
+    function renderFacultyWeekTableHeader(parts, weekdayDivider, satEve, hasSaturday) {
+        const shared = (parts.shared || []).filter(Boolean);
+        const afternoon = (parts.afternoon || []).filter(Boolean);
+        const weekdayEvening = (parts.weekdayEvening || []).filter(Boolean);
+        const satEveList = (satEve || []).filter(Boolean);
+        const eveningColSpan = facultyEveningColSpan(weekdayEvening, satEveList, hasSaturday);
+        const dayColSpan = shared.length + afternoon.length;
+        const hasSatEveLabels = hasSaturday && satEveList.length > 0;
+        let html = '<thead>';
+        if (eveningColSpan > 0) {
+            html += '<tr>';
+            html += '<th class="faculty-day-col" rowspan="2">Day</th>';
+            if (dayColSpan > 0) {
+                html += `<th class="faculty-weekday-day-band faculty-head-day" colspan="${dayColSpan}">Day College</th>`;
+            }
+            html += `<th class="faculty-weekday-evening-band faculty-head-evening" colspan="${eveningColSpan}">Evening College</th>`;
+            html += '</tr><tr>';
+            const allWeekdayCols = [...shared, ...afternoon, ...weekdayEvening];
+            const extraEveCols = eveningColSpan - weekdayEvening.length;
+            shared.forEach((s, i) => {
+                const bc = facultySlotBoundaryClasses(s, 'weekday', weekdayDivider, allWeekdayCols, i);
+                html += `<th class="slot-head-col faculty-head-day${bc}">${escapeHtml(s)}</th>`;
+            });
+            afternoon.forEach((s, i) => {
+                const idx = shared.length + i;
+                const bc = facultySlotBoundaryClasses(s, 'weekday', weekdayDivider, allWeekdayCols, idx);
+                html += `<th class="slot-head-col faculty-head-day${bc}">${escapeHtml(s)}</th>`;
+            });
+            weekdayEvening.forEach((s, i) => {
+                const idx = shared.length + afternoon.length + i;
+                const isLast = extraEveCols === 0 && i === weekdayEvening.length - 1;
+                let bc = facultySlotBoundaryClasses(s, 'weekday', weekdayDivider, allWeekdayCols, idx);
+                bc += slotEveningColClass(s, 'weekday');
+                if (isLast) bc += ' slot-table-end';
+                const rangeTag = hasSatEveLabels && i === 0 ? '<span class="slot-range-tag">Mon–Fri</span> ' : '';
+                html += `<th class="slot-head-col faculty-evening-slot-head faculty-head-evening${bc}">${rangeTag}${escapeHtml(s)}</th>`;
+            });
+            for (let i = 0; i < extraEveCols; i++) {
+                const endCls = i === extraEveCols - 1 ? ' slot-table-end' : '';
+                html += `<th class="slot-head-col faculty-evening-slot-head faculty-head-evening faculty-sat-eve-only-head slot-evening-col${endCls}">&nbsp;</th>`;
+            }
+            html += '</tr>';
+        } else {
+            const all = [...shared, ...afternoon];
+            if (all.length > 1) {
+                html += '<tr>';
+                html += '<th class="faculty-day-col" rowspan="2">Day</th>';
+                html += `<th class="faculty-weekday-day-band faculty-head-day" colspan="${all.length}">Day College</th>`;
+                html += '</tr><tr>';
+                all.forEach((s, i) => {
+                    const bc = facultySlotBoundaryClasses(s, 'weekday', weekdayDivider, all, i);
+                    html += `<th class="slot-head-col faculty-head-day${bc}">${escapeHtml(s)}</th>`;
+                });
+                html += '</tr>';
+            } else {
+                html += '<tr><th class="faculty-day-col">Day</th>';
+                all.forEach((s, i) => {
+                    const bc = facultySlotBoundaryClasses(s, 'weekday', weekdayDivider, all, i);
+                    html += `<th class="slot-head-col faculty-head-day${bc}">${escapeHtml(s)}</th>`;
+                });
+                html += '</tr>';
+            }
+        }
+        html += '</thead>';
+        return html;
+    }
+
+    function renderFacultySaturdayDayHeader(daySlots, firstColLabel) {
+        const label = firstColLabel || 'Time';
+        const day = (daySlots || []).filter(Boolean);
+        const satDivider = facultyShiftHasDivider(day, 'saturday');
+        let html = '<thead><tr>';
+        html += `<th class="faculty-day-col">${escapeHtml(label)}</th>`;
+        day.forEach((s, i) => {
+            const bc = facultySlotBoundaryClasses(s, 'saturday', satDivider, day, i);
+            html += `<th class="slot-head-col faculty-head-day${bc}">${escapeHtml(s)}</th>`;
+        });
+        html += '</tr></thead>';
+        return html;
+    }
+
+    function addRowspanToCells(cellsHtml, rowspan) {
+        if (!rowspan || rowspan < 2 || !cellsHtml) return cellsHtml;
+        return cellsHtml.replace(/<td /g, `<td rowspan="${rowspan}" `);
+    }
+
+    function facultySaturdayAfternoonPadCells(afternoonSlots) {
+        const list = (afternoonSlots || []).filter(Boolean);
+        if (!list.length) return '';
+        const dayEnd = FACULTY_SHIFT_BOUNDARIES.weekday.dayEnd;
+        let html = '';
+        list.forEach((s, i) => {
+            const bc = (i === list.length - 1 || facultySlotsMatch(s, dayEnd)) ? ' slot-day-end' : '';
+            html += `<td class="slot-free slot-sat-afternoon-pad${bc}">—</td>`;
+        });
+        return html;
+    }
+
+    function renderSaturdayEveningInline(dayCells, eveSlots, eveningColSpan) {
+        const eve = (eveSlots || []).filter(Boolean);
+        const span = Math.max(eveningColSpan || 0, eve.length, 0);
+        if (!span || !eve.length) return { html: '', hours: 0 };
+        const padCount = span - eve.length;
+        let hours = 0;
+        const skipSlots = new Set();
+        let headerHtml = '';
+        eve.forEach((s, i) => {
+            const tag = i === 0 ? '<span class="slot-range-tag">Saturday</span> ' : '';
+            headerHtml += `<th class="faculty-eve-slot-mini slot-evening-col">${tag}${escapeHtml(s)}</th>`;
+        });
+        for (let i = 0; i < padCount; i++) {
+            headerHtml += '<th class="faculty-eve-slot-mini faculty-eve-pad slot-evening-col"></th>';
+        }
+        let bodyHtml = '';
+        eve.forEach((s, si) => {
+            if (!s || skipSlots.has(si)) return;
+            const v = facultyCellValue(dayCells, s);
+            const nextActive = si + 1 < eve.length && !skipSlots.has(si + 1);
+            if (nextActive && isFacultyLabSpan(dayCells, eve, si)) {
+                skipSlots.add(si + 1);
+                if (v) hours += 2;
+                bodyHtml += v
+                    ? `<td colspan="2" class="busy lab-block slot-evening-col">${escapeHtml(v)}</td>`
+                    : '<td colspan="2" class="slot-free slot-evening-col">—</td>';
+            } else if (v) {
+                hours += 1;
+                bodyHtml += `<td class="busy slot-evening-col">${escapeHtml(v)}</td>`;
+            } else {
+                bodyHtml += '<td class="slot-free slot-evening-col">—</td>';
+            }
+        });
+        for (let i = 0; i < padCount; i++) {
+            bodyHtml += '<td class="slot-free slot-evening-col">—</td>';
+        }
+        let html = `<td colspan="${span}" class="faculty-sat-evening-shell slot-table-end">`;
+        html += '<table class="faculty-sat-evening-grid">';
+        html += `<thead><tr>${headerHtml}</tr></thead><tbody>`;
+        html += `<tr>${bodyHtml}</tr></tbody></table></td>`;
+        return { html, hours };
+    }
+
+    function facultyMappedRowCells(dayCells, columnSlots, activeSlots, dayKind, markSatDayEnd) {
+        const showDivider = markSatDayEnd && facultyShiftHasDivider(columnSlots, dayKind);
+        let html = '';
+        let hours = 0;
+        const skipSlots = new Set();
+        let lastActiveIdx = -1;
+        columnSlots.forEach((colSlot, si) => {
+            if (colSlot && slotActiveInSet(colSlot, activeSlots)) lastActiveIdx = si;
+        });
+        columnSlots.forEach((colSlot, si) => {
+            if (!colSlot || skipSlots.has(si)) return;
+            let bc = facultySlotBoundaryClasses(colSlot, dayKind, showDivider, columnSlots, si);
+            if (markSatDayEnd && si === lastActiveIdx) bc += ' slot-day-end';
+            if (!slotActiveInSet(colSlot, activeSlots)) {
+                html += `<td class="slot-free slot-gap${bc}">—</td>`;
+                return;
+            }
+            const v = facultyCellValue(dayCells, colSlot);
+            const nextActive = si + 1 < columnSlots.length && slotActiveInSet(columnSlots[si + 1], activeSlots);
+            if (nextActive && isFacultyLabSpan(dayCells, columnSlots, si)) {
+                skipSlots.add(si + 1);
+                if (v) hours += 2;
+                html += v
+                    ? `<td colspan="2" class="busy lab-block${bc}">${escapeHtml(v)}</td>`
+                    : `<td colspan="2" class="slot-free${bc}">—</td>`;
+            } else if (v) {
+                hours += 1;
+                html += `<td class="busy${bc}">${escapeHtml(v)}</td>`;
+            } else {
+                html += `<td class="slot-free${bc}">—</td>`;
+            }
+        });
+        return { html, hours };
+    }
+
+    function sectionDayWeekSlotList() {
+        const mon = store.daywise.Monday;
+        if (mon) return slotsForSectionGroup(mon, 'day').filter(Boolean);
+        return SECTION_SLOT_SETS.day_weekday.slice();
+    }
+
+    function sectionSaturdayDayOnlySlots() {
+        const sat = store.daywise.Saturday;
+        return sat
+            ? slotsForSectionGroup(sat, 'day').filter(Boolean)
+            : SECTION_SLOT_SETS.day_saturday.slice();
+    }
+
+    function sectionEveningWeekdaySlots() {
+        const mon = store.daywise.Monday;
+        if (mon) return slotsForSectionGroup(mon, 'evening').filter(Boolean);
+        return SECTION_SLOT_SETS.evening_weekday.slice();
+    }
+
+    function sectionSaturdayEveningSlots() {
+        const sat = store.daywise.Saturday;
+        return sat
+            ? slotsForSectionGroup(sat, 'evening').filter(Boolean)
+            : SECTION_SLOT_SETS.evening_saturday.slice();
+    }
+
+    function isEveningSectionName(name) {
+        const norm = String(name || '').replace(/\s*\(Eve\)\s*$/i, '').trim();
+        return DAYS.some(day => {
+            const dw = store.daywise[day];
+            if (!dw) return false;
+            return (dw.eveningSections || []).some(s => {
+                const sn = String(s.name || '').replace(/\s*\(Eve\)\s*$/i, '').trim();
+                return sn === norm || s.name === name;
+            });
+        });
+    }
+
+    function allUniqueDaySections() {
+        const seen = new Map();
+        DAYS.forEach(day => {
+            const dw = store.daywise[day];
+            if (!dw) return;
+            (dw.sections || []).filter(s => !s.group || s.group === 'day').forEach(sec => {
+                if (sec.name && !seen.has(sec.name)) seen.set(sec.name, sec);
+            });
+        });
+        return sortSectionsByStream([...seen.values()]);
+    }
+
+    function allUniqueEveningSections() {
+        const seen = new Map();
+        DAYS.forEach(day => {
+            const dw = store.daywise[day];
+            if (!dw) return;
+            (dw.eveningSections || []).forEach(sec => {
+                if (sec.name && !seen.has(sec.name)) seen.set(sec.name, sec);
+            });
+        });
+        return sortSectionsByStream([...seen.values()]);
+    }
+
+    function findSectionOnDay(day, sectionName, shift) {
+        const dw = store.daywise[day];
+        if (!dw || !sectionName) return null;
+        const norm = String(sectionName).replace(/\s*\(Eve\)\s*$/i, '').trim();
+        if (shift === 'evening') {
+            const pool = eveningSectionsForDay(dw);
+            return pool.find(s => s.name === sectionName)
+                || pool.find(s => String(s.name || '').replace(/\s*\(Eve\)\s*$/i, '').trim() === norm)
+                || null;
+        }
+        if (shift === 'day') {
+            const pool = (dw.sections || []).filter(s => !s.group || s.group === 'day');
+            return pool.find(s => s.name === sectionName)
+                || pool.find(s => String(s.name || '').replace(/\s*\(Eve\)\s*$/i, '').trim() === norm)
+                || null;
+        }
+        const all = [...(dw.sections || []), ...(dw.eveningSections || [])];
+        return all.find(s => s.name === sectionName)
+            || all.find(s => String(s.name || '').replace(/\s*\(Eve\)\s*$/i, '').trim() === norm)
+            || null;
+    }
+
+    function sectionCellsForDay(day, sectionName, shift) {
+        const sec = findSectionOnDay(day, sectionName, shift);
+        return sec ? (sec.cells || {}) : {};
+    }
+
+    function allUniqueSectionNames() {
+        const daySecs = allUniqueDaySections();
+        const dayNames = new Set(daySecs.map(s => s.name));
+        return sortSectionsByStream([
+            ...daySecs,
+            ...allUniqueEveningSections().filter(s => !dayNames.has(s.name)),
+        ]);
+    }
+
+    function sectionSlotCellsHtmlWeek(cells, slots, dayKind, suppressDayEnd) {
+        const showDivider = facultyShiftHasDivider(slots, dayKind);
+        let html = '';
+        const skipSlots = new Set();
+        slots.forEach((s, si) => {
+            if (!s || skipSlots.has(si)) return;
+            let bc = facultySlotBoundaryClasses(s, dayKind, showDivider, slots, si);
+            if (suppressDayEnd) bc = bc.replace(/\s*slot-day-end/g, '');
+            bc += slotEveningColClass(s, dayKind);
+            const v = cellForSection(cells, s);
+            if (isSectionLabSpan(cells, slots, si)) {
+                skipSlots.add(si + 1);
+                html += v
+                    ? `<td colspan="2" class="busy lab-block${bc}">${escapeHtml(v)}</td>`
+                    : `<td colspan="2" class="slot-free${bc}">—</td>`;
+            } else if (!v || v === '—') {
+                html += `<td class="slot-free${bc}">—</td>`;
+            } else {
+                const cls = isLabSubject(sectionCellSubject(v)) ? 'busy lab-block' : 'busy';
+                html += `<td class="${cls}${bc}">${escapeHtml(v)}</td>`;
+            }
+        });
+        return { html };
+    }
+
+    function sectionMappedRowCells(cells, columnSlots, activeSlots, dayKind, markSatDayEnd) {
+        const showDivider = markSatDayEnd && facultyShiftHasDivider(columnSlots, dayKind);
+        let html = '';
+        const skipSlots = new Set();
+        let lastActiveIdx = -1;
+        columnSlots.forEach((colSlot, si) => {
+            if (colSlot && slotActiveInSet(colSlot, activeSlots)) lastActiveIdx = si;
+        });
+        columnSlots.forEach((colSlot, si) => {
+            if (!colSlot || skipSlots.has(si)) return;
+            let bc = facultySlotBoundaryClasses(colSlot, dayKind, showDivider, columnSlots, si);
+            if (markSatDayEnd && si === lastActiveIdx) bc += ' slot-day-end';
+            if (!slotActiveInSet(colSlot, activeSlots)) {
+                html += `<td class="slot-free slot-gap${bc}">—</td>`;
+                return;
+            }
+            const v = cellForSection(cells, colSlot);
+            const nextActive = si + 1 < columnSlots.length && slotActiveInSet(columnSlots[si + 1], activeSlots);
+            if (nextActive && isSectionLabSpan(cells, columnSlots, si)) {
+                skipSlots.add(si + 1);
+                html += v
+                    ? `<td colspan="2" class="busy lab-block${bc}">${escapeHtml(v)}</td>`
+                    : `<td colspan="2" class="slot-free${bc}">—</td>`;
+            } else if (!v || v === '—') {
+                html += `<td class="slot-free${bc}">—</td>`;
+            } else {
+                const cls = isLabSubject(sectionCellSubject(v)) ? 'busy lab-block' : 'busy';
+                html += `<td class="${cls}${bc}">${escapeHtml(v)}</td>`;
+            }
+        });
+        return { html };
+    }
+
+    function renderDaySectionWeekTable(sectionName, shift) {
+        const cellShift = shift || 'day';
+        const weekdayDaySlots = sectionDayWeekSlotList();
+        const satDay = sectionSaturdayDayOnlySlots().filter(Boolean);
+        if (!weekdayDaySlots.length && !satDay.length) {
+            return '<p class="empty">No day college timetable data.</p>';
+        }
+        const weekdayDivider = facultyShiftHasDivider(weekdayDaySlots, 'weekday');
+        let html = '<div class="faculty-timetable-block">';
+        html += `<div class="faculty-block-head">${escapeHtml(sectionName)} — Day college · whole week</div>`;
+        html += '<p class="sections-scroll-hint faculty-scroll-hint">Swipe left for all time slots →</p>';
+        html += '<div class="faculty-scroll-wrap">';
+        if (weekdayDaySlots.length) {
+            const parts = partitionWeekdayColumns(weekdayDaySlots, satDay);
+            html += '<table class="faculty-grid-table sections-grid-table">';
+            html += renderFacultyWeekTableHeader(parts, weekdayDivider, [], satDay.length > 0);
+            html += '<tbody>';
+            ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].forEach(day => {
+                const cells = sectionCellsForDay(day, sectionName, cellShift);
+                const { html: rowCells } = sectionSlotCellsHtmlWeek(cells, weekdayDaySlots, 'weekday');
+                html += `<tr><td class="faculty-day-col">${day.slice(0, 3)}</td>${rowCells}</tr>`;
+            });
+            if (satDay.length) {
+                const satCells = sectionCellsForDay('Saturday', sectionName, cellShift);
+                const dayPart = parts.shared.length
+                    ? sectionMappedRowCells(satCells, parts.shared, satDay, 'saturday', false)
+                    : sectionSlotCellsHtmlWeek(satCells, satDay, 'saturday', true);
+                const afternoonPad = facultySaturdayAfternoonPadCells(parts.afternoon);
+                html += `<tr class="faculty-sat-row"><td class="faculty-day-col faculty-sat-label">Saturday</td>${dayPart.html}${afternoonPad}</tr>`;
+            }
+            html += '</tbody></table>';
+        } else {
+            html += '<table class="faculty-grid-table sections-grid-table">';
+            html += renderFacultySaturdayDayHeader(satDay, 'Day');
+            html += '<tbody>';
+            const satCells = sectionCellsForDay('Saturday', sectionName, cellShift);
+            const { html: dayPart } = sectionSlotCellsHtmlWeek(satCells, satDay, 'saturday', true);
+            html += `<tr class="faculty-sat-row"><td class="faculty-day-col faculty-sat-label">Saturday</td>${dayPart}</tr>`;
+            html += '</tbody></table>';
+        }
+        html += '</div></div>';
+        return html;
+    }
+
+    function renderEveningSectionWeekTable(sectionName, shift) {
+        const cellShift = shift || 'evening';
+        const wdEve = sectionEveningWeekdaySlots();
+        const satEve = sectionSaturdayEveningSlots().filter(Boolean);
+        if (!wdEve.length && !satEve.length) {
+            return '<p class="empty">No evening college timetable data.</p>';
+        }
+        let html = '<div class="faculty-timetable-block sections-block sections-block--evening">';
+        html += `<div class="faculty-block-head">${escapeHtml(sectionName)} — Evening college · whole week</div>`;
+        if (wdEve.length) {
+            html += '<p class="sections-scroll-hint faculty-scroll-hint">Mon–Fri · swipe →</p>';
+            html += '<div class="faculty-scroll-wrap">';
+            html += '<table class="faculty-grid-table sections-grid-table"><thead><tr>';
+            html += '<th class="faculty-day-col">Day</th>';
+            wdEve.forEach(s => {
+                html += `<th class="slot-head-col faculty-head-evening slot-evening-col">${escapeHtml(s)}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+            ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].forEach(day => {
+                const cells = sectionCellsForDay(day, sectionName, cellShift);
+                const { html: rowCells } = sectionSlotCellsHtmlWeek(cells, wdEve, 'weekday');
+                html += `<tr><td class="faculty-day-col">${day.slice(0, 3)}</td>${rowCells}</tr>`;
+            });
+            html += '</tbody></table></div>';
+        }
+        if (satEve.length) {
+            html += '<p class="sections-scroll-hint faculty-scroll-hint">Saturday · swipe →</p>';
+            html += '<div class="faculty-scroll-wrap">';
+            html += '<table class="faculty-grid-table sections-grid-table"><thead><tr>';
+            html += '<th class="faculty-day-col">Day</th>';
+            satEve.forEach(s => {
+                html += `<th class="slot-head-col faculty-head-evening slot-evening-col">${escapeHtml(s)}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+            const satCells = sectionCellsForDay('Saturday', sectionName, cellShift);
+            const { html: rowCells } = sectionSlotCellsHtmlWeek(satCells, satEve, 'saturday');
+            html += `<tr><td class="faculty-day-col faculty-sat-label">Sat</td>${rowCells}</tr>`;
+            html += '</tbody></table></div>';
+        }
+        html += '</div>';
+        return html;
+    }
+
+    function renderSectionWeekTable(sectionName, shift) {
+        if (shift === 'evening' || (!shift && isEveningSectionName(sectionName))) {
+            return renderEveningSectionWeekTable(sectionName, shift || 'evening');
+        }
+        return renderDaySectionWeekTable(sectionName, shift || 'day');
+    }
+
+    function sectionSlotsForGroup(day, group) {
+        const sat = day === 'Saturday';
+        if (group === 'evening') {
+            return sat ? SECTION_SLOT_SETS.evening_saturday.slice() : SECTION_SLOT_SETS.evening_weekday.slice();
+        }
+        return sat ? SECTION_SLOT_SETS.day_saturday.slice() : SECTION_SLOT_SETS.day_weekday.slice();
+    }
+
+    let store = { college: 'College', faculty: {}, daywise: {}, staffNames: {} };
+    let activeDay = 'Monday';
+    let activeFaculty = '';
+    let facultyViewMode = 'day';
+    let sectionsFilter = '';
+    let sectionsFilterCacheKey = '';
+    let paintingDay = false;
+    let dayTabsBound = false;
+    let daySelectBound = false;
+    let sectionsViewBound = false;
+    let timetableJsonSourceUrl = '';
+    let timetableJsonFingerprint = '';
+    let timetableJsonFromEmbed = false;
+    let timetableJsonRefreshInFlight = false;
+    let timetableJsonAutoRefresh = false;
+
+    const el = id => document.getElementById(id);
+
+    function syncActiveDay(day) {
+        const d = DAYS.includes(day) ? day : 'Monday';
+        activeDay = d;
+        window.TimetableMobile.activeDay = d;
+        return d;
+    }
+
+    function streamSortKey(stream) {
+        const name = String(stream || '').trim();
+        const m = name.match(/^(\d+)(?:st|nd|rd|th)?\s*(.*)$/i);
+        if (m) return [0, parseInt(m[1], 10), (m[2] || '').trim().toUpperCase(), name.toUpperCase()];
+        return [1, 999, name.toUpperCase(), name.toUpperCase()];
+    }
+
+    function compareSortKeys(a, b) {
+        const n = Math.max(a.length, b.length);
+        for (let i = 0; i < n; i++) {
+            const av = a[i] ?? '';
+            const bv = b[i] ?? '';
+            if (av < bv) return -1;
+            if (av > bv) return 1;
+        }
+        return 0;
+    }
+
+    function streamLabelFromSection(sectionName) {
+        const name = String(sectionName || '').trim();
+        const m = name.match(/^(\d+(?:st|nd|rd|th)?\s+\S+)/i);
+        return m ? m[1] : name;
+    }
+
+    function sectionStreamKey(sec) {
+        return (sec.stream || streamLabelFromSection(sec.name)).trim();
+    }
+
+    function sectionSortKey(sectionName) {
+        const name = String(sectionName || '').trim();
+        const m = name.match(/^(\d+(?:st|nd|rd|th)?\s+\S+)(?:\s+(.*))?$/i);
+        const streamPart = m ? m[1] : name;
+        const suffix = m && m[2] ? m[2].trim().toUpperCase() : '';
+        return [...streamSortKey(streamPart), suffix, name.toUpperCase()];
+    }
+
+    function sheetMatrix(ws) {
+        if (!ws || !ws['!ref']) return [];
+        return XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+    }
+
+    function cellTextFromWs(ws, r, c) {
+        const ref = XLSX.utils.encode_cell({ r, c });
+        const cell = ws[ref];
+        if (!cell) return '';
+        const v = cell.v ?? cell.w ?? '';
+        if (v && typeof v === 'object' && Array.isArray(v.richText)) {
+            return v.richText.map(t => t.t || '').join('').trim();
+        }
+        return String(v ?? '').trim();
+    }
+
+    /** Excel 2-hr labs use merged cells — copy top-left value into covered cells. */
+    function applySheetMerges(matrix, ws) {
+        const merges = ws && ws['!merges'];
+        if (!merges || !merges.length) return;
+        for (const m of merges) {
+            const sr = m.s.r, sc = m.s.c, er = m.e.r, ec = m.e.c;
+            const topLeft = cellTextFromWs(ws, sr, sc);
+            if (!topLeft) continue;
+            for (let r = sr; r <= er; r++) {
+                if (!matrix[r]) continue;
+                for (let c = sc; c <= ec; c++) {
+                    if (r === sr && c === sc) continue;
+                    matrix[r][c] = topLeft;
+                }
+            }
+        }
+    }
+
+    function isLabSubject(subject) {
+        const s = String(subject || '').toLowerCase();
+        return s.includes('lab') || s.includes('practical');
+    }
+
+    /** Faculty Excel: merged / identical adjacent slots = 2-hour lab block. */
+    function isFacultyLabSpan(dayCells, slots, slotIndex) {
+        const slot = slots[slotIndex];
+        const nextSlot = slots[slotIndex + 1];
+        if (!slot || !nextSlot) return false;
+        const text = facultyCellValue(dayCells, slot);
+        const nextText = facultyCellValue(dayCells, nextSlot);
+        if (!text || text !== nextText) return false;
+        const lines = String(text).split('\n').map(s => s.trim()).filter(Boolean);
+        for (const line of lines) {
+            const afterDash = line.includes('—') ? line.split('—').slice(1).join('—').trim() : line;
+            const subjectOnly = afterDash.split(' [')[0].trim();
+            if (isLabSubject(subjectOnly)) return true;
+        }
+        return false;
+    }
+
+    function findHeaderRow(matrix, label) {
+        for (let i = 0; i < matrix.length; i++) {
+            if (String(matrix[i][0] || '').trim() === label) {
+                return { idx: i, headers: matrix[i].map(c => String(c || '').trim()) };
+            }
+        }
+        return null;
+    }
+
+    function resolveDaySheetName(name) {
+        const n = String(name || '').trim();
+        if (DAYS.includes(n)) return n;
+        for (const [abbr, full] of Object.entries(DAY_SHEET_MAP)) {
+            if (n.toLowerCase().startsWith(abbr.toLowerCase())) return full;
+        }
+        return DAYS.find(d => d.toLowerCase().startsWith(n.toLowerCase().slice(0, 3))) || null;
+    }
+
+    function facultyNameFromSheet(sheetName, matrix) {
+        const title = String((matrix[0] && matrix[0][0]) || '');
+        const m = title.match(/COMBINED\s+TIMETABLE\s*[—\-]\s*(.+)/i);
+        if (m) return m[1].trim();
+        return String(sheetName || '').replace(/_/g, ' ').trim();
+    }
+
+    function findAllHeaderRows(matrix, label) {
+        const rows = [];
+        for (let i = 0; i < matrix.length; i++) {
+            if (String(matrix[i][0] || '').trim() === label) {
+                rows.push({
+                    idx: i,
+                    slots: matrix[i].slice(1).map(c => String(c ?? '').trim()),
+                });
+            }
+        }
+        return rows;
+    }
+
+    function trimTrailingEmptySlots(slots) {
+        const out = slots.slice();
+        while (out.length && !out[out.length - 1]) out.pop();
+        return out;
+    }
+
+    function parseFacultySheet(matrix) {
+        const dayHeaders = findAllHeaderRows(matrix, 'Day');
+        let weekdaySlots = [];
+        let saturdaySlots = [];
+        let saturdayDaySlots = [];
+        let saturdayEveningSlots = [];
+        const days = {};
+        DAYS.forEach(d => { days[d] = {}; });
+
+        if (!dayHeaders.length) return null;
+
+        weekdaySlots = trimTrailingEmptySlots(dayHeaders[0].slots);
+        if (dayHeaders.length > 1) {
+            saturdaySlots = trimTrailingEmptySlots(dayHeaders[1].slots);
+            const split = splitFacultySlotsByCollege(saturdaySlots, 'saturday');
+            saturdayDaySlots = split.daySlots;
+            saturdayEveningSlots = split.eveningSlots;
+        }
+
+        let block = 0;
+        for (let r = 0; r < matrix.length; r++) {
+            const c0 = String(matrix[r][0] || '').trim();
+            if (c0 === 'Day') {
+                const hdr = dayHeaders.find(h => h.idx === r);
+                block = dayHeaders.indexOf(hdr);
+                continue;
+            }
+            if (!DAYS.includes(c0)) continue;
+            const hdrSlots = block === 1 && saturdaySlots.length ? saturdaySlots : weekdaySlots;
+            hdrSlots.forEach((slot, ci) => {
+                if (!slot) return;
+                const v = String(matrix[r][ci + 1] ?? '').trim();
+                if (v && v.toLowerCase() !== 'free' && v !== '—') {
+                    days[c0][normalizeSlotKey(slot)] = v;
+                }
+            });
+        }
+
+        return { weekdaySlots, saturdaySlots, saturdayDaySlots, saturdayEveningSlots, days };
+    }
+
+    function facultyDisplayName(code) {
+        const c = String(code || '').trim();
+        if (!c) return '';
+        const names = store.staffNames || {};
+        if (names[c]) return names[c];
+        const base = c.replace(/_E$/i, '');
+        if (base !== c && names[base]) return names[base];
+        return c;
+    }
+
+    function facultyDisplayLabel(code) {
+        const c = String(code || '').trim();
+        const name = facultyDisplayName(c);
+        return name === c ? c : `${name} (${c})`;
+    }
+
+    function compareFacultyCodes(a, b) {
+        const labelCmp = facultyDisplayLabel(a).localeCompare(facultyDisplayLabel(b), undefined, { sensitivity: 'base' });
+        return labelCmp !== 0 ? labelCmp : a.localeCompare(b);
+    }
+
+    function parseStaffNamesWorkbook(wb) {
+        const sheetName = (wb.SheetNames || []).find(n => /^staff\s*names$/i.test(String(n).trim()));
+        if (!sheetName) return {};
+        const matrix = sheetMatrix(wb.Sheets[sheetName]);
+        const out = {};
+        for (let r = 1; r < matrix.length; r++) {
+            const code = String(matrix[r][0] || '').trim();
+            const name = String(matrix[r][1] || '').trim();
+            if (code && name) out[code] = name;
+        }
+        return out;
+    }
+
+    function parseFacultyWorkbook(wb) {
+        const out = {};
+        (wb.SheetNames || []).forEach(sheetName => {
+            const ws = wb.Sheets[sheetName];
+            const matrix = sheetMatrix(ws);
+            applySheetMerges(matrix, ws);
+            const parsed = parseFacultySheet(matrix);
+            if (!parsed) return;
+            const name = facultyNameFromSheet(sheetName, matrix);
+            const hasAny = DAYS.some(d => Object.keys(parsed.days[d] || {}).length);
+            if (name && hasAny) {
+                out[name] = parsed;
+            }
+        });
+        return out;
+    }
+
+    function parseStreamLabel(c0) {
+        return String(c0 || '').replace(/^[\s\u2014\-]+|[\s\u2014\-]+$/g, '').trim();
+    }
+
+    function isStreamHeaderRow(c0) {
+        const s = String(c0 || '').trim();
+        return s.startsWith('—') || s.startsWith('-') || /^\u2014/.test(s);
+    }
+
+    function parseSectionRow(c0, matrix, r, slots, group, stream) {
+        if (isStreamHeaderRow(c0)) return null;
+        const cells = {};
+        slots.forEach((slot, ci) => {
+            if (!slot) return;
+            const v = String(matrix[r][ci + 1] ?? '').trim();
+            if (v && v !== '—' && v.toLowerCase() !== 'free') {
+                cells[normalizeSlotKey(slot)] = v;
+            }
+        });
+        return { name: c0, group, stream: stream || '', cells };
+    }
+
+    function pushSectionItem(list, sec) {
+        if (sec) list.push({ type: 'section', section: sec });
+    }
+
+    function parseDaywiseWorkbook(wb) {
+        const out = {};
+        (wb.SheetNames || []).forEach(sheetName => {
+            const day = resolveDaySheetName(sheetName);
+            if (!day) return;
+            const ws = wb.Sheets[sheetName];
+            const matrix = sheetMatrix(ws);
+            applySheetMerges(matrix, ws);
+            const parsed = parseDaywiseSheet(matrix, day);
+            if (parsed) out[day] = parsed;
+        });
+        return out;
+    }
+
+    function parseDaywiseSheet(matrix, day) {
+        const sectionHeaders = findAllHeaderRows(matrix, 'Section');
+        if (!sectionHeaders.length) return null;
+
+        const sections = [];
+        const eveningSections = [];
+        const dayItems = [];
+        const eveningItems = [];
+        let daySlots = [];
+        let eveningSlots = [];
+        let group = 'day';
+        let currentSlots = [];
+        let currentStream = '';
+
+        const isCollegeBanner = c0 => /day\s*college/i.test(c0) || /evening\s*college/i.test(c0);
+        const isSkippableRow = c0 => !c0 || /^format:/i.test(c0) || /all sections/i.test(c0);
+
+        if (sectionHeaders.length === 1) {
+            const mergedSlots = trimTrailingEmptySlots(sectionHeaders[0].slots);
+            for (let r = sectionHeaders[0].idx + 1; r < matrix.length; r++) {
+                const c0 = String(matrix[r][0] || '').trim();
+                if (!c0) continue;
+                if (/day\s*college/i.test(c0)) { group = 'day'; currentStream = ''; continue; }
+                if (/evening\s*college/i.test(c0)) { group = 'evening'; currentStream = ''; continue; }
+                if (isStreamHeaderRow(c0)) { currentStream = parseStreamLabel(c0); continue; }
+                const sec = parseSectionRow(c0, matrix, r, mergedSlots, group, currentStream);
+                if (!sec) continue;
+                if (group === 'evening') {
+                    eveningSections.push(sec);
+                    pushSectionItem(eveningItems, sec);
+                } else {
+                    sections.push(sec);
+                    pushSectionItem(dayItems, sec);
+                }
+            }
+            const split = splitFacultySlotsByCollege(mergedSlots, day === 'Saturday' ? 'saturday' : 'weekday');
+            daySlots = split.daySlots.length ? split.daySlots : sectionSlotsForGroup(day, 'day');
+            eveningSlots = split.eveningSlots.length ? split.eveningSlots : sectionSlotsForGroup(day, 'evening');
+        } else {
+            for (let r = 0; r < matrix.length; r++) {
+                const c0 = String(matrix[r][0] || '').trim();
+                if (isSkippableRow(c0)) continue;
+                if (/day\s*college/i.test(c0)) {
+                    group = 'day';
+                    currentStream = '';
+                    continue;
+                }
+                if (/evening\s*college/i.test(c0)) {
+                    group = 'evening';
+                    currentStream = '';
+                    continue;
+                }
+                if (c0 === 'Section') {
+                    currentSlots = trimTrailingEmptySlots(matrix[r].slice(1).map(c => String(c ?? '').trim()));
+                    if (group === 'day' && currentSlots.length) daySlots = currentSlots.slice();
+                    if (group === 'evening' && currentSlots.length) eveningSlots = currentSlots.slice();
+                    continue;
+                }
+                if (isCollegeBanner(c0)) continue;
+                if (isStreamHeaderRow(c0)) {
+                    currentStream = parseStreamLabel(c0);
+                    continue;
+                }
+                if (!currentSlots.length) continue;
+                const sec = parseSectionRow(c0, matrix, r, currentSlots, group, currentStream);
+                if (!sec) continue;
+                if (group === 'evening') {
+                    eveningSections.push(sec);
+                    pushSectionItem(eveningItems, sec);
+                } else {
+                    sections.push(sec);
+                    pushSectionItem(dayItems, sec);
+                }
+            }
+            if (!daySlots.length) daySlots = sectionSlotsForGroup(day, 'day');
+            if (!eveningSlots.length) eveningSlots = sectionSlotsForGroup(day, 'evening');
+        }
+
+        return {
+            slots: [...daySlots, ...eveningSlots.filter(s => !daySlots.includes(s))],
+            daySlots,
+            eveningSlots,
+            sections,
+            eveningSections,
+            dayItems,
+            eveningItems,
+        };
+    }
+
+    function readFile(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = e => {
+                try {
+                    const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+                    resolve(wb);
+                } catch (err) { reject(err); }
+            };
+            reader.onerror = () => reject(new Error('Could not read file'));
+            reader.readAsArrayBuffer(file);
+        });
+    }
+
+    function escapeHtml(s) {
+        const d = document.createElement('div');
+        d.textContent = s == null ? '' : String(s);
+        return d.innerHTML;
+    }
+
+    function readEmbeddedStore() {
+        const dataEl = document.getElementById('tt-embed');
+        if (dataEl && dataEl.textContent) {
+            try {
+                const raw = dataEl.textContent.trim();
+                if (dataEl.getAttribute('data-encoding') === 'base64') {
+                    return JSON.parse(decodeURIComponent(escape(atob(raw))));
+                }
+                return JSON.parse(raw);
+            } catch (e) { console.error('tt-embed parse failed', e); }
+        }
+        if (window.__TIMETABLE_MOBILE_DATA__) return window.__TIMETABLE_MOBILE_DATA__;
+        return null;
+    }
+
+    function cellHtml(val) {
+        if (!val || val === '—') return '<td class="slot-free">—</td>';
+        return `<td class="busy">${escapeHtml(val)}</td>`;
+    }
+
+    function sectionCellSubject(text) {
+        if (!text) return '';
+        const s = String(text).trim();
+        const m = s.match(/^(.+?) \(/);
+        if (m) return m[1].trim();
+        return s.split('(')[0].trim();
+    }
+
+    function isSectionLabSpan(cells, slots, slotIndex) {
+        const slot = slots[slotIndex];
+        const nextSlot = slots[slotIndex + 1];
+        if (!slot || !nextSlot) return false;
+        const text = cellForSection(cells, slot);
+        const nextText = cellForSection(cells, nextSlot);
+        if (!text || text !== nextText) return false;
+        return isLabSubject(sectionCellSubject(text));
+    }
+
+    function sectionSlotCellHtml(cells, slots, si, skipSlots) {
+        const s = slots[si];
+        const v = cellForSection(cells, s);
+        if (isSectionLabSpan(cells, slots, si)) {
+            skipSlots.add(si + 1);
+            return v
+                ? `<td colspan="2" class="busy lab-block">${escapeHtml(v)}</td>`
+                : '<td colspan="2" class="slot-free">—</td>';
+        }
+        if (!v || v === '—') return '<td class="slot-free">—</td>';
+        const cls = isLabSubject(sectionCellSubject(v)) ? 'busy lab-block' : 'busy';
+        return `<td class="${cls}">${escapeHtml(v)}</td>`;
+    }
+
+    function slotsForFacultyDay(fac, day) {
+        if (day === 'Saturday' && fac.saturdaySlots && fac.saturdaySlots.length) {
+            return fac.saturdaySlots;
+        }
+        if (fac.weekdaySlots && fac.weekdaySlots.length) return fac.weekdaySlots;
+        return fac.slots || [];
+    }
+
+    function facultySlotCellsHtml(dayCells, slots, dayKind, suppressDayEnd, opts) {
+        const options = opts || {};
+        const showDivider = facultyShiftHasDivider(slots, dayKind);
+        const lastIdx = options.markTableEnd
+            ? lastVisibleSlotIndex(dayCells, slots, isFacultyLabSpan)
+            : -1;
+        let html = '';
+        let hours = 0;
+        const skipSlots = new Set();
+        slots.forEach((s, si) => {
+            if (!s || skipSlots.has(si)) return;
+            let bc = facultySlotBoundaryClasses(s, dayKind, showDivider, slots, si);
+            if (suppressDayEnd) bc = bc.replace(/\s*slot-day-end/g, '');
+            bc += slotEveningColClass(s, dayKind);
+            if (options.markTableEnd && si === lastIdx) bc += ' slot-table-end';
+            const v = facultyCellValue(dayCells, s);
+            if (isFacultyLabSpan(dayCells, slots, si)) {
+                skipSlots.add(si + 1);
+                if (v) hours += 2;
+                html += v
+                    ? `<td colspan="2" class="busy lab-block${bc}">${escapeHtml(v)}</td>`
+                    : `<td colspan="2" class="slot-free${bc}">—</td>`;
+            } else if (v) {
+                hours += 1;
+                html += `<td class="busy${bc}">${escapeHtml(v)}</td>`;
+            } else {
+                html += `<td class="slot-free${bc}">—</td>`;
+            }
+        });
+        return { html, hours };
+    }
+
+    function renderFacultyDayTable(fac, day) {
+        const dayCells = fac.days[day] || {};
+        const dayKind = facultyDayKind(day);
+        let html = '<div class="faculty-timetable-block">';
+        html += `<div class="faculty-block-head">${escapeHtml(day)}</div>`;
+        html += '<p class="sections-scroll-hint faculty-scroll-hint">Swipe left for all time slots →</p>';
+        html += '<div class="faculty-scroll-wrap">';
+        let hours = 0;
+
+        if (day === 'Saturday') {
+            const { daySlots, eveningSlots } = facultySaturdaySlotSets(fac);
+            const satDay = daySlots.filter(Boolean);
+            const satEve = eveningSlots.filter(Boolean);
+            if (!satDay.length && !satEve.length) {
+                html += '</div></div>';
+                return { html: '<p class="empty">No time slots in Excel for this day.</p>', hours: 0 };
+            }
+            html += '<table class="faculty-grid-table">';
+            html += renderFacultySaturdayDayHeader(satDay);
+            html += '<tbody>';
+            const { html: dayPart, hours: h1 } = facultySlotCellsHtml(dayCells, satDay, 'saturday');
+            const eveCells = renderSaturdayEveningRowCells(dayCells, satEve, Math.max(satEve.length, 1));
+            hours = h1 + eveCells.hours;
+            html += `<tr><td class="faculty-day-col">Classes</td>${dayPart}${eveCells.html}</tr>`;
+            html += '</tbody></table>';
+        } else {
+            const slots = slotsForFacultyDay(fac, day);
+            if (!slots.length) {
+                html += '</div></div>';
+                return { html: '<p class="empty">No time slots in Excel for this day.</p>', hours: 0 };
+            }
+            const showDivider = facultyShiftHasDivider(slots, dayKind);
+            const { html: cells, hours: h } = facultySlotCellsHtml(dayCells, slots, dayKind);
+            hours = h;
+            html += '<table class="faculty-grid-table"><thead><tr>';
+            html += '<th class="faculty-day-col">Time</th>';
+            slots.forEach((s, i) => {
+                if (!s) return;
+                const bc = facultySlotBoundaryClasses(s, dayKind, showDivider, slots, i);
+                html += `<th class="slot-head-col faculty-head-day${bc}">${escapeHtml(s)}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+            html += `<tr><td class="faculty-day-col">Classes</td>${cells}</tr>`;
+            html += '</tbody></table>';
+        }
+        html += '</div></div>';
+        return { html, hours };
+    }
+
+    function renderFacultyWeekTable(fac) {
+        const weekdaySlots = (fac.weekdaySlots || fac.slots || []).filter(Boolean);
+        const { daySlots: satDaySlots, eveningSlots: satEveSlots } = facultySaturdaySlotSets(fac);
+        const satDay = satDaySlots.filter(Boolean);
+        const satEve = satEveSlots.filter(Boolean);
+        const hasSaturday = satDay.length || satEve.length;
+        if (!weekdaySlots.length && !hasSaturday) {
+            return { html: '<p class="empty">No time slots in Excel.</p>', hours: 0 };
+        }
+        const weekdayDivider = facultyShiftHasDivider(weekdaySlots, 'weekday');
+        let totalHours = 0;
+        let html = '<div class="faculty-timetable-block">';
+        html += '<div class="faculty-block-head">Whole week</div>';
+        html += '<p class="sections-scroll-hint faculty-scroll-hint">Swipe left for all slots — evening columns are wider for readability →</p>';
+        html += '<div class="faculty-scroll-wrap">';
+        if (weekdaySlots.length) {
+            const parts = partitionWeekdayColumns(weekdaySlots, satDay);
+            const eveningColSpan = facultyEveningColSpan(parts.weekdayEvening, satEve, hasSaturday);
+            html += '<table class="faculty-grid-table faculty-week-grid">';
+            html += renderFacultyWeekTableHeader(parts, weekdayDivider, satEve, hasSaturday);
+        } else {
+            html += '<table class="faculty-grid-table faculty-week-grid">';
+            html += renderFacultySaturdayDayHeader(satDay, 'Day');
+        }
+        html += '<tbody>';
+        if (weekdaySlots.length) {
+            const parts = partitionWeekdayColumns(weekdaySlots, satDay);
+            const eveningColSpan = facultyEveningColSpan(parts.weekdayEvening, satEve, hasSaturday);
+            const needsEvePad = parts.weekdayEvening.length < eveningColSpan;
+            const evePad = facultyWeekdayRowEveningPad(parts.weekdayEvening, eveningColSpan);
+            ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].forEach(day => {
+                const dayCells = fac.days[day] || {};
+                const { html: cells, hours } = facultySlotCellsHtml(
+                    dayCells, weekdaySlots, 'weekday', false, { markTableEnd: !needsEvePad },
+                );
+                totalHours += hours;
+                html += `<tr><td class="faculty-day-col">${day.slice(0, 3)}</td>${cells}${evePad}</tr>`;
+            });
+            if (hasSaturday) {
+                const satCells = fac.days.Saturday || {};
+                const dayPart = parts.shared.length
+                    ? facultyMappedRowCells(satCells, parts.shared, satDay, 'saturday', false)
+                    : facultySlotCellsHtml(satCells, satDay, 'saturday', true);
+                const afternoonPad = facultySaturdayAfternoonPadCells(parts.afternoon);
+                const eveCells = satEve.length
+                    ? renderSaturdayEveningRowCells(satCells, satEve, eveningColSpan)
+                    : { html: '', hours: 0 };
+                const tailGap = !satEve.length && eveningColSpan
+                    ? facultyWeekdayRowEveningPad([], eveningColSpan)
+                    : '';
+                totalHours += dayPart.hours + eveCells.hours;
+                html += `<tr class="faculty-sat-row"><td class="faculty-day-col faculty-sat-label">Saturday</td>${dayPart.html}${afternoonPad}${eveCells.html}${tailGap}</tr>`;
+            }
+        } else if (hasSaturday) {
+            const satCells = fac.days.Saturday || {};
+            const { html: dayPart, hours: h1 } = facultySlotCellsHtml(satCells, satDay, 'saturday', true);
+            const eveCells = renderSaturdayEveningRowCells(satCells, satEve, Math.max(satEve.length, 1));
+            totalHours += h1 + eveCells.hours;
+            html += `<tr class="faculty-sat-row"><td class="faculty-day-col faculty-sat-label">Saturday</td>${dayPart}${eveCells.html}</tr>`;
+        }
+        html += '</tbody></table></div></div>';
+        return { html, hours: totalHours };
+    }
+
+    function updateFacultyViewToggle() {
+        const btn = el('btn-faculty-view');
+        if (!btn) return;
+        const week = facultyViewMode === 'week';
+        btn.textContent = week ? 'Single day' : 'Whole week';
+        btn.setAttribute('aria-pressed', week ? 'true' : 'false');
+        btn.classList.toggle('active', week);
+    }
+
+    function renderMyTimetable() {
+        const host = el('my-timetable');
+        const titleEl = el('my-title');
+        const pillEl = el('hours-pill');
+        const fac = store.faculty[activeFaculty];
+        const weekMode = facultyViewMode === 'week';
+        if (titleEl) {
+            titleEl.textContent = weekMode
+                ? `${facultyDisplayLabel(activeFaculty)} — Whole week`
+                : `${facultyDisplayLabel(activeFaculty)} — ${activeDay}`;
+        }
+        updateFacultyViewToggle();
+        if (!host) return;
+        if (!fac) {
+            host.innerHTML = '<p class="empty">Faculty not found.</p>';
+            if (pillEl) pillEl.textContent = '';
+            return;
+        }
+        const result = weekMode
+            ? renderFacultyWeekTable(fac)
+            : renderFacultyDayTable(fac, activeDay);
+        host.innerHTML = result.html;
+        if (pillEl) {
+            if (weekMode) {
+                pillEl.textContent = result.hours
+                    ? `${result.hours} hr(s) this week`
+                    : 'Free this week';
+            } else {
+                pillEl.textContent = result.hours
+                    ? `${result.hours} hr(s) on ${activeDay}`
+                    : `Free on ${activeDay}`;
+            }
+        }
+    }
+
+    function cellForSection(cells, slot) {
+        if (!cells) return '';
+        if (cells[slot]) return cells[slot];
+        const dot = slot.replace(/:/g, '.');
+        const colon = slot.replace(/\.(?=\d)/g, ':');
+        return cells[dot] || cells[colon] || '';
+    }
+
+    function renderSectionTableRow(sec, slots, rowClass) {
+        const cls = rowClass || 'section-data-row';
+        let row = `<tr class="${cls}"><td class="section-name">${escapeHtml(sec.name)}</td>`;
+        const skipSlots = new Set();
+        slots.forEach((s, si) => {
+            if (!s || skipSlots.has(si)) return;
+            row += sectionSlotCellHtml(sec.cells, slots, si, skipSlots);
+        });
+        return row + '</tr>';
+    }
+
+    function sectionItemsForGroup(dw, group) {
+        if (!dw) return [];
+        if (group === 'evening') {
+            if (Array.isArray(dw.eveningItems) && dw.eveningItems.length) return dw.eveningItems;
+            return eveningSectionsForDay(dw).map(sec => ({ type: 'section', section: sec }));
+        }
+        if (Array.isArray(dw.dayItems) && dw.dayItems.length) return dw.dayItems;
+        const secs = (dw.sections || []).filter(s => !s.group || s.group === 'day');
+        return secs.map(sec => ({ type: 'section', section: sec }));
+    }
+
+    function attrQuote(s) {
+        return String(s ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+    }
+
+    function syncSectionsViewFromUi() {
+        const filterSel = el('sections-filter');
+        if (filterSel) sectionsFilter = filterSel.value || '';
+    }
+
+    function persistSectionsViewUi() {
+        try {
+            localStorage.setItem('mobileSectionsFilter', sectionsFilter);
+        } catch (e) {}
+    }
+
+    function restoreSectionsViewUi() {
+        try {
+            const filt = localStorage.getItem('mobileSectionsFilter');
+            if (filt != null) sectionsFilter = filt;
+        } catch (e) {}
+        const filterSel = el('sections-filter');
+        if (filterSel && sectionsFilter) filterSel.value = sectionsFilter;
+    }
+
+    function allSectionsForDay(dw) {
+        const dayItems = sectionItemsForGroup(dw, 'day');
+        const eveningItems = sectionItemsForGroup(dw, 'evening');
+        return sortSectionsByStream([
+            ...orderedSectionsFromItems(dayItems),
+            ...orderedSectionsFromItems(eveningItems),
+        ]);
+    }
+
+    function buildSectionFilterOptions() {
+        const daySections = allUniqueDaySections();
+        const eveningSections = allUniqueEveningSections();
+        const cacheKey = `${activeDay}|d:${daySections.map(s => s.name).join('|')}|e:${eveningSections.map(s => s.name).join('|')}`;
+        if (cacheKey === sectionsFilterCacheKey && el('sections-filter')?.options.length > 1) {
+            return cacheKey;
+        }
+        sectionsFilterCacheKey = cacheKey;
+        const filterSel = el('sections-filter');
+        if (!filterSel) return cacheKey;
+        const prev = sectionsFilter || filterSel.value;
+        let html = `<option value="">All sections · ${escapeHtml(activeDay)}</option>`;
+        if (daySections.length) {
+            html += '<optgroup label="Whole week — day college">';
+            daySections.forEach(sec => {
+                const val = 'section:day:' + sec.name;
+                html += `<option value="${attrQuote(val)}">${escapeHtml(sec.name)}</option>`;
+            });
+            html += '</optgroup>';
+        }
+        if (eveningSections.length) {
+            html += '<optgroup label="Whole week — evening college">';
+            eveningSections.forEach(sec => {
+                const val = 'section:evening:' + sec.name;
+                html += `<option value="${attrQuote(val)}">${escapeHtml(sec.name)}</option>`;
+            });
+            html += '</optgroup>';
+        }
+        filterSel.innerHTML = html;
+        let restored = prev;
+        if (prev && prev.startsWith('section:') && !prev.startsWith('section:day:') && !prev.startsWith('section:evening:')) {
+            const legacyName = prev.slice(8);
+            const dayVal = 'section:day:' + legacyName;
+            const eveVal = 'section:evening:' + legacyName;
+            if ([...filterSel.options].some(o => o.value === dayVal)) restored = dayVal;
+            else if ([...filterSel.options].some(o => o.value === eveVal)) restored = eveVal;
+        }
+        if (restored && [...filterSel.options].some(o => o.value === restored)) {
+            filterSel.value = restored;
+            sectionsFilter = restored;
+        } else {
+            sectionsFilter = filterSel.value || '';
+        }
+        return cacheKey;
+    }
+
+    function parseSectionsFilter() {
+        if (!sectionsFilter || !sectionsFilter.startsWith('section:')) return null;
+        const rest = sectionsFilter.slice(8);
+        const dayPrefix = 'day:';
+        const evePrefix = 'evening:';
+        if (rest.startsWith(dayPrefix)) {
+            return { shift: 'day', name: rest.slice(dayPrefix.length) };
+        }
+        if (rest.startsWith(evePrefix)) {
+            return { shift: 'evening', name: rest.slice(evePrefix.length) };
+        }
+        return {
+            shift: isEveningSectionName(rest) ? 'evening' : 'day',
+            name: rest,
+        };
+    }
+
+    function selectedSectionName() {
+        const parsed = parseSectionsFilter();
+        return parsed ? parsed.name : '';
+    }
+
+    function sectionsPanelTitle() {
+        const parsed = parseSectionsFilter();
+        if (parsed) {
+            return parsed.shift === 'evening'
+                ? `${parsed.name} — evening · whole week`
+                : `${parsed.name} — whole week`;
+        }
+        return `Sections · ${activeDay}`;
+    }
+
+    function renderAllSectionsDaywise() {
+        const dw = store.daywise[activeDay];
+        if (!dw) return '<p class="empty">No section data for this day.</p>';
+        const dayItems = sectionItemsForGroup(dw, 'day');
+        const eveningItems = sectionItemsForGroup(dw, 'evening');
+        const daySections = orderedSectionsFromItems(dayItems);
+        const eveningSections = orderedSectionsFromItems(eveningItems);
+        if (!daySections.length && !eveningSections.length) {
+            return '<p class="empty">No section data for this day.</p>';
+        }
+        const daySlots = slotsForSectionGroup(dw, 'day');
+        const eveningSlots = slotsForSectionGroup(dw, 'evening');
+        const isSaturday = activeDay === 'Saturday';
+        let html = '';
+        if (daySections.length) {
+            html += '<div class="sections-block sections-block--day">';
+            html += '<h3>Day College</h3>';
+            html += '<p class="sections-scroll-hint">Swipe left for all time slots →</p>';
+            html += '<div class="sections-scroll-wrap">';
+            html += buildSectionsTableFromItems(dayItems, daySlots);
+            if (isSaturday && eveningSections.length) {
+                html += '<div class="faculty-shift-subhead">Evening College</div>';
+                html += buildSectionsTableFromItems(eveningItems, eveningSlots);
+            }
+            html += '</div></div>';
+        }
+        if (eveningSections.length && !(isSaturday && daySections.length)) {
+            html += '<div class="sections-block sections-block--evening">';
+            html += '<h3>Evening College</h3>';
+            html += '<p class="sections-scroll-hint">Swipe left for all time slots →</p>';
+            html += '<div class="sections-scroll-wrap">';
+            html += buildSectionsTableFromItems(eveningItems, eveningSlots);
+            html += '</div></div>';
+        }
+        return html || '<p class="empty">No section data for this day.</p>';
+    }
+
+    function renderSectionsDaywise() {
+        syncSectionsViewFromUi();
+        buildSectionFilterOptions();
+        const host = el('sections-timetable');
+        const titleEl = el('sections-title');
+        if (titleEl) titleEl.textContent = sectionsPanelTitle();
+        if (!host) return;
+
+        const parsed = parseSectionsFilter();
+        host.innerHTML = parsed
+            ? renderSectionWeekTable(parsed.name, parsed.shift)
+            : renderAllSectionsDaywise();
+        persistSectionsViewUi();
+    }
+
+    function onSectionsFilterChange() {
+        const filterSel = el('sections-filter');
+        sectionsFilter = filterSel?.value || '';
+        renderSectionsDaywise();
+    }
+
+    function orderedSectionsFromItems(items) {
+        return (items || [])
+            .filter(i => i.type === 'section' && i.section)
+            .map(i => i.section);
+    }
+
+    /** 1st BCA before 2nd BCA before 3rd; within stream A, B, C */
+    function sortSectionsByStream(sections) {
+        return [...sections].sort((a, b) => {
+            const streamCmp = compareSortKeys(
+                streamSortKey(sectionStreamKey(a)),
+                streamSortKey(sectionStreamKey(b))
+            );
+            if (streamCmp !== 0) return streamCmp;
+            return compareSortKeys(sectionSortKey(a.name), sectionSortKey(b.name));
+        });
+    }
+
+    function buildSectionsTableFromItems(items, slots) {
+        const sections = sortSectionsByStream(orderedSectionsFromItems(items));
+        if (!sections.length || !slots.length) return '';
+        let html = '<table class="sections-grid-table"><thead><tr>';
+        html += '<th class="section-head-col">Section</th>';
+        slots.forEach(s => { html += `<th class="slot-head-col">${escapeHtml(s)}</th>`; });
+        html += '</tr></thead><tbody>';
+        sections.forEach((sec, idx) => {
+            let rowClass = 'section-data-row';
+            if (idx > 0) {
+                const prev = sections[idx - 1];
+                if (sectionStreamKey(sec) !== sectionStreamKey(prev)) {
+                    rowClass = 'section-data-row stream-break';
+                }
+            }
+            html += renderSectionTableRow(sec, slots, rowClass);
+        });
+        html += '</tbody></table>';
+        return html;
+    }
+
+    function buildSectionsTable(sections, slots) {
+        const items = sections.map(sec => ({ type: 'section', section: sec }));
+        return buildSectionsTableFromItems(items, slots);
+    }
+
+    function eveningSectionsForDay(dw) {
+        if (!dw) return [];
+        if (Array.isArray(dw.eveningSections) && dw.eveningSections.length) {
+            return dw.eveningSections;
+        }
+        return (dw.sections || []).filter(s => s.group === 'evening');
+    }
+
+    function slotsForSectionGroup(dw, group) {
+        if (!dw) return sectionSlotsForGroup(activeDay, group);
+        if (group === 'evening') {
+            return (dw.eveningSlots && dw.eveningSlots.length)
+                ? dw.eveningSlots
+                : sectionSlotsForGroup(activeDay, 'evening');
+        }
+        return (dw.daySlots && dw.daySlots.length)
+            ? dw.daySlots
+            : sectionSlotsForGroup(activeDay, 'day');
+    }
+
+    function bindSectionsViewControls() {
+        const app = el('faculty-app');
+        if (!app || sectionsViewBound) return;
+        sectionsViewBound = true;
+        app.addEventListener('change', (e) => {
+            if (e.target.id === 'sections-filter') onSectionsFilterChange();
+        });
+    }
+
+    let sectionsRenderToken = 0;
+
+    function renderAll() {
+        try {
+            renderMyTimetable();
+            const token = ++sectionsRenderToken;
+            const sectionsHost = el('sections-timetable');
+            if (sectionsHost) sectionsHost.innerHTML = '<p class="empty">Loading sections…</p>';
+            setTimeout(() => {
+                if (token !== sectionsRenderToken) return;
+                try { renderSectionsDaywise(); } catch (e) { console.error(e); }
+            }, 0);
+        } catch (err) {
+            console.error(err);
+            const host = el('my-timetable');
+            if (host) host.innerHTML = `<p class="err">Could not show timetable: ${escapeHtml(err.message || err)}</p>`;
+        }
+    }
+
+    function setActiveDay(day) {
+        syncActiveDay(day);
+        sectionsFilter = '';
+        sectionsFilterCacheKey = '';
+        try { localStorage.setItem('mobileSectionsFilter', ''); } catch (e) {}
+        const filterSel = el('sections-filter');
+        if (filterSel) filterSel.value = '';
+        paintDayTabs();
+        renderAll();
+    }
+
+    window.TimetableMobile.setDay = setActiveDay;
+
+    function paintDayTabs() {
+        const host = el('day-tabs');
+        if (!host) return;
+        paintingDay = true;
+        host.innerHTML = DAYS.map(d =>
+            `<button type="button" class="tab-btn${d === activeDay ? ' active' : ''}" data-day="${d}">${d.slice(0, 3)}</button>`
+        ).join('');
+        const sel = el('day-select');
+        if (sel) sel.value = activeDay;
+        paintingDay = false;
+    }
+
+    function initDayPicker() {
+        const sel = el('day-select');
+        if (sel) {
+            sel.innerHTML = DAYS.map(d => `<option value="${d}">${d}</option>`).join('');
+            if (!daySelectBound) {
+                daySelectBound = true;
+                sel.addEventListener('change', () => {
+                    if (paintingDay) return;
+                    setActiveDay(sel.value);
+                });
+            }
+            sel.value = activeDay;
+        }
+        paintDayTabs();
+    }
+
+    function bindDayTabEvents() {
+        if (dayTabsBound) return;
+        dayTabsBound = true;
+        const onTab = (e) => {
+            const btn = e.target.closest('#day-tabs .tab-btn');
+            if (!btn) return;
+            e.preventDefault();
+            e.stopPropagation();
+            const day = btn.getAttribute('data-day');
+            if (day) setActiveDay(day);
+        };
+        document.addEventListener('click', onTab, true);
+        document.addEventListener('touchend', onTab, { capture: true, passive: false });
+    }
+
+    function buildFacultySelect() {
+        const sel = el('faculty-select');
+        const names = Object.keys(store.faculty).sort(compareFacultyCodes);
+        sel.innerHTML = names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(facultyDisplayLabel(n))}</option>`).join('');
+        if (!activeFaculty || !names.includes(activeFaculty)) activeFaculty = names[0] || '';
+        sel.value = activeFaculty;
+    }
+
+    function buildDayTabs() {
+        initDayPicker();
+    }
+
+    let activeAppPanel = 'timetable';
+
+    function switchAppPanel(panel) {
+        activeAppPanel = panel;
+        const pt = el('panel-timetable');
+        const pl = el('panel-leave');
+        if (pt) pt.classList.toggle('hidden', panel !== 'timetable');
+        if (pl) pl.classList.toggle('hidden', panel !== 'leave');
+        document.querySelectorAll('.dock-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-panel') === panel);
+        });
+        if (panel === 'leave') initLeaveModule();
+    }
+
+    function initLeaveModule() {
+        if (!window.LeaveApp) return false;
+        LeaveApp.attachLeavePackToStore(store);
+        const pack = LeaveApp.initFromMobileStore(store);
+        const miss = el('leave_module_missing');
+        if (miss) miss.style.display = 'none';
+        const roster = pack && pack.roster ? pack.roster.length : 0;
+        if (!roster && window.LeaveApp.showLeaveMessage) {
+            LeaveApp.showLeaveMessage('No staff codes found in daywise data. Re-build from Bulk Export ZIP.', true);
+        }
+        return true;
+    }
+
+    function setLeaveAnalyzing(busy) {
+        const btn = el('btn-analyze-leave');
+        if (!btn) return;
+        btn.classList.toggle('is-busy', busy);
+        btn.textContent = busy ? 'Analyzing…' : 'Analyze & match staff';
+    }
+
+    function showFacultyApp() {
+        const hasData = Object.keys(store.faculty).length && Object.keys(store.daywise).length;
+        el('no-data').classList.toggle('hidden', hasData);
+        el('faculty-app').classList.toggle('hidden', !hasData);
+        const dock = el('app-dock');
+        if (dock) dock.classList.toggle('hidden', !hasData);
+        document.body.classList.toggle('has-app-dock', hasData);
+        if (!hasData) return;
+        el('college-title').textContent = store.college + ' — MGM Mobile';
+        const sub = el('college-sub');
+        if (sub) {
+            sub.textContent = window.__FACULTY_ONLY__
+                ? 'Timetable · leave & substitution'
+                : 'Timetable · leave & substitution — tap tabs below';
+        }
+        initLeaveModule();
+        switchAppPanel(activeAppPanel);
+        buildFacultySelect();
+        buildDayTabs();
+        restoreSectionsViewUi();
+        bindSectionsViewControls();
+        buildSectionFilterOptions();
+        renderAll();
+    }
+
+    function downloadHtmlBlob(html, filename) {
+        const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+
+    function downloadJsonBlob(jsonText, filename) {
+        const blob = new Blob([jsonText], { type: 'application/json;charset=utf-8' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+
+    function facultyOnlyManifest(college) {
+        const name = (college || 'College') + ' Timetable';
+        const icon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect fill='%232563eb' width='192' height='192' rx='32'/%3E%3Ctext x='96' y='112' font-size='56' font-weight='700' text-anchor='middle' fill='white' font-family='system-ui,sans-serif'%3ETT%3C/text%3E%3C/svg%3E";
+        return JSON.stringify({
+            name,
+            short_name: 'MGM Mobile',
+            display: 'standalone',
+            start_url: './',
+            background_color: '#f1f5f9',
+            theme_color: '#2563eb',
+            icons: [
+                { src: icon, sizes: '192x192', type: 'image/svg+xml', purpose: 'any' },
+            ],
+        });
+    }
+
+    function storeToBase64(data) {
+        try {
+            return btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+        } catch (e) {
+            return btoa(JSON.stringify(data));
+        }
+    }
+
+    function sanitizeExportedHtml(html) {
+        return html
+            .replace(/\s*]*"/gi, '')
+            .replace(/\s*]*"/gi, '')
+            .replace(/\s*]*"/gi, '');
+    }
+
+    function embedStoreInHtml(html, data) {
+        const b64 = storeToBase64(data);
+        const embed = '<script id="tt-embed" type="application/json" data-encoding="base64">' + b64 + '<\/script>\n';
+        if (html.includes('<!-- TT_EMBED_MARKER -->')) {
+            return html.replace('<!-- TT_EMBED_MARKER -->', '<!-- TT_EMBED_MARKER -->\n' + embed);
+        }
+        return html.replace(/<script>\s*window\.TimetableMobile/, embed + '<script>\nwindow.TimetableMobile');
+    }
+
+    async function inlineLeaveScript(html) {
+        try {
+            const resp = await fetch('leave-substitution.js');
+            if (!resp.ok) return html;
+            const js = await resp.text();
+            return html.replace(
+                /<script src="leave-substitution\.js"><\/script>/,
+                '<script>\n' + js + '\n<\/script>'
+            );
+        } catch (e) {
+            return html;
+        }
+    }
+
+    async function buildFacultyOnlyHtml() {
+        let html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+        html = html.replace(/<script src="[^"]*xlsx[^"]*"><\/script>\s*/gi, '');
+        html = html.replace(/<details id="admin-panel"[\s\S]*?<\/details>\s*/i, '');
+        html = await inlineLeaveScript(html);
+        html = html.replace(/window\.__FACULTY_ONLY__\s*=\s*false/, 'window.__FACULTY_ONLY__ = true');
+        return sanitizeExportedHtml(html);
+    }
+
+    function maybeShowInstallHint() {
+        if (!window.__FACULTY_ONLY__) return;
+        const hint = el('install-hint');
+        if (!hint) return;
+        try {
+            if (localStorage.getItem('facultyInstallHintDismissed') === '1') return;
+        } catch (e) {}
+        hint.style.display = 'block';
+        document.body.style.paddingBottom = '96px';
+    }
+
+    const dismissBtn = el('install-hint-dismiss');
+    if (dismissBtn) {
+        dismissBtn.addEventListener('click', () => {
+            const hint = el('install-hint');
+            if (hint) hint.style.display = 'none';
+            document.body.style.paddingBottom = '';
+            try { localStorage.setItem('facultyInstallHintDismissed', '1'); } catch (e) {}
+        });
+    }
+    function afterStoreLoaded() {
+        applySectionSlotSetsFromDaywise(store.daywise || {});
+        if (window.LeaveApp) LeaveApp.attachLeavePackToStore(store);
+    }
+
+    function resolveTimetableJsonUrl() {
+        if (typeof window.__TIMETABLE_JSON_URL__ === 'string' && window.__TIMETABLE_JSON_URL__.trim()) {
+            return window.__TIMETABLE_JSON_URL__.trim();
+        }
+        try {
+            const params = new URLSearchParams(location.search);
+            const fromQuery = params.get('timetableUrl') || params.get('timetable');
+            if (fromQuery && fromQuery.trim()) return fromQuery.trim();
+        } catch (e) { /* ignore */ }
+        if (window.__FACULTY_ONLY__) return './timetable.json';
+        return '';
+    }
+
+    function finishStoreBootstrap(options) {
+        options = options || {};
+        try {
+            const saved = localStorage.getItem('facultyMobileName');
+            if (saved && store.faculty[saved]) activeFaculty = saved;
+        } catch (e) {}
+        if (options.embedded || window.__FACULTY_ONLY__) {
+            const adminPanel = el('admin-panel');
+            if (adminPanel) adminPanel.classList.add('hidden');
+            maybeShowInstallHint();
+        }
+        showFacultyApp();
+    }
+
+    function timetableJsonFingerprintFromResponse(resp, bodyText) {
+        const etag = resp.headers.get('etag');
+        if (etag) return 'etag:' + etag;
+        const lastModified = resp.headers.get('last-modified');
+        if (lastModified) return 'lm:' + lastModified;
+        let hash = 0;
+        for (let i = 0; i < bodyText.length; i++) {
+            hash = ((hash << 5) - hash + bodyText.charCodeAt(i)) | 0;
+        }
+        return 'body:' + hash;
+    }
+
+    function isValidMobileStore(data) {
+        return !!(data && typeof data === 'object'
+            && Object.keys(data.faculty || {}).length
+            && Object.keys(data.daywise || {}).length);
+    }
+
+    function applyStoreFromJsonData(data, options) {
+        options = options || {};
+        if (!isValidMobileStore(data)) return false;
+        const prevFaculty = activeFaculty;
+        store = data;
+        if (!store.staffNames || typeof store.staffNames !== 'object') store.staffNames = {};
+        afterStoreLoaded();
+        if (options.initial) {
+            finishStoreBootstrap();
+        } else {
+            if (prevFaculty && store.faculty[prevFaculty]) activeFaculty = prevFaculty;
+            try { localStorage.setItem('timetableMobileData', JSON.stringify(store)); } catch (e) {}
+            showFacultyApp();
+        }
+        return true;
+    }
+
+    async function loadStoreFromJsonUrl(url, options) {
+        options = options || {};
+        if (!url) return false;
+        try {
+            const resp = await fetch(url, { cache: 'no-store' });
+            if (!resp.ok) return false;
+            const bodyText = await resp.text();
+            const fingerprint = timetableJsonFingerprintFromResponse(resp, bodyText);
+            if (!options.force && timetableJsonFingerprint && fingerprint === timetableJsonFingerprint) return false;
+            const data = JSON.parse(bodyText);
+            if (!applyStoreFromJsonData(data, options)) return false;
+            timetableJsonSourceUrl = url;
+            timetableJsonFingerprint = fingerprint;
+            if (!timetableJsonFromEmbed) timetableJsonAutoRefresh = true;
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    async function refreshTimetableJsonIfChanged() {
+        const url = timetableJsonSourceUrl || resolveTimetableJsonUrl();
+        if (!url || timetableJsonFromEmbed || !timetableJsonAutoRefresh || timetableJsonRefreshInFlight) return false;
+        timetableJsonRefreshInFlight = true;
+        try {
+            return await loadStoreFromJsonUrl(url, { force: false });
+        } finally {
+            timetableJsonRefreshInFlight = false;
+        }
+    }
+
+    function bindTimetableJsonRefresh() {
+        if (timetableJsonFromEmbed || !timetableJsonSourceUrl || !timetableJsonAutoRefresh) return;
+        const onAppBecameActive = (ev) => {
+            if (ev && ev.type === 'visibilitychange' && document.visibilityState !== 'visible') return;
+            refreshTimetableJsonIfChanged();
+        };
+        document.addEventListener('visibilitychange', onAppBecameActive);
+        window.addEventListener('pageshow', onAppBecameActive);
+    }
+
+    function loadEmbeddedData() {
+        const embedded = readEmbeddedStore();
+        if (!embedded) return false;
+        store = embedded;
+        afterStoreLoaded();
+        finishStoreBootstrap({ embedded: true });
+        return true;
+    }
+
+    function tryLocalStorage() {
+        try {
+            const raw = localStorage.getItem('timetableMobileData');
+            if (!raw) return false;
+            store = JSON.parse(raw);
+            afterStoreLoaded();
+            showFacultyApp();
+            return true;
+        } catch (e) { return false; }
+    }
+
+    function bindClick(id, fn) {
+        const node = el(id);
+        if (node) node.addEventListener('click', fn);
+    }
+
+    bindClick('btn-faculty-view', () => {
+        facultyViewMode = facultyViewMode === 'day' ? 'week' : 'day';
+        renderMyTimetable();
+    });
+
+    const facultySel = el('faculty-select');
+    if (facultySel) {
+        facultySel.addEventListener('change', () => {
+            activeFaculty = facultySel.value;
+            try { localStorage.setItem('facultyMobileName', activeFaculty); } catch (e) {}
+            renderAll();
+        });
+    }
+
+    bindClick('btn-build', async () => {
+        el('admin-error').textContent = '';
+        el('admin-status').textContent = '';
+        const fDay = el('file-daywise').files[0];
+        const fFac = el('file-faculty').files[0];
+        if (!fDay || !fFac) {
+            el('admin-error').textContent = 'Please select both Excel files.';
+            return;
+        }
+        try {
+            const [wbDay, wbFac] = await Promise.all([readFile(fDay), readFile(fFac)]);
+            store.college = (el('college-name-input').value || 'College').trim() || 'College';
+            store.faculty = parseFacultyWorkbook(wbFac);
+            store.daywise = parseDaywiseWorkbook(wbDay);
+            store.staffNames = parseStaffNamesWorkbook(wbFac);
+            applySectionSlotSetsFromDaywise(store.daywise);
+            const nf = Object.keys(store.faculty).length;
+            const nd = Object.keys(store.daywise).length;
+            if (!nf || !nd) throw new Error('Could not read timetable data. Use files from Bulk Export ZIP.');
+            if (window.LeaveApp) LeaveApp.attachLeavePackToStore(store);
+            try { localStorage.setItem('timetableMobileData', JSON.stringify(store)); } catch (e) {}
+            timetableJsonAutoRefresh = false;
+            el('admin-status').textContent = `Ready — ${nf} faculty, ${nd} days loaded. Faculty can use this page on their phones (same Wi‑Fi) or download the HTML file below.`;
+            showFacultyApp();
+        } catch (err) {
+            el('admin-error').textContent = err.message || String(err);
+        }
+    });
+
+    bindClick('btn-download-faculty', async () => {
+        const errEl = el('admin-error');
+        const statusEl = el('admin-status');
+        if (errEl) errEl.textContent = '';
+        if (!Object.keys(store.faculty).length) {
+            if (errEl) errEl.textContent = 'Build first (upload Excel files and click Build).';
+            return;
+        }
+        if (window.LeaveApp) LeaveApp.attachLeavePackToStore(store);
+        const prefix = (store.college || 'College').replace(/[^\w]+/g, '_');
+        downloadJsonBlob(JSON.stringify(store), 'timetable.json');
+        const html = await buildFacultyOnlyHtml();
+        downloadHtmlBlob(html, prefix + '_Faculty_App.html');
+        if (statusEl) statusEl.textContent =
+            'Faculty app downloaded (timetable + leave). Share on WhatsApp — open in Chrome.';
+    });
+
+    bindClick('btn-download', async () => {
+        const errEl = el('admin-error');
+        const statusEl = el('admin-status');
+        if (!Object.keys(store.faculty).length) {
+            if (errEl) errEl.textContent = 'Build first (upload Excel files and click Build).';
+            return;
+        }
+        if (window.LeaveApp) LeaveApp.attachLeavePackToStore(store);
+        let html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+        html = await inlineLeaveScript(html);
+        html = embedStoreInHtml(html, store);
+        html = sanitizeExportedHtml(html);
+        downloadHtmlBlob(html, (store.college || 'College').replace(/[^\w]+/g, '_') + '_Faculty_Mobile.html');
+        if (statusEl) statusEl.textContent = 'Downloaded! Share this HTML file — faculty open it in Chrome.';
+    });
+
+    document.querySelectorAll('.dock-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchAppPanel(btn.getAttribute('data-panel')));
+    });
+
+    bindClick('btn-analyze-leave', () => {
+        if (!window.LeaveApp) {
+            const miss = el('leave_module_missing');
+            if (miss) miss.style.display = 'block';
+            return;
+        }
+        setLeaveAnalyzing(true);
+        try {
+            LeaveApp.processMGMSubstitutions();
+        } catch (err) {
+            console.error(err);
+            if (LeaveApp.showLeaveMessage) {
+                LeaveApp.showLeaveMessage(err.message || 'Analysis failed. Try re-building timetable data.', true);
+            }
+        } finally {
+            setTimeout(() => setLeaveAnalyzing(false), 50);
+        }
+    });
+
+    bindClick('btn-dispatch-leave', () => {
+        if (window.LeaveApp) LeaveApp.dispatchMasterReport();
+    });
+
+    const absentFacultySel = el('absent_faculty_select');
+    if (absentFacultySel) {
+        absentFacultySel.addEventListener('change', () => {
+            if (window.LeaveApp) LeaveApp.resetAnalysisCard();
+        });
+    }
+
+    const leaveDateInput = el('leave_date_input');
+    if (leaveDateInput) {
+        const onDateChange = () => {
+            if (window.LeaveApp) {
+                LeaveApp.syncLeaveDayFromDate();
+                LeaveApp.resetAnalysisCard();
+            }
+        };
+        leaveDateInput.addEventListener('change', onDateChange);
+        leaveDateInput.addEventListener('input', onDateChange);
+    }
+
+    window.__FACULTY_ONLY__ = true;
+    window.__TIMETABLE_MOBILE_DATA__ = null;
+    if (typeof window.__TIMETABLE_JSON_URL__ !== 'string') window.__TIMETABLE_JSON_URL__ = '';
+    if (location.hash === '#leave') activeAppPanel = 'leave';
+    bindDayTabEvents();
+    initDayPicker();
+    (async function bootstrapStore() {
+        timetableJsonSourceUrl = resolveTimetableJsonUrl();
+        if (loadEmbeddedData()) {
+            timetableJsonFromEmbed = true;
+        } else if (timetableJsonSourceUrl) {
+            const loaded = await loadStoreFromJsonUrl(timetableJsonSourceUrl, { initial: true });
+            if (!loaded) tryLocalStorage();
+            if (!loaded && window.__FACULTY_ONLY__ && timetableJsonSourceUrl) timetableJsonAutoRefresh = true;
+        } else {
+            tryLocalStorage();
+        }
+        window.TimetableMobile.ready = true;
+        bindTimetableJsonRefresh();
+    })();
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(registration => {
+                    console.log('ServiceWorker registration successful');
+                })
+                .catch(err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+        });
+    }
+})();
+</script>
+
+
+</body></html>
