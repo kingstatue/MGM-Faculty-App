@@ -1057,60 +1057,13 @@
             display: none;
             margin-bottom: 12px;
             padding: 12px;
-            border-radius: 12px;
+            border-radius: 10px;
             background: #fff7ed;
             border: 1px solid #fdba74;
             color: #9a3412;
             font-size: 12px;
             line-height: 1.45;
         }
-        #login-screen h2 { margin: 0 0 6px; font-size: 1rem; }
-        #login-screen .sub { margin-bottom: 14px; }
-        #login-input {
-            font-size: 15px;
-            font-weight: 600;
-            background: #f8fafc;
-            margin-bottom: 8px;
-            border: 1px solid #cbd5e1;
-            border-radius: 10px;
-            width: 100%;
-            padding: 9px 12px;
-        }
-        #login-error { margin: 0 0 10px; }
-        #btn-login {
-            margin-bottom: 0;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-        }
-        .logged-in-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 12px;
-            padding: 8px 12px;
-            border-radius: 10px;
-            background: #ecfdf5;
-            border: 1px solid #86efac;
-            font-size: 0.82rem;
-        }
-        .logged-in-bar span { font-weight: 700; color: #047857; min-width: 0; }
-        #btn-logout {
-            width: auto;
-            flex-shrink: 0;
-            margin: 0;
-            padding: 6px 12px;
-            font-size: 12px;
-            background: #fff;
-            color: #64748b;
-            border: 1px solid var(--border);
-            box-shadow: none;
-        }
-        #faculty-select:disabled, #absent_faculty_select:disabled {
-            opacity: 1;
-            color: var(--text);
-            -webkit-text-fill-color: var(--text);
-        }
-        html.faculty-login-saved #login-screen { display: none !important; }
     </style>
     <script>
 /**
@@ -1246,11 +1199,7 @@
     }
 
     function leaveFacultyDropdownList() {
-        const all = globalMasterFacultyRoster.filter(isIndividualFacultyCode);
-        const loggedIn = typeof global.__getLoggedInFacultyCode === 'function'
-            ? global.__getLoggedInFacultyCode() : null;
-        if (loggedIn && all.includes(loggedIn)) return [loggedIn];
-        return all;
+        return globalMasterFacultyRoster.filter(isIndividualFacultyCode);
     }
 
     function staffMatchesAbsent(entryStaff, absentStaff) {
@@ -1370,23 +1319,15 @@
         const dropdown = document.getElementById('absent_faculty_select');
         if (!dropdown) return;
         const previous = dropdown.value;
-        const list = leaveFacultyDropdownList().slice().sort(compareStaffCodes);
-        dropdown.innerHTML = list.length > 1
-            ? '<option value="">-- Choose Faculty --</option>'
-            : '';
-        list.forEach(teacher => {
+        dropdown.innerHTML = '<option value="">-- Choose Faculty --</option>';
+        leaveFacultyDropdownList().slice().sort(compareStaffCodes).forEach(teacher => {
             const opt = document.createElement('option');
             opt.value = teacher;
             opt.textContent = staffDisplayLabel(teacher);
             dropdown.appendChild(opt);
         });
-        const loggedIn = typeof global.__getLoggedInFacultyCode === 'function'
-            ? global.__getLoggedInFacultyCode() : null;
-        dropdown.disabled = !!(loggedIn && list.length === 1);
-        if (previous && list.includes(previous)) {
+        if (previous && leaveFacultyDropdownList().includes(previous)) {
             dropdown.value = previous;
-        } else if (list.length === 1) {
-            dropdown.value = list[0];
         } else {
             resetAnalysisCard();
         }
@@ -1918,33 +1859,12 @@
     </script>
 </head>
 <body class="has-app-dock">
-<script>
-try {
-    if (localStorage.getItem('facultyMobileLogin') || localStorage.getItem('facultyMobileName')) {
-        document.documentElement.classList.add('faculty-login-saved');
-    }
-} catch (e) {}
-</script>
 <!-- TT_EMBED_MARKER -->
 <div class="wrap">
     <h1 id="college-title">College — MGM Mobile</h1>
     <p class="sub" id="college-sub">Timetable · leave &amp; substitution — tap tabs below</p>
 
-    <div id="login-screen" class="card hidden">
-        <h2>Faculty sign in</h2>
-        <p class="sub">Enter your name or code to view your timetable and leave requests.</p>
-        <label for="login-input">Name or initials</label>
-        <input type="text" id="login-input" class="form-control" autocomplete="username" placeholder="e.g. Anupama or AA" autocapitalize="words">
-        <p id="login-error" class="err hidden" role="alert"></p>
-        <button type="button" id="btn-login">Sign in</button>
-    </div>
-
-    <div id="logged-in-bar" class="logged-in-bar hidden">
-        <span id="logged-in-label">Signed in</span>
-        <button type="button" id="btn-logout">Sign out</button>
-    </div>
-
-    <div id="faculty-app" class="hidden">
+    <div id="faculty-app" class="">
     <div id="panel-timetable" class="app-panel">
         <div class="card controls-card">
             <label for="faculty-select">Faculty name</label>
@@ -1952,16 +1872,19 @@ try {
             <label>Day</label>
             <div class="day-tabs" id="day-tabs"><button type="button" class="tab-btn active" data-day="Monday">Mon</button><button type="button" class="tab-btn" data-day="Tuesday">Tue</button><button type="button" class="tab-btn" data-day="Wednesday">Wed</button><button type="button" class="tab-btn" data-day="Thursday">Thu</button><button type="button" class="tab-btn" data-day="Friday">Fri</button><button type="button" class="tab-btn" data-day="Saturday">Sat</button></div>
             <select id="day-select" class="day-select" aria-hidden="true" tabindex="-1"><option value="Monday">Monday</option><option value="Tuesday">Tuesday</option><option value="Wednesday">Wednesday</option><option value="Thursday">Thursday</option><option value="Friday">Friday</option><option value="Saturday">Saturday</option></select>
-            <span class="pill" id="hours-pill">1 hr(s) on Monday</span>
+            <span class="pill" id="hours-pill">4 hr(s) on Monday</span>
         </div>
 
         <div class="card">
             <div class="my-timetable-header">
-                <h2 id="my-title">Anupama (AA) — Monday</h2>
+                <h2 id="my-title">Abhijna (ABJ) — Monday</h2>
                 <button type="button" id="btn-faculty-view" class="view-toggle-btn" aria-pressed="false">Whole week</button>
             </div>
-            <div id="my-timetable"><div class="faculty-timetable-block"><div class="faculty-block-head">Monday</div><p class="sections-scroll-hint faculty-scroll-hint">Swipe left for all time slots →</p><div class="faculty-scroll-wrap"><table class="faculty-grid-table"><thead><tr><th class="faculty-day-col">Time</th><th class="slot-head-col faculty-head-day">9-9.50</th><th class="slot-head-col faculty-head-day">9.55-10.45</th><th class="slot-head-col faculty-head-day">11-11.50</th><th class="slot-head-col faculty-head-day">11.55-12.45</th><th class="slot-head-col faculty-head-day">12.45-1.30</th><th class="slot-head-col faculty-head-day">1.30-2.20</th><th class="slot-head-col faculty-head-day">2.25-3.15</th><th class="slot-head-col faculty-head-day">3.20-4.10</th><th class="slot-head-col faculty-head-day">4.15-5.05</th><th class="slot-head-col faculty-head-day slot-evening-start">1.30-2.15(3rdBCAOnly)</th><th class="slot-head-col faculty-head-day">2:15-3</th><th class="slot-head-col faculty-head-day">3-3:45</th><th class="slot-head-col faculty-head-day">3:45-4:30</th><th class="slot-head-col faculty-head-day">4:45-5:30</th><th class="slot-head-col faculty-head-day">5:30-6:15</th></tr></thead><tbody><tr><td class="faculty-day-col">Classes</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">3BCA C
-R PROG [SH1]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free slot-evening-start slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td></tr></tbody></table></div></div></div>
+            <div id="my-timetable"><div class="faculty-timetable-block"><div class="faculty-block-head">Monday</div><p class="sections-scroll-hint faculty-scroll-hint">Swipe left for all time slots →</p><div class="faculty-scroll-wrap"><table class="faculty-grid-table"><thead><tr><th class="faculty-day-col">Time</th><th class="slot-head-col faculty-head-day">9-9.50</th><th class="slot-head-col faculty-head-day">9.55-10.45</th><th class="slot-head-col faculty-head-day">11-11.50</th><th class="slot-head-col faculty-head-day">11.55-12.45</th><th class="slot-head-col faculty-head-day">12.45-1.30</th><th class="slot-head-col faculty-head-day">1.30-2.20</th><th class="slot-head-col faculty-head-day">2.25-3.15</th><th class="slot-head-col faculty-head-day">3.20-4.10</th><th class="slot-head-col faculty-head-day">4.15-5.05</th><th class="slot-head-col faculty-head-day slot-evening-start">1.30-2.15(3rdBCAOnly)</th><th class="slot-head-col faculty-head-day">2:15-3</th><th class="slot-head-col faculty-head-day">3-3:45</th><th class="slot-head-col faculty-head-day">3:45-4:30</th><th class="slot-head-col faculty-head-day">4:45-5:30</th><th class="slot-head-col faculty-head-day">5:30-6:15</th></tr></thead><tbody><tr><td class="faculty-day-col">Classes</td><td class="busy">2BCA A
+C# [LH4]</td><td class="busy">1BCA B
+DISC.MATHS [LH7]</td><td class="slot-free">—</td><td class="busy">1BCA C(AIML)
+COMP.MATHS [LH5]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">2BSc
+COA_EL [SH2]</td><td class="slot-free slot-evening-start slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td></tr></tbody></table></div></div></div>
         </div>
 
         <div class="sections-picker-bar">
@@ -1970,8 +1893,8 @@ R PROG [SH1]</td><td class="slot-free">—</td><td class="slot-free">—</td><td
         </div>
 
         <div class="card sections-card">
-            <h2 class="sections-card-header" id="sections-title">1st BCA B (Eve) — evening · whole week</h2>
-            <div id="sections-timetable" class="table-wrap"><div class="faculty-timetable-block sections-block sections-block--evening"><div class="faculty-block-head">1st BCA B (Eve) — Evening college · whole week</div><p class="sections-scroll-hint faculty-scroll-hint">Mon–Fri · swipe →</p><div class="faculty-scroll-wrap"><table class="faculty-grid-table sections-grid-table"><thead><tr><th class="faculty-day-col">Day</th><th class="slot-head-col faculty-head-evening slot-evening-col">1.30-2.15(3rdBCAOnly)</th><th class="slot-head-col faculty-head-evening slot-evening-col">2:15-3</th><th class="slot-head-col faculty-head-evening slot-evening-col">3-3:45</th><th class="slot-head-col faculty-head-evening slot-evening-col">3:45-4:30</th><th class="slot-head-col faculty-head-evening slot-evening-col">4:45-5:30</th><th class="slot-head-col faculty-head-evening slot-evening-col">5:30-6:15</th></tr></thead><tbody><tr><td class="faculty-day-col">Mon</td><td class="slot-free slot-evening-col">—</td><td colspan="2" class="busy lab-block slot-evening-col">C LAB (DP) [Lab5]</td><td class="busy slot-evening-col">DISC.MATHS (RAM)</td><td class="busy slot-evening-col">ENG</td><td class="busy slot-evening-col">PROG in C (DP)</td></tr><tr><td class="faculty-day-col">Tue</td><td class="slot-free slot-evening-col">—</td><td class="busy slot-evening-col">ELECTIVE: HND [SKLR3] · KAN [SKLR4]</td><td class="busy slot-evening-col">ENG</td><td class="busy slot-evening-col">DISC.MATHS (RAM)</td><td class="busy slot-evening-col">DISC.MATHS (VAR_E)</td><td class="busy slot-evening-col">FOC (ANJ_E)</td></tr><tr><td class="faculty-day-col">Wed</td><td class="slot-free slot-evening-col">—</td><td class="busy slot-evening-col">ENG</td><td class="busy slot-evening-col">PROG in C (DP)</td><td class="busy slot-evening-col">ELECTIVE: HND [SKLR3] · KAN [SKLR4]</td><td colspan="2" class="busy lab-block slot-evening-col">FOC LAB (ANJ_E) [Lab5]</td></tr><tr><td class="faculty-day-col">Thu</td><td class="slot-free slot-evening-col">—</td><td colspan="2" class="busy lab-block slot-evening-col">C LAB (DP) [Lab5]</td><td class="busy slot-evening-col">PROG in C (DP)</td><td class="busy slot-evening-col">FOC (ANJ_E)</td><td class="busy slot-evening-col">CONST</td></tr><tr><td class="faculty-day-col">Fri</td><td class="slot-free slot-evening-col">—</td><td class="busy slot-evening-col">CONST</td><td class="busy slot-evening-col">DISC.MATHS (RAM)</td><td class="busy slot-evening-col">FOC (ANJ_E)</td><td class="busy slot-evening-col">ELECTIVE: HND [SKLR3] · KAN [SKLR4]</td><td class="busy slot-evening-col">ENG</td></tr></tbody></table></div><p class="sections-scroll-hint faculty-scroll-hint">Saturday · swipe →</p><div class="faculty-scroll-wrap"><table class="faculty-grid-table sections-grid-table"><thead><tr><th class="faculty-day-col">Day</th><th class="slot-head-col faculty-head-evening slot-evening-col">1-1.45</th><th class="slot-head-col faculty-head-evening slot-evening-col">1.45-2.30</th><th class="slot-head-col faculty-head-evening slot-evening-col">2.30-3.15</th><th class="slot-head-col faculty-head-evening slot-evening-col">3.15-4</th><th class="slot-head-col faculty-head-evening slot-evening-col">4.15-5</th><th class="slot-head-col faculty-head-evening slot-evening-col">5-5.45</th></tr></thead><tbody><tr><td class="faculty-day-col faculty-sat-label">Sat</td><td colspan="2" class="busy lab-block slot-evening-col">FOC LAB (ANJ_E) [Lab5]</td><td class="busy slot-evening-col">FOC (ANJ_E)</td><td class="busy slot-evening-col">ELECTIVE: HND [SKLR3] · KAN [SKLR4]</td><td class="busy slot-evening-col">PROG in C (DP)</td><td class="busy slot-evening-col">DISC.MATHS (VAR_E)</td></tr></tbody></table></div></div></div>
+            <h2 class="sections-card-header" id="sections-title">Sections · Monday</h2>
+            <div id="sections-timetable" class="table-wrap"><div class="sections-block sections-block--day"><h3>Day College</h3><p class="sections-scroll-hint">Swipe left for all time slots →</p><div class="sections-scroll-wrap"><table class="sections-grid-table"><thead><tr><th class="section-head-col">Section</th><th class="slot-head-col">9-9.50</th><th class="slot-head-col">9.55-10.45</th><th class="slot-head-col">11-11.50</th><th class="slot-head-col">11.55-12.45</th><th class="slot-head-col">12.45-1.30</th><th class="slot-head-col">1.30-2.20</th><th class="slot-head-col">2.25-3.15</th><th class="slot-head-col">3.20-4.10</th><th class="slot-head-col">4.15-5.05</th></tr></thead><tbody><tr class="section-data-row"><td class="section-name">1st BCA A</td><td class="busy">FOC (RAK) [SH3]</td><td class="busy">DISC.MATHS (AKS) [SH3]</td><td colspan="2" class="busy lab-block">C LAB (RNC) [Lab1+Lab2]</td><td class="slot-free">—</td><td class="busy">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5]</td><td class="busy">CONST [SH3]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">1st BCA B</td><td class="busy">FOC (RAS) [LH7]</td><td class="busy">DISC.MATHS (ABJ) [LH7]</td><td colspan="2" class="busy lab-block">FOC LAB (RAS) [Lab5+MScLab]</td><td class="slot-free">—</td><td class="busy">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5]</td><td class="busy">CONST [LH7]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">1st BCA C(AIML)</td><td colspan="2" class="busy lab-block">C LAB (JRP) [SLab2+SLab3]</td><td class="busy">FOC (SAN) [LH5]</td><td class="busy">COMP.MATHS (ABJ) [LH5]</td><td class="slot-free">—</td><td class="busy">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5]</td><td class="busy">CONST [LH5]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">1st BSc</td><td colspan="2" class="busy lab-block">F_C LAB (RAM) [Lab5]</td><td class="slot-free">—</td><td class="busy">F_C (RAM) [SH1]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">2nd BCA A</td><td class="busy">C# (ABJ) [LH4]</td><td class="busy">CN (MIT) [LH4]</td><td class="busy">ENG [LH4]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">2nd BCA B</td><td class="slot-free">—</td><td class="busy">CN (RAK) [LH6]</td><td class="busy">ENG [LH6]</td><td class="busy">C# (AKS) [LH6]</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">C# LAB (AKS) [Lab4]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">2nd BCA C</td><td class="busy">DBMS (RMR) [SH4]</td><td class="busy">C# (DK) [SH4]</td><td class="busy">ENG [SH4]</td><td class="busy">CN (SHI) [SH4]</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">DBMS LAB (RMR) [Lab1+Lab2]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">2nd BSc</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">COA_EL (ABJ) [SH2]</td></tr><tr class="section-data-row stream-break"><td class="section-name">3rd BCA A</td><td class="busy">CRYPT (PRJ) [LH1]</td><td class="busy">WEB (NL1) [LH1]</td><td colspan="2" class="busy lab-block">WEB LAB (NL1) [Lab4]</td><td class="slot-free">—</td><td class="busy">SE (JRP) [LH1]</td><td class="busy">CLOUD (RAS) [LH1]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">3rd BCA B</td><td class="busy">CRYPT (SUSH) [SH2]</td><td class="busy">R PROG (RAS) [SH2]</td><td colspan="2" class="busy lab-block">WEB LAB (MIT) [SLab2+SLab3]</td><td class="slot-free">—</td><td class="busy">SE (RNC) [SH2]</td><td class="busy">CLOUD (PRK) [SH2]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">3rd BCA C</td><td class="busy">DAA (PRK) [SH1]</td><td class="busy">SE (SUSH) [SH1]</td><td class="busy">CRYPT (RMR) [SH1]</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">WEB LAB (DK) [Lab5+MScLab]</td><td class="busy">R PROG (AA) [SH1]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">3rd BSc</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">OS (PRJ) [SH2]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">PYTHON (JRP) [SH1]</td><td class="slot-free">—</td></tr></tbody></table></div></div><div class="sections-block sections-block--evening"><h3>Evening College</h3><p class="sections-scroll-hint">Swipe left for all time slots →</p><div class="sections-scroll-wrap"><table class="sections-grid-table"><thead><tr><th class="section-head-col">Section</th><th class="slot-head-col">1.30-2.15(3rdBCAOnly)</th><th class="slot-head-col">2:15-3</th><th class="slot-head-col">3-3:45</th><th class="slot-head-col">3:45-4:30</th><th class="slot-head-col">4:45-5:30</th><th class="slot-head-col">5:30-6:15</th></tr></thead><tbody><tr class="section-data-row"><td class="section-name">1st BCA A (Eve)</td><td class="slot-free">—</td><td class="busy">ENG</td><td class="busy">PROG in C (VAR_E)</td><td class="busy">FOC (AKN_E)</td><td colspan="2" class="busy lab-block">FOC LAB (AKN_E) [Lab5]</td></tr><tr class="section-data-row"><td class="section-name">1st BCA B (Eve)</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">C LAB (DP) [Lab5]</td><td class="busy">DISC.MATHS (RAM)</td><td class="busy">ENG</td><td class="busy">PROG in C (DP)</td></tr><tr class="section-data-row stream-break"><td class="section-name">2nd BCA A (Eve)</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">C# LAB (DK + ANJ_E) [SLab2+SLab3]</td><td class="busy">DBMS (RMR)</td><td class="busy">ELECTIVE: KAN · HND</td><td class="busy">CN (SHI)</td></tr><tr class="section-data-row"><td class="section-name">2nd BCA B (Eve)</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">DBMS LAB (SUSH + SAJ_E) [Lab2+Lab3]</td><td class="busy">DBMS (SAJ_E)</td><td class="busy">ELECTIVE: KAN · HND</td><td class="busy">CN (MVP)</td></tr><tr class="section-data-row stream-break"><td class="section-name">3rd BCA A (Eve)</td><td class="busy lab-block">AITOOLS LAB [SLab2]</td><td class="busy">R PROG (ANV_E)</td><td class="busy">CRYPT (AKN_E)</td><td class="busy">CLOUD (NL1_E)</td><td colspan="2" class="busy lab-block">DAA LAB (PRK + RAM) [SLab2+SLab3]</td></tr><tr class="section-data-row"><td class="section-name">3rd BCA B (Eve)</td><td class="busy lab-block">AITOOLS LAB [SLab3]</td><td class="busy">DAA (VAR_E)</td><td class="busy">CRYPT (ANV_E)</td><td class="busy">SE (RNC)</td><td colspan="2" class="busy lab-block">DAA LAB (VAR_E + AKS) [Lab4]</td></tr></tbody></table></div></div></div>
         </div>
     </div>
 
@@ -2795,143 +2718,7 @@ window.TimetableMobile = { activeDay: 'Monday' };
     let timetableJsonRefreshInFlight = false;
     let timetableJsonAutoRefresh = false;
 
-    const FACULTY_LOGIN_KEY = 'facultyMobileLogin';
-
     const el = id => document.getElementById(id);
-
-    function normalizeLoginInput(s) {
-        return String(s || '').trim().toLowerCase().replace(/\s+/g, '');
-    }
-
-    function readPersistedFacultyCode() {
-        try {
-            let code = localStorage.getItem(FACULTY_LOGIN_KEY) || '';
-            if (!code) {
-                const raw = localStorage.getItem('facultyMobileLoginData');
-                if (raw) {
-                    const parsed = JSON.parse(raw);
-                    code = parsed && parsed.code ? String(parsed.code).trim() : '';
-                }
-            }
-            if (!code) code = localStorage.getItem('facultyMobileName') || '';
-            return String(code || '').trim();
-        } catch (e) {
-            return '';
-        }
-    }
-
-    function getLoggedInFacultyCode() {
-        const code = readPersistedFacultyCode();
-        if (!code || !Object.keys(store.faculty).length || !store.faculty[code]) return '';
-        try {
-            if (localStorage.getItem(FACULTY_LOGIN_KEY) !== code) {
-                localStorage.setItem(FACULTY_LOGIN_KEY, code);
-            }
-            localStorage.setItem('facultyMobileName', code);
-            localStorage.setItem('facultyMobileLoginData', JSON.stringify({ code, at: Date.now() }));
-        } catch (e) {}
-        return code;
-    }
-
-    function isFacultyLoggedIn() {
-        return !!getLoggedInFacultyCode();
-    }
-
-    window.__getLoggedInFacultyCode = getLoggedInFacultyCode;
-
-    function setLoggedInFacultyCode(code) {
-        const c = String(code || '').trim();
-        if (!c || !store.faculty[c]) return false;
-        try {
-            localStorage.setItem(FACULTY_LOGIN_KEY, c);
-            localStorage.setItem('facultyMobileName', c);
-            localStorage.setItem('facultyMobileLoginData', JSON.stringify({ code: c, at: Date.now() }));
-        } catch (e) {}
-        activeFaculty = c;
-        return true;
-    }
-
-    function clearFacultyLogin() {
-        try {
-            localStorage.removeItem(FACULTY_LOGIN_KEY);
-            localStorage.removeItem('facultyMobileName');
-            localStorage.removeItem('facultyMobileLoginData');
-        } catch (e) {}
-        activeFaculty = '';
-    }
-
-    function resolveFacultyFromLogin(input) {
-        const raw = String(input || '').trim();
-        if (!raw) return null;
-        const norm = normalizeLoginInput(raw);
-        const codes = Object.keys(store.faculty).sort(compareFacultyCodes);
-
-        const exactCode = codes.find(c => c.toLowerCase() === norm);
-        if (exactCode) return exactCode;
-
-        const codeNoEve = codes.find(c => c.replace(/_E$/i, '').toLowerCase() === norm);
-        if (codeNoEve) return codeNoEve;
-
-        const names = store.staffNames || {};
-        for (const code of codes) {
-            const name = facultyDisplayName(code);
-            if (!name || name === code) continue;
-            const nameNorm = normalizeLoginInput(name);
-            if (nameNorm === norm) return code;
-            const firstName = name.split(/\s+/)[0];
-            if (normalizeLoginInput(firstName) === norm) return code;
-            if (norm.length >= 3 && nameNorm.startsWith(norm)) return code;
-        }
-
-        const partialNameMatches = codes.filter(code => {
-            const name = facultyDisplayName(code);
-            if (!name || name === code) return false;
-            return normalizeLoginInput(name).includes(norm);
-        });
-        if (partialNameMatches.length === 1) return partialNameMatches[0];
-
-        return null;
-    }
-
-    function updateLoggedInBar() {
-        const bar = el('logged-in-bar');
-        const label = el('logged-in-label');
-        const code = getLoggedInFacultyCode();
-        if (!bar || !label) return;
-        if (!code) {
-            bar.classList.add('hidden');
-            return;
-        }
-        label.textContent = 'Signed in as ' + facultyDisplayLabel(code);
-        bar.classList.remove('hidden');
-    }
-
-    function showLoginError(msg) {
-        const err = el('login-error');
-        if (!err) return;
-        if (msg) {
-            err.textContent = msg;
-            err.classList.remove('hidden');
-        } else {
-            err.textContent = '';
-            err.classList.add('hidden');
-        }
-    }
-
-    function attemptFacultyLogin(input) {
-        const code = resolveFacultyFromLogin(input);
-        if (!code) {
-            showLoginError('Name or code not found. Try your full name or code (e.g. AA).');
-            return false;
-        }
-        setLoggedInFacultyCode(code);
-        showLoginError('');
-        try { document.documentElement.classList.add('faculty-login-saved'); } catch (e) {}
-        const loginInput = el('login-input');
-        if (loginInput) loginInput.value = '';
-        showFacultyApp();
-        return true;
-    }
 
     function syncActiveDay(day) {
         const d = DAYS.includes(day) ? day : 'Monday';
@@ -3915,18 +3702,10 @@ window.TimetableMobile = { activeDay: 'Monday' };
 
     function buildFacultySelect() {
         const sel = el('faculty-select');
-        const loggedIn = getLoggedInFacultyCode();
-        const names = loggedIn
-            ? [loggedIn]
-            : Object.keys(store.faculty).sort(compareFacultyCodes);
+        const names = Object.keys(store.faculty).sort(compareFacultyCodes);
         sel.innerHTML = names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(facultyDisplayLabel(n))}</option>`).join('');
-        if (loggedIn) {
-            activeFaculty = loggedIn;
-        } else if (!activeFaculty || !names.includes(activeFaculty)) {
-            activeFaculty = names[0] || '';
-        }
+        if (!activeFaculty || !names.includes(activeFaculty)) activeFaculty = names[0] || '';
         sel.value = activeFaculty;
-        sel.disabled = !!loggedIn;
     }
 
     function buildDayTabs() {
@@ -3970,18 +3749,11 @@ window.TimetableMobile = { activeDay: 'Monday' };
     function showFacultyApp() {
         const hasData = Object.keys(store.faculty).length && Object.keys(store.daywise).length;
         el('no-data').classList.toggle('hidden', hasData);
+        el('faculty-app').classList.toggle('hidden', !hasData);
         const dock = el('app-dock');
-        const loginScreen = el('login-screen');
-
-        if (!hasData) {
-            el('faculty-app').classList.add('hidden');
-            if (loginScreen) loginScreen.classList.add('hidden');
-            if (dock) dock.classList.add('hidden');
-            updateLoggedInBar();
-            document.body.classList.remove('has-app-dock');
-            return;
-        }
-
+        if (dock) dock.classList.toggle('hidden', !hasData);
+        document.body.classList.toggle('has-app-dock', hasData);
+        if (!hasData) return;
         el('college-title').textContent = store.college + ' — MGM Mobile';
         const sub = el('college-sub');
         if (sub) {
@@ -3989,22 +3761,6 @@ window.TimetableMobile = { activeDay: 'Monday' };
                 ? 'Timetable · leave & substitution'
                 : 'Timetable · leave & substitution — tap tabs below';
         }
-
-        if (!isFacultyLoggedIn()) {
-            if (loginScreen) loginScreen.classList.remove('hidden');
-            el('faculty-app').classList.add('hidden');
-            if (dock) dock.classList.add('hidden');
-            updateLoggedInBar();
-            document.body.classList.remove('has-app-dock');
-            return;
-        }
-
-        if (loginScreen) loginScreen.classList.add('hidden');
-        el('faculty-app').classList.remove('hidden');
-        if (dock) dock.classList.remove('hidden');
-        document.body.classList.add('has-app-dock');
-        updateLoggedInBar();
-        activeFaculty = getLoggedInFacultyCode();
         initLeaveModule();
         switchAppPanel(activeAppPanel);
         buildFacultySelect();
@@ -4136,8 +3892,10 @@ window.TimetableMobile = { activeDay: 'Monday' };
 
     function finishStoreBootstrap(options) {
         options = options || {};
-        const loggedIn = getLoggedInFacultyCode();
-        if (loggedIn) activeFaculty = loggedIn;
+        try {
+            const saved = localStorage.getItem('facultyMobileName');
+            if (saved && store.faculty[saved]) activeFaculty = saved;
+        } catch (e) {}
         if (options.embedded || window.__FACULTY_ONLY__) {
             const adminPanel = el('admin-panel');
             if (adminPanel) adminPanel.classList.add('hidden');
@@ -4174,9 +3932,7 @@ window.TimetableMobile = { activeDay: 'Monday' };
         if (options.initial) {
             finishStoreBootstrap();
         } else {
-            const loggedIn = getLoggedInFacultyCode();
-            if (loggedIn) activeFaculty = loggedIn;
-            else if (prevFaculty && store.faculty[prevFaculty]) activeFaculty = prevFaculty;
+            if (prevFaculty && store.faculty[prevFaculty]) activeFaculty = prevFaculty;
             try { localStorage.setItem('timetableMobileData', JSON.stringify(store)); } catch (e) {}
             showFacultyApp();
         }
@@ -4219,13 +3975,6 @@ window.TimetableMobile = { activeDay: 'Monday' };
         const onAppBecameActive = (ev) => {
             if (ev && ev.type === 'visibilitychange' && document.visibilityState !== 'visible') return;
             refreshTimetableJsonIfChanged();
-            if (isValidMobileStore(store)) {
-                const loggedIn = getLoggedInFacultyCode();
-                if (loggedIn) {
-                    activeFaculty = loggedIn;
-                    showFacultyApp();
-                }
-            }
         };
         document.addEventListener('visibilitychange', onAppBecameActive);
         window.addEventListener('pageshow', onAppBecameActive);
@@ -4246,7 +3995,7 @@ window.TimetableMobile = { activeDay: 'Monday' };
             if (!raw) return false;
             store = JSON.parse(raw);
             afterStoreLoaded();
-            finishStoreBootstrap();
+            showFacultyApp();
             return true;
         } catch (e) { return false; }
     }
@@ -4264,43 +4013,11 @@ window.TimetableMobile = { activeDay: 'Monday' };
     const facultySel = el('faculty-select');
     if (facultySel) {
         facultySel.addEventListener('change', () => {
-            if (isFacultyLoggedIn()) {
-                facultySel.value = getLoggedInFacultyCode();
-                return;
-            }
             activeFaculty = facultySel.value;
             try { localStorage.setItem('facultyMobileName', activeFaculty); } catch (e) {}
             renderAll();
         });
     }
-
-    bindClick('btn-login', () => {
-        const input = el('login-input');
-        attemptFacultyLogin(input ? input.value : '');
-    });
-
-    const loginInput = el('login-input');
-    if (loginInput) {
-        loginInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                attemptFacultyLogin(loginInput.value);
-            }
-        });
-    }
-
-    bindClick('btn-logout', () => {
-        clearFacultyLogin();
-        showLoginError('');
-        const loginScreen = el('login-screen');
-        if (loginScreen) loginScreen.classList.remove('hidden');
-        const loginField = el('login-input');
-        if (loginField) {
-            loginField.value = '';
-            loginField.focus();
-        }
-        showFacultyApp();
-    });
 
     bindClick('btn-build', async () => {
         el('admin-error').textContent = '';
