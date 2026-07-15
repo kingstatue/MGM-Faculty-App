@@ -6,7 +6,8 @@ const PRECACHE_ASSETS = [
     'icon-192.png',
     'icon-512.png',
 'index.html',
-'timetable.json'	
+'timetable.json',
+    'subject.json'
 ];
 
 function isTimetableJsonUrl(url) {
