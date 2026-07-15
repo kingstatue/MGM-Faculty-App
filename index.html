@@ -3824,12 +3824,15 @@ window.TimetableMobile = { activeDay: 'Monday' };
                 const rawMap = await res.json();
                 setNormalizedSubjectMap(rawMap);
                 console.log("Loaded subject map from network:", globalSubjectMap);
+                alert("Debug SUCCESS: Loaded " + Object.keys(globalSubjectMap).length + " subjects from subject.json!");
                 try {
                     localStorage.setItem('timetableSubjectMap', JSON.stringify(rawMap));
                 } catch(e) {}
+            } else {
+                alert("Debug FAIL: Status code " + res.status + " trying to fetch subject.json");
             }
         } catch(e) {
-            console.warn("Could not load subject.json from network:", e);
+            alert("Debug ERROR: " + e.message + " while fetching subject.json");
         }
     })();
 
