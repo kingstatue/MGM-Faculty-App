@@ -3801,15 +3801,26 @@ window.TimetableMobile = { activeDay: 'Monday' };
     }
 
     let globalSubjectMap = {};
+    try {
+        const cachedMap = localStorage.getItem('timetableSubjectMap');
+        if (cachedMap) {
+            globalSubjectMap = JSON.parse(cachedMap);
+            console.log("Loaded subject map from localStorage:", globalSubjectMap);
+        }
+    } catch(e) {}
+
     (async function fetchSubjectMap() {
         try {
             const res = await fetch('subject.json', { cache: 'no-store' });
             if (res.ok) {
                 globalSubjectMap = await res.json();
-                console.log("Loaded subject map:", globalSubjectMap);
+                console.log("Loaded subject map from network:", globalSubjectMap);
+                try {
+                    localStorage.setItem('timetableSubjectMap', JSON.stringify(globalSubjectMap));
+                } catch(e) {}
             }
         } catch(e) {
-            console.warn("Could not load subject.json:", e);
+            console.warn("Could not load subject.json from network:", e);
         }
     })();
 
@@ -3893,14 +3904,14 @@ window.TimetableMobile = { activeDay: 'Monday' };
         try {
             console.log("Speaking: ", text);
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en_US'; // Force English locale
+            utterance.lang = 'en-US'; // Force English locale
             utterance.rate = 0.9;
             
             // Try to find a native English voice on the mobile/PC device
             if ('speechSynthesis' in window) {
                 const voices = window.speechSynthesis.getVoices();
                 if (voices && voices.length) {
-                    const enVoice = voices.find(v => v.lang === 'en_US' || v.lang === 'en_GB' || v.lang.startsWith('en-'));
+                    const enVoice = voices.find(v => v.lang === 'en-US' || v.lang === 'en-GB' || v.lang.startsWith('en-'));
                     if (enVoice) {
                         utterance.voice = enVoice;
                     }
