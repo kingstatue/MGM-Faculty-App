@@ -1064,6 +1064,130 @@
             font-size: 12px;
             line-height: 1.45;
         }
+
+        /* Login screen styling */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 120px);
+            padding: 16px;
+        }
+        .login-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 20px;
+            padding: 32px 24px;
+            width: 100%;
+            max-width: 360px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+            text-align: center;
+            animation: loginSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes loginSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .login-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            color: var(--primary);
+            border-radius: 14px;
+            font-size: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.1);
+        }
+        .login-header h2 {
+            font-size: 1.25rem;
+            margin: 0 0 6px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+        .login-header p {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin: 0 0 24px;
+            line-height: 1.45;
+        }
+        .login-body label {
+            text-align: left;
+            margin-bottom: 6px;
+        }
+        .login-body select {
+            font-size: 14px;
+            font-weight: 600;
+            background: #f8fafc;
+            margin-bottom: 18px;
+            border-color: #cbd5e1;
+            padding: 10px 12px;
+        }
+        .login-body button {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 12px;
+            font-size: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+            transition: transform 0.1s;
+        }
+        .login-body button:active {
+            transform: scale(0.98);
+        }
+
+        /* Modal Overlay & PIN Table Printing Styling */
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+        .modal.hidden {
+            display: none !important;
+        }
+        #pin-table-container table {
+            border-spacing: 0;
+            width: 100%;
+        }
+        #pin-table-container th, #pin-table-container td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        #pin-table-container tr:last-child td {
+            border-bottom: none;
+        }
+        
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #pin-modal, #pin-modal * {
+                visibility: visible;
+            }
+            #pin-modal {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: none !important;
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                padding: 0;
+            }
+            #pin-modal .card {
+                box-shadow: none !important;
+                border: none !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                max-height: none !important;
+                overflow: visible !important;
+                padding: 0 !important;
+            }
+            #btn-close-pins, #btn-print-pins {
+                display: none !important;
+            }
+        }
     </style>
     <script>
 /**
@@ -1077,6 +1201,12 @@
     };
     const WEEKDAY_ORDER = LEAVE_DAYS.slice();
     const campusLabList = ['Lab1', 'Lab2', 'Lab3', 'Lab4', 'Lab5', 'SLab1', 'SLab2', 'MScLab'];
+
+    function isLabSubject(subject) {
+        if (!subject) return false;
+        const s = String(subject).toLowerCase();
+        return s.includes('lab') || s.includes('practical') || s.includes('project') || s.includes('seminar');
+    }
 
     let timetableDatabase = emptyDayMap([]);
     let orderedSlotsByDay = emptyDayMap([]);
@@ -1162,6 +1292,59 @@
         });
     }
 
+    function groupAffectedClasses(entries, day) {
+        const sorted = entries.slice().sort((a, b) => {
+            const shiftA = shiftForLeaveEntry(a);
+            const shiftB = shiftForLeaveEntry(b);
+            if (shiftA !== shiftB) return shiftA.localeCompare(shiftB);
+            return leaveSlotSortIndex(day, shiftA, a.slot) - leaveSlotSortIndex(day, shiftB, b.slot);
+        });
+
+        const grouped = [];
+        const skip = new Set();
+
+        for (let i = 0; i < sorted.length; i++) {
+            if (skip.has(i)) continue;
+            const current = sorted[i];
+            const shift = shiftForLeaveEntry(current);
+            const isLab = isLabSubject(current.subject);
+            
+            if (isLab) {
+                let nextIdx = i + 1;
+                let foundNext = null;
+                while (nextIdx < sorted.length) {
+                    const next = sorted[nextIdx];
+                    if (shiftForLeaveEntry(next) === shift &&
+                        next.section === current.section &&
+                        next.subject === current.subject) {
+                        const currentSlotIdx = leaveSlotSortIndex(day, shift, current.slot);
+                        const nextSlotIdx = leaveSlotSortIndex(day, shift, next.slot);
+                        if (nextSlotIdx === currentSlotIdx + 1) {
+                            foundNext = next;
+                            skip.add(nextIdx);
+                            break;
+                        }
+                    }
+                    nextIdx++;
+                }
+                
+                if (foundNext) {
+                    grouped.push({
+                        ...current,
+                        isCombinedLab: true,
+                        slot: `${current.slot} to ${foundNext.slot}`,
+                        firstSlot: current.slot,
+                        secondSlot: foundNext.slot,
+                    });
+                    continue;
+                }
+            }
+            
+            grouped.push(current);
+        }
+        return grouped;
+    }
+
     function escapeHtml(s) {
         return String(s ?? '')
             .replace(/&/g, '&amp;')
@@ -1208,10 +1391,52 @@
         return parseStaffCodes(entryStaff).includes(absentStaff);
     }
 
+    function parseTimeToMinutes(timeStr) {
+        const s = String(timeStr || '').replace(/\./g, ':').trim();
+        const parts = s.split(':');
+        let hour = parseInt(parts[0], 10);
+        let min = parts[1] ? parseInt(parts[1], 10) : 0;
+        
+        if (isNaN(hour)) return null;
+        if (isNaN(min)) min = 0;
+        
+        if (hour >= 1 && hour <= 8) {
+            hour += 12;
+        }
+        return hour * 60 + min;
+    }
+
+    function parseTimeRange(slot) {
+        let clean = String(slot || '').split('(')[0].replace(/\s+/g, '');
+        if (!clean) return null;
+        const parts = clean.split('-');
+        if (parts.length !== 2) return null;
+        const start = parseTimeToMinutes(parts[0]);
+        const end = parseTimeToMinutes(parts[1]);
+        if (start === null || end === null) return null;
+        return { start, end };
+    }
+
+    function slotsOverlap(slotA, slotB) {
+        if (slotA === slotB) return true;
+        if (slotA.includes(' to ')) {
+            return slotA.split(' to ').some(part => slotsOverlap(part, slotB));
+        }
+        if (slotB.includes(' to ')) {
+            return slotB.split(' to ').some(part => slotsOverlap(slotA, part));
+        }
+        const rangeA = parseTimeRange(slotA);
+        const rangeB = parseTimeRange(slotB);
+        if (!rangeA || !rangeB) return false;
+        return rangeA.start < rangeB.end && rangeB.start < rangeA.end;
+    }
+
     function busyStaffAtSlot(dailySchedule, slot) {
         const busy = new Set();
-        dailySchedule.filter(e => e.slot === slot).forEach(e => {
-            parseStaffCodes(e.staff).forEach(s => busy.add(s));
+        dailySchedule.forEach(e => {
+            if (slotsOverlap(e.slot, slot)) {
+                parseStaffCodes(e.staff).forEach(s => busy.add(s));
+            }
         });
         return busy;
     }
@@ -1219,16 +1444,37 @@
     function parseScheduleCell(cellContent) {
         const cell = String(cellContent || '').trim();
         if (!cell || !cell.includes('(')) return null;
-        const staffExtractor = cell.match(/\(([^)]+)\)/);
-        const roomExtractor = cell.match(/\[([^\]]+)\]/);
-        if (!staffExtractor || !staffExtractor[1]) return null;
-        const staffCodes = parseStaffCodes(staffExtractor[1]);
-        if (!staffCodes.length) return null;
+        
+        const cellRoomMatch = cell.match(/\[([^\]]+)\]/);
+        const cellRoom = cellRoomMatch ? cellRoomMatch[1].trim() : 'N/A';
+        
+        const parsedSegments = [];
+        const regex = /([^().\/\[\]]+(?:[.\/][^().\/\[\]]+)*)\s*\(([^)]+)\)(?:\s*\.?\s*(?:\(([^)]+)\)|\[([^\]]+)\]))?/g;
+        
+        for (const match of cell.matchAll(regex)) {
+            const subject = match[1].replace(/^[\/\.\s&]+/, '').trim();
+            const staffStr = match[2].trim();
+            const roomStr = (match[3] || match[4]) ? (match[3] || match[4]).trim() : cellRoom;
+            
+            const staffCodes = parseStaffCodes(staffStr);
+            staffCodes.forEach(code => {
+                parsedSegments.push({
+                    subject: subject,
+                    staff: code,
+                    room: roomStr || 'N/A'
+                });
+            });
+        }
+        
+        if (!parsedSegments.length) return null;
+        
+        const staffAll = parsedSegments.map(ps => ps.staff);
         return {
-            subject: cell.split('(')[0].trim(),
-            staff: staffCodes[0],
-            staffAll: staffCodes,
-            room: roomExtractor ? roomExtractor[1].trim() : 'N/A',
+            subject: parsedSegments[0].subject,
+            staff: staffAll[0],
+            staffAll: staffAll,
+            room: parsedSegments[0].room,
+            segments: parsedSegments
         };
     }
 
@@ -1319,14 +1565,25 @@
         const dropdown = document.getElementById('absent_faculty_select');
         if (!dropdown) return;
         const previous = dropdown.value;
-        dropdown.innerHTML = '<option value="">-- Choose Faculty --</option>';
-        leaveFacultyDropdownList().slice().sort(compareStaffCodes).forEach(teacher => {
+        
+        let list = leaveFacultyDropdownList().slice();
+        const loggedIn = localStorage.getItem('loggedInFaculty');
+        if (loggedIn) {
+            list = list.filter(teacher => teacher === loggedIn);
+            dropdown.innerHTML = '';
+        } else {
+            dropdown.innerHTML = '<option value="">-- Choose Faculty --</option>';
+        }
+        
+        list.sort(compareStaffCodes).forEach(teacher => {
             const opt = document.createElement('option');
             opt.value = teacher;
             opt.textContent = staffDisplayLabel(teacher);
             dropdown.appendChild(opt);
         });
-        if (previous && leaveFacultyDropdownList().includes(previous)) {
+        if (loggedIn && list.includes(loggedIn)) {
+            dropdown.value = loggedIn;
+        } else if (previous && list.includes(previous)) {
             dropdown.value = previous;
         } else {
             resetAnalysisCard();
@@ -1379,12 +1636,12 @@
         return '';
     }
 
-    function buildStaffOptionHtml(index, teacher, leaveDay, targetSection, slot, teachesToday, teachesOtherDays, shift) {
+    function buildStaffOptionHtml(index, teacher, leaveDay, targetSection, slot, teachesToday, teachesOtherDays, shift, firstSlot) {
         let badges = '';
         if (teachesToday) badges += '<span class="opt-badge opt-badge--today">Today</span>';
         if (teachesOtherDays) badges += '<span class="opt-badge opt-badge--exchange">Day swap</span>';
-        const subSubject = substituteSubjectInSection(teacher, leaveDay, targetSection, slot);
-        const timelineHtml = buildTeacherTimelineHtml(teacher, leaveDay, targetSection, teachesToday, teachesOtherDays, shift);
+        const subSubject = substituteSubjectInSection(teacher, leaveDay, targetSection, firstSlot || slot);
+        const timelineHtml = buildTeacherTimelineHtml(teacher, leaveDay, targetSection, shift);
         const profLabel = staffProfLabel(teacher);
         const subAttr = subSubject ? ` data-sub-subject="${escapeHtml(subSubject)}"` : '';
         return `<button type="button" class="replacement-opt" data-value="${escapeHtml(profLabel)}" data-info-text="${escapeHtml(profLabel)}"${subAttr} onclick="LeaveApp.pickReplacement(${index}, this)">
@@ -1411,7 +1668,6 @@
         return (timetableDatabase[day] || []).filter(e => {
             if (e.staff !== teacher) return false;
             if (section && e.section !== section) return false;
-            if (shift && shiftForLeaveEntry(e) !== shift) return false;
             return true;
         });
     }
@@ -1420,66 +1676,117 @@
         return (timetableDatabase[day] || []).filter(e => {
             if (e.staff !== teacher) return false;
             if (e.section === targetSection) return false;
-            if (shift && shiftForLeaveEntry(e) !== shift) return false;
             return true;
         });
     }
 
-    function buildTeacherTimelineHtml(teacher, leaveDay, targetSection, teachesToday, teachesOtherDays, shift) {
+    function groupEntriesForTimeline(entries, day, shift) {
+        const sorted = entries.slice().sort((a, b) => {
+            const shiftA = shiftForLeaveEntry(a);
+            const shiftB = shiftForLeaveEntry(b);
+            if (shiftA !== shiftB) return shiftA.localeCompare(shiftB);
+            return leaveSlotSortIndex(day, shiftA, a.slot) - leaveSlotSortIndex(day, shiftB, b.slot);
+        });
+        
+        const result = [];
+        const skip = new Set();
+        
+        for (let i = 0; i < sorted.length; i++) {
+            if (skip.has(i)) continue;
+            const current = sorted[i];
+            const isLab = isLabSubject(current.subject);
+            
+            if (isLab) {
+                let nextIdx = i + 1;
+                let foundNext = null;
+                while (nextIdx < sorted.length) {
+                    const next = sorted[nextIdx];
+                    if (next.section === current.section &&
+                        next.subject === current.subject) {
+                        const shiftC = shiftForLeaveEntry(current);
+                        const currentSlotIdx = leaveSlotSortIndex(day, shiftC, current.slot);
+                        const nextSlotIdx = leaveSlotSortIndex(day, shiftC, next.slot);
+                        if (nextSlotIdx === currentSlotIdx + 1) {
+                            foundNext = next;
+                            skip.add(nextIdx);
+                            break;
+                        }
+                    }
+                    nextIdx++;
+                }
+                
+                if (foundNext) {
+                    result.push({
+                        ...current,
+                        slotDisplay: `${current.slot} to ${foundNext.slot} Lab`,
+                    });
+                    continue;
+                }
+            }
+            
+            result.push({
+                ...current,
+                slotDisplay: isLab ? `${current.slot} Lab` : current.slot,
+            });
+        }
+        return result;
+    }
+
+    function buildTeacherTimelineHtml(teacher, leaveDay, targetSection, shift) {
         const parts = [];
         const leaveShift = shift || 'day';
 
-        if (teachesToday) {
-            const sameSectionToday = teacherEntriesOnDay(teacher, leaveDay, targetSection, leaveShift);
-            const otherClassesToday = teacherOtherSectionEntriesOnDay(teacher, leaveDay, targetSection, leaveShift);
+        const rawSame = teacherEntriesOnDay(teacher, leaveDay, targetSection, leaveShift);
+        const sameSectionToday = groupEntriesForTimeline(rawSame, leaveDay, leaveShift);
+        const rawOther = teacherOtherSectionEntriesOnDay(teacher, leaveDay, targetSection, leaveShift);
+        const otherClassesToday = groupEntriesForTimeline(rawOther, leaveDay, leaveShift);
 
-            if (sameSectionToday.length) {
-                parts.push(`<div class="timeline-row">
-                    <span class="timeline-label">Today · same section (${escapeHtml(targetSection)})</span>
-                    <span class="timeline-chips">`);
-                sameSectionToday.forEach(e => {
-                    parts.push(`<span class="slot-chip slot-chip--same">${escapeHtml(e.slot)}</span>`);
-                });
-                parts.push('</span></div>');
-            }
-
-            if (otherClassesToday.length) {
-                parts.push(`<div class="timeline-row">
-                    <span class="timeline-label">Today · other sections</span>
-                    <span class="timeline-chips">`);
-                otherClassesToday.forEach(e => {
-                    parts.push(`<span class="slot-chip slot-chip--other">${escapeHtml(e.slot)} · ${escapeHtml(e.section)}</span>`);
-                });
-                parts.push('</span></div>');
-            }
+        if (sameSectionToday.length) {
+            parts.push(`<div class="timeline-row">
+                <span class="timeline-label">Today · same section (${escapeHtml(targetSection)})</span>
+                <span class="timeline-chips">`);
+            sameSectionToday.forEach(e => {
+                parts.push(`<span class="slot-chip slot-chip--same">${escapeHtml(e.slotDisplay)}</span>`);
+            });
+            parts.push('</span></div>');
         }
 
-        if (teachesOtherDays) {
-            const exchangeSlots = [];
-            WEEKDAY_ORDER.forEach(d => {
-                if (d === leaveDay) return;
-                teacherEntriesOnDay(teacher, d, targetSection, leaveShift).forEach(e => {
-                    exchangeSlots.push({ day: d, slot: e.slot, subject: e.subject });
-                });
+        if (otherClassesToday.length) {
+            parts.push(`<div class="timeline-row">
+                <span class="timeline-label">Today · other sections</span>
+                <span class="timeline-chips">`);
+            otherClassesToday.forEach(e => {
+                parts.push(`<span class="slot-chip slot-chip--other">${escapeHtml(e.slotDisplay)} · ${escapeHtml(e.section)}</span>`);
             });
+            parts.push('</span></div>');
+        }
 
-            if (exchangeSlots.length) {
-                parts.push(`<div class="timeline-row">
-                    <span class="timeline-label">Other days · same section (can swap)</span>
-                    <span class="timeline-chips">`);
-                exchangeSlots.forEach(e => {
-                    const dayLabel = DAY_SHORT[e.day] || e.day;
-                    const sub = e.subject ? ` · ${e.subject}` : '';
-                    parts.push(`<span class="slot-chip slot-chip--exchange">${escapeHtml(dayLabel)} ${escapeHtml(e.slot)}${escapeHtml(sub)}</span>`);
-                });
-                parts.push('</span></div>');
-            }
+        const exchangeSlots = [];
+        WEEKDAY_ORDER.forEach(d => {
+            if (d === leaveDay) return;
+            const rawEx = teacherEntriesOnDay(teacher, d, targetSection, leaveShift);
+            const groupedEx = groupEntriesForTimeline(rawEx, d, leaveShift);
+            groupedEx.forEach(e => {
+                exchangeSlots.push({ day: d, slotDisplay: e.slotDisplay, subject: e.subject });
+            });
+        });
 
-            if (!teachesToday) {
-                parts.push(`<div class="timeline-row">
-                    <span class="slot-chip slot-chip--free">Free on ${escapeHtml(leaveDay)} at this hour</span>
-                </div>`);
-            }
+        if (exchangeSlots.length) {
+            parts.push(`<div class="timeline-row">
+                <span class="timeline-label">Other days · same section (can swap)</span>
+                <span class="timeline-chips">`);
+            exchangeSlots.forEach(e => {
+                const dayLabel = DAY_SHORT[e.day] || e.day;
+                const sub = e.subject ? ` · ${e.subject}` : '';
+                parts.push(`<span class="slot-chip slot-chip--exchange">${escapeHtml(dayLabel)} ${escapeHtml(e.slotDisplay)}${escapeHtml(sub)}</span>`);
+            });
+            parts.push('</span></div>');
+        }
+
+        if (!sameSectionToday.length) {
+            parts.push(`<div class="timeline-row">
+                <span class="slot-chip slot-chip--free">Free on ${escapeHtml(leaveDay)} at this hour</span>
+            </div>`);
         }
 
         if (!parts.length) {
@@ -1622,7 +1929,9 @@
 
         let rowsHtml = '';
 
-        if (!affectedClasses.length) {
+        const groupedClasses = groupAffectedClasses(affectedClasses, day);
+
+        if (!groupedClasses.length) {
             rowsHtml = "<p class='leave-empty-options leave-empty-options--ok'>🎉 Free day — no classes scheduled for this faculty.</p>";
             listContainer.innerHTML = rowsHtml;
             resultsCard.style.display = 'block';
@@ -1631,18 +1940,31 @@
         }
 
         function renderAffectedClass(cls, idx) {
-            const busyStaffList = busyStaffAtSlot(dailySchedule, cls.slot);
+            const isTargetLab = isLabSubject(cls.subject);
+            
+            let busyStaffList;
+            if (cls.isCombinedLab) {
+                const busy1 = busyStaffAtSlot(dailySchedule, cls.firstSlot);
+                const busy2 = busyStaffAtSlot(dailySchedule, cls.secondSlot);
+                busyStaffList = new Set([...busy1, ...busy2]);
+            } else {
+                busyStaffList = busyStaffAtSlot(dailySchedule, cls.slot);
+            }
+
             const freeStaffList = globalMasterFacultyRoster.filter(t =>
                 isIndividualFacultyCode(t) && !busyStaffList.has(t) && t !== absentStaff);
 
-            const activeSlotsTimeline = slotsTimelineForLeave(day, cls);
-            const currentSlotIdx = activeSlotsTimeline.indexOf(cls.slot);
-            const nextSlotLabel = (currentSlotIdx !== -1 && currentSlotIdx + 1 < activeSlotsTimeline.length)
-                ? activeSlotsTimeline[currentSlotIdx + 1] : null;
-
-            const activeRoomsThisHour = dailySchedule.filter(e => e.slot === cls.slot).map(e => e.room);
-            const activeRoomsNextHour = nextSlotLabel
-                ? dailySchedule.filter(e => e.slot === nextSlotLabel).map(e => e.room) : [];
+            const firstSlot = cls.firstSlot || cls.slot;
+            let secondSlot = cls.secondSlot;
+            if (!secondSlot) {
+                const activeSlotsTimeline = slotsTimelineForLeave(day, cls);
+                const currentSlotIdx = activeSlotsTimeline.indexOf(cls.slot);
+                secondSlot = (currentSlotIdx !== -1 && currentSlotIdx + 1 < activeSlotsTimeline.length)
+                    ? activeSlotsTimeline[currentSlotIdx + 1] : null;
+            }
+            const activeRoomsThisHour = dailySchedule.filter(e => e.slot === firstSlot).map(e => e.room);
+            const activeRoomsNextHour = secondSlot
+                ? dailySchedule.filter(e => e.slot === secondSlot).map(e => e.room) : [];
 
             const openLabsTwoHourBlock = campusLabList.filter(lab => {
                 const busyNow = activeRoomsThisHour.some(r => r.toLowerCase().includes(lab.toLowerCase()));
@@ -1651,34 +1973,43 @@
             });
 
             const matchingFacultyRosterList = [];
-
             const clsShift = shiftForLeaveEntry(cls);
 
             freeStaffList.forEach(teacher => {
-                const teachesThisClassToday = dailySchedule.some(e =>
-                    e.staff === teacher && e.section === cls.section && shiftForLeaveEntry(e) === clsShift);
-                let teachesThisClassOnOtherDays = false;
+                const teachesSameSectionToday = dailySchedule.some(e =>
+                    e.staff === teacher &&
+                    e.section === cls.section &&
+                    shiftForLeaveEntry(e) === clsShift &&
+                    isLabSubject(e.subject) === isTargetLab
+                );
+
+                let teachesSameSectionOtherDays = false;
                 Object.keys(timetableDatabase).forEach(d => {
-                    if (d !== day && timetableDatabase[d].some(e =>
-                        e.staff === teacher && e.section === cls.section && shiftForLeaveEntry(e) === clsShift)) {
-                        teachesThisClassOnOtherDays = true;
+                    if (d !== day) {
+                        const hasMatch = timetableDatabase[d].some(e =>
+                            e.staff === teacher &&
+                            e.section === cls.section &&
+                            shiftForLeaveEntry(e) === clsShift &&
+                            isLabSubject(e.subject) === isTargetLab
+                        );
+                        if (hasMatch) teachesSameSectionOtherDays = true;
                     }
                 });
 
-                if (teachesThisClassToday || teachesThisClassOnOtherDays) {
+                if (teachesSameSectionToday || teachesSameSectionOtherDays) {
                     matchingFacultyRosterList.push({
                         code: teacher,
-                        teachesToday: teachesThisClassToday,
-                        teachesOtherDays: teachesThisClassOnOtherDays,
+                        sameSecToday: teachesSameSectionToday,
+                        sameSecOtherDays: teachesSameSectionOtherDays
                     });
                 }
             });
 
             matchingFacultyRosterList.sort((a, b) => {
-                if (a.teachesToday && !b.teachesToday) return -1;
-                if (!a.teachesToday && b.teachesToday) return 1;
-                if (a.teachesOtherDays && !b.teachesOtherDays) return -1;
-                if (!a.teachesOtherDays && b.teachesOtherDays) return 1;
+                if (a.sameSecToday && !b.sameSecToday) return -1;
+                if (!a.sameSecToday && b.sameSecToday) return 1;
+                if (a.sameSecOtherDays && !b.sameSecOtherDays) return -1;
+                if (!a.sameSecOtherDays && b.sameSecOtherDays) return 1;
                 return a.code.localeCompare(b.code);
             });
 
@@ -1702,7 +2033,7 @@
                     </p>
                     <div class="option-list">`;
                 matchingFacultyRosterList.forEach(t => {
-                    rowHtml += buildStaffOptionHtml(idx, t.code, day, cls.section, cls.slot, t.teachesToday, t.teachesOtherDays, clsShift);
+                    rowHtml += buildStaffOptionHtml(idx, t.code, day, cls.section, cls.slot, t.sameSecToday, t.sameSecOtherDays, clsShift, cls.firstSlot);
                 });
                 rowHtml += '</div></div>';
             } else {
@@ -1721,16 +2052,8 @@
             return rowHtml;
         }
 
-        const dayClasses = sortAffectedBySlot(
-            affectedClasses.filter(c => shiftForLeaveEntry(c) !== 'evening'),
-            day,
-            'day',
-        );
-        const eveningClasses = sortAffectedBySlot(
-            affectedClasses.filter(c => shiftForLeaveEntry(c) === 'evening'),
-            day,
-            'evening',
-        );
+        const dayClasses = groupedClasses.filter(c => shiftForLeaveEntry(c) !== 'evening');
+        const eveningClasses = groupedClasses.filter(c => shiftForLeaveEntry(c) === 'evening');
         let rowIdx = 0;
 
         if (dayClasses.length) {
@@ -1864,27 +2187,82 @@
     <h1 id="college-title">College — MGM Mobile</h1>
     <p class="sub" id="college-sub">Timetable · leave &amp; substitution — tap tabs below</p>
 
+    <div id="pin-modal" class="modal hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 16px;">
+        <div class="card" style="max-width: 480px; width: 100%; max-height: 80vh; overflow-y: auto; padding: 24px; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); background: #ffffff; display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px;">
+                <h3 style="margin: 0; font-size: 1.1rem; font-weight: 800; color: #0f172a;">Faculty PIN List</h3>
+                <button type="button" id="btn-close-pins" class="secondary" style="margin: 0; width: auto; padding: 6px 12px; font-size: 12px;">Close</button>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--muted); margin: 0 0 16px;">Share these unique 4-digit PINs with the respective teachers to let them log in. Click Close to exit.</p>
+            <div id="pin-table-container" style="flex: 1; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                    <thead>
+                        <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+                            <th style="padding: 10px; font-weight: 700; color: #475569; border-bottom: 1px solid #cbd5e1;">Code</th>
+                            <th style="padding: 10px; font-weight: 700; color: #475569; border-bottom: 1px solid #cbd5e1;">Name</th>
+                            <th style="padding: 10px; font-weight: 700; color: #475569; border-bottom: 1px solid #cbd5e1;">PIN</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pin-table-body">
+                        <!-- populated via js -->
+                    </tbody>
+                </table>
+            </div>
+            <button type="button" id="btn-print-pins" class="btn-leave-primary" style="margin-top: 16px; width: 100%; padding: 10px;">Print PIN List</button>
+        </div>
+    </div>
+
     <div id="faculty-app" class="">
+    <div id="panel-login" class="app-panel hidden">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="login-icon">🔑</div>
+                    <h2>Faculty Login</h2>
+                    <p>Select your profile and enter your 4-digit PIN</p>
+                </div>
+                <div class="login-body">
+                    <label for="login-faculty-select">Faculty Profile</label>
+                    <select id="login-faculty-select" style="margin-bottom: 12px;"></select>
+                    <label for="login-pin-input">4-Digit PIN</label>
+                    <input type="password" id="login-pin-input" maxlength="4" placeholder="Enter PIN" style="padding: 10px 12px; border-radius: 10px; border: 1px solid #cbd5e1; width: 100%; font-size: 15px; font-weight: 700; text-align: center; letter-spacing: 6px; background: #f8fafc; margin-bottom: 20px;">
+                    <div id="login-error-msg" style="color: #dc2626; font-size: 12px; font-weight: 700; margin-bottom: 12px; min-height: 18px; text-align: center;"></div>
+                    <button type="button" id="btn-login-submit">Sign In</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="panel-timetable" class="app-panel">
         <div class="card controls-card">
-            <label for="faculty-select">Faculty name</label>
-            <select id="faculty-select"><option value="ABJ">Abhijna (ABJ)</option><option value="AKN_E">AkshathaNayak (AKN_E)</option><option value="AKS">AkshathaShettigar (AKS)</option><option value="ANJ_E">Anjalin (ANJ_E)</option><option value="AA">Anupama (AA)</option><option value="ANV_E">Anvitha (ANV_E)</option><option value="DP">Damodar (DP)</option><option value="DK">Deepali (DK)</option><option value="JRP">Jayanthi (JRP)</option><option value="MIT">Mithun (MIT)</option><option value="NL1">NL1</option><option value="NL1_E">NL1_E</option><option value="PRJ">Prajnashree (PRJ)</option><option value="PRK">Prakash (PRK)</option><option value="RMR">Rajamoorthy (RMR)</option><option value="RAK">Rakshitha (RAK)</option><option value="RAM">Ramya (RAM)</option><option value="RAS">Rashmi (RAS)</option><option value="RNC">RekhaChandra (RNC)</option><option value="SAN">Sanath (SAN)</option><option value="SAJ_E">Sanjana (SAJ_E)</option><option value="SHI">Shilpa (SHI)</option><option value="SUSH">Sushma (SUSH)</option><option value="VAR_E">Varshini (VAR_E)</option><option value="MVP">Vishwanath (MVP)</option><option value="VVK">Vivek (VVK)</option></select>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
+                <label for="faculty-select" style="margin-bottom: 0;">Faculty name</label>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button type="button" id="btn-speech-toggle" class="secondary" style="margin: 0; padding: 4px 10px; font-size: 10px; border-radius: 6px; width: auto; font-weight: 700; height: 24px; line-height: 1; display: flex; align-items: center; gap: 4px;" onclick="toggleSpeech()" aria-label="Toggle Speech">
+                        <svg id="speech-icon-off" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+                        <svg id="speech-icon-on" style="display:none;" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                        <span id="speech-btn-text">Speech Off</span>
+                    </button>
+                    <button type="button" id="btn-logout" class="secondary" style="margin: 0; padding: 4px 10px; font-size: 10px; border-radius: 6px; width: auto; font-weight: 700; height: 24px; line-height: 1;">Log Out</button>
+                </div>
+            </div>
+            <select id="faculty-select"><option value="RMR">Rajamoorthy (RMR)</option></select>
             <label>Day</label>
             <div class="day-tabs" id="day-tabs"><button type="button" class="tab-btn active" data-day="Monday">Mon</button><button type="button" class="tab-btn" data-day="Tuesday">Tue</button><button type="button" class="tab-btn" data-day="Wednesday">Wed</button><button type="button" class="tab-btn" data-day="Thursday">Thu</button><button type="button" class="tab-btn" data-day="Friday">Fri</button><button type="button" class="tab-btn" data-day="Saturday">Sat</button></div>
             <select id="day-select" class="day-select" aria-hidden="true" tabindex="-1"><option value="Monday">Monday</option><option value="Tuesday">Tuesday</option><option value="Wednesday">Wednesday</option><option value="Thursday">Thursday</option><option value="Friday">Friday</option><option value="Saturday">Saturday</option></select>
-            <span class="pill" id="hours-pill">4 hr(s) on Monday</span>
+            <span class="pill" id="hours-pill">5 hr(s) on Monday</span>
         </div>
 
         <div class="card">
             <div class="my-timetable-header">
-                <h2 id="my-title">Abhijna (ABJ) — Monday</h2>
+                <h2 id="my-title">Rajamoorthy (RMR) — Monday</h2>
                 <button type="button" id="btn-faculty-view" class="view-toggle-btn" aria-pressed="false">Whole week</button>
             </div>
-            <div id="my-timetable"><div class="faculty-timetable-block"><div class="faculty-block-head">Monday</div><p class="sections-scroll-hint faculty-scroll-hint">Swipe left for all time slots →</p><div class="faculty-scroll-wrap"><table class="faculty-grid-table"><thead><tr><th class="faculty-day-col">Time</th><th class="slot-head-col faculty-head-day">9-9.50</th><th class="slot-head-col faculty-head-day">9.55-10.45</th><th class="slot-head-col faculty-head-day">11-11.50</th><th class="slot-head-col faculty-head-day">11.55-12.45</th><th class="slot-head-col faculty-head-day">12.45-1.30</th><th class="slot-head-col faculty-head-day">1.30-2.20</th><th class="slot-head-col faculty-head-day">2.25-3.15</th><th class="slot-head-col faculty-head-day">3.20-4.10</th><th class="slot-head-col faculty-head-day">4.15-5.05</th><th class="slot-head-col faculty-head-day slot-evening-start">1.30-2.15(3rdBCAOnly)</th><th class="slot-head-col faculty-head-day">2:15-3</th><th class="slot-head-col faculty-head-day">3-3:45</th><th class="slot-head-col faculty-head-day">3:45-4:30</th><th class="slot-head-col faculty-head-day">4:45-5:30</th><th class="slot-head-col faculty-head-day">5:30-6:15</th></tr></thead><tbody><tr><td class="faculty-day-col">Classes</td><td class="busy">2BCA A
-C# [LH4]</td><td class="busy">1BCA B
-DISC.MATHS [LH7]</td><td class="slot-free">—</td><td class="busy">1BCA C(AIML)
-COMP.MATHS [LH5]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">2BSc
-COA_EL [SH2]</td><td class="slot-free slot-evening-start slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td></tr></tbody></table></div></div></div>
+            <div id="my-timetable"><div class="faculty-timetable-block"><div class="faculty-block-head">Monday</div><p class="sections-scroll-hint faculty-scroll-hint">Swipe left for all time slots →</p><div class="faculty-scroll-wrap"><table class="faculty-grid-table"><thead><tr><th class="faculty-day-col">Time</th><th class="slot-head-col faculty-head-day">9-9.50</th><th class="slot-head-col faculty-head-day">9.55-10.45</th><th class="slot-head-col faculty-head-day">11-11.50</th><th class="slot-head-col faculty-head-day">11.55-12.45</th><th class="slot-head-col faculty-head-day">12.45-1.30</th><th class="slot-head-col faculty-head-day">1.30-2.20</th><th class="slot-head-col faculty-head-day">2.25-3.15</th><th class="slot-head-col faculty-head-day">3.20-4.10</th><th class="slot-head-col faculty-head-day">4.15-5.05</th><th class="slot-head-col faculty-head-day slot-evening-start">1.30-2.15(3rdBCAOnly)</th><th class="slot-head-col faculty-head-day">2:15-3</th><th class="slot-head-col faculty-head-day">3-3:45</th><th class="slot-head-col faculty-head-day">3:45-4:30</th><th class="slot-head-col faculty-head-day">4:45-5:30</th><th class="slot-head-col faculty-head-day">5:30-6:15</th></tr></thead><tbody><tr><td class="faculty-day-col">Classes</td><td class="busy">2BCA C
+DBMS [SH4]</td><td class="slot-free">—</td><td class="busy">3BCA C
+CRYPT [SH1]</td><td class="slot-free">—</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">2BCA C
+DBMS LAB [Lab1+Lab2]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free slot-evening-start slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="busy slot-evening-col">2BCA A (Eve)
+DBMS [SKLR1]</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td></tr></tbody></table></div></div></div>
         </div>
 
         <div class="sections-picker-bar">
@@ -1894,7 +2272,7 @@ COA_EL [SH2]</td><td class="slot-free slot-evening-start slot-evening-col">—</
 
         <div class="card sections-card">
             <h2 class="sections-card-header" id="sections-title">Sections · Monday</h2>
-            <div id="sections-timetable" class="table-wrap"><div class="sections-block sections-block--day"><h3>Day College</h3><p class="sections-scroll-hint">Swipe left for all time slots →</p><div class="sections-scroll-wrap"><table class="sections-grid-table"><thead><tr><th class="section-head-col">Section</th><th class="slot-head-col">9-9.50</th><th class="slot-head-col">9.55-10.45</th><th class="slot-head-col">11-11.50</th><th class="slot-head-col">11.55-12.45</th><th class="slot-head-col">12.45-1.30</th><th class="slot-head-col">1.30-2.20</th><th class="slot-head-col">2.25-3.15</th><th class="slot-head-col">3.20-4.10</th><th class="slot-head-col">4.15-5.05</th></tr></thead><tbody><tr class="section-data-row"><td class="section-name">1st BCA A</td><td class="busy">FOC (RAK) [SH3]</td><td class="busy">DISC.MATHS (AKS) [SH3]</td><td colspan="2" class="busy lab-block">C LAB (RNC) [Lab1+Lab2]</td><td class="slot-free">—</td><td class="busy">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5]</td><td class="busy">CONST [SH3]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">1st BCA B</td><td class="busy">FOC (RAS) [LH7]</td><td class="busy">DISC.MATHS (ABJ) [LH7]</td><td colspan="2" class="busy lab-block">FOC LAB (RAS) [Lab5+MScLab]</td><td class="slot-free">—</td><td class="busy">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5]</td><td class="busy">CONST [LH7]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">1st BCA C(AIML)</td><td colspan="2" class="busy lab-block">C LAB (JRP) [SLab2+SLab3]</td><td class="busy">FOC (SAN) [LH5]</td><td class="busy">COMP.MATHS (ABJ) [LH5]</td><td class="slot-free">—</td><td class="busy">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5]</td><td class="busy">CONST [LH5]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">1st BSc</td><td colspan="2" class="busy lab-block">F_C LAB (RAM) [Lab5]</td><td class="slot-free">—</td><td class="busy">F_C (RAM) [SH1]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">2nd BCA A</td><td class="busy">C# (ABJ) [LH4]</td><td class="busy">CN (MIT) [LH4]</td><td class="busy">ENG [LH4]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">2nd BCA B</td><td class="slot-free">—</td><td class="busy">CN (RAK) [LH6]</td><td class="busy">ENG [LH6]</td><td class="busy">C# (AKS) [LH6]</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">C# LAB (AKS) [Lab4]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">2nd BCA C</td><td class="busy">DBMS (RMR) [SH4]</td><td class="busy">C# (DK) [SH4]</td><td class="busy">ENG [SH4]</td><td class="busy">CN (SHI) [SH4]</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">DBMS LAB (RMR) [Lab1+Lab2]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">2nd BSc</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">COA_EL (ABJ) [SH2]</td></tr><tr class="section-data-row stream-break"><td class="section-name">3rd BCA A</td><td class="busy">CRYPT (PRJ) [LH1]</td><td class="busy">WEB (NL1) [LH1]</td><td colspan="2" class="busy lab-block">WEB LAB (NL1) [Lab4]</td><td class="slot-free">—</td><td class="busy">SE (JRP) [LH1]</td><td class="busy">CLOUD (RAS) [LH1]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">3rd BCA B</td><td class="busy">CRYPT (SUSH) [SH2]</td><td class="busy">R PROG (RAS) [SH2]</td><td colspan="2" class="busy lab-block">WEB LAB (MIT) [SLab2+SLab3]</td><td class="slot-free">—</td><td class="busy">SE (RNC) [SH2]</td><td class="busy">CLOUD (PRK) [SH2]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">3rd BCA C</td><td class="busy">DAA (PRK) [SH1]</td><td class="busy">SE (SUSH) [SH1]</td><td class="busy">CRYPT (RMR) [SH1]</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">WEB LAB (DK) [Lab5+MScLab]</td><td class="busy">R PROG (AA) [SH1]</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">3rd BSc</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">OS (PRJ) [SH2]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">PYTHON (JRP) [SH1]</td><td class="slot-free">—</td></tr></tbody></table></div></div><div class="sections-block sections-block--evening"><h3>Evening College</h3><p class="sections-scroll-hint">Swipe left for all time slots →</p><div class="sections-scroll-wrap"><table class="sections-grid-table"><thead><tr><th class="section-head-col">Section</th><th class="slot-head-col">1.30-2.15(3rdBCAOnly)</th><th class="slot-head-col">2:15-3</th><th class="slot-head-col">3-3:45</th><th class="slot-head-col">3:45-4:30</th><th class="slot-head-col">4:45-5:30</th><th class="slot-head-col">5:30-6:15</th></tr></thead><tbody><tr class="section-data-row"><td class="section-name">1st BCA A (Eve)</td><td class="slot-free">—</td><td class="busy">ENG</td><td class="busy">PROG in C (VAR_E)</td><td class="busy">FOC (AKN_E)</td><td colspan="2" class="busy lab-block">FOC LAB (AKN_E) [Lab5]</td></tr><tr class="section-data-row"><td class="section-name">1st BCA B (Eve)</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">C LAB (DP) [Lab5]</td><td class="busy">DISC.MATHS (RAM)</td><td class="busy">ENG</td><td class="busy">PROG in C (DP)</td></tr><tr class="section-data-row stream-break"><td class="section-name">2nd BCA A (Eve)</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">C# LAB (DK + ANJ_E) [SLab2+SLab3]</td><td class="busy">DBMS (RMR)</td><td class="busy">ELECTIVE: KAN · HND</td><td class="busy">CN (SHI)</td></tr><tr class="section-data-row"><td class="section-name">2nd BCA B (Eve)</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">DBMS LAB (SUSH + SAJ_E) [Lab2+Lab3]</td><td class="busy">DBMS (SAJ_E)</td><td class="busy">ELECTIVE: KAN · HND</td><td class="busy">CN (MVP)</td></tr><tr class="section-data-row stream-break"><td class="section-name">3rd BCA A (Eve)</td><td class="busy lab-block">AITOOLS LAB [SLab2]</td><td class="busy">R PROG (ANV_E)</td><td class="busy">CRYPT (AKN_E)</td><td class="busy">CLOUD (NL1_E)</td><td colspan="2" class="busy lab-block">DAA LAB (PRK + RAM) [SLab2+SLab3]</td></tr><tr class="section-data-row"><td class="section-name">3rd BCA B (Eve)</td><td class="busy lab-block">AITOOLS LAB [SLab3]</td><td class="busy">DAA (VAR_E)</td><td class="busy">CRYPT (ANV_E)</td><td class="busy">SE (RNC)</td><td colspan="2" class="busy lab-block">DAA LAB (VAR_E + AKS) [Lab4]</td></tr></tbody></table></div></div></div>
+            <div id="sections-timetable" class="table-wrap"><div class="sections-block sections-block--day"><h3>Day College</h3><p class="sections-scroll-hint">Swipe left for all time slots →</p><div class="sections-scroll-wrap"><table class="sections-grid-table"><thead><tr><th class="section-head-col">Section</th><th class="slot-head-col">9-9.50</th><th class="slot-head-col">9.55-10.45</th><th class="slot-head-col">11-11.50</th><th class="slot-head-col">11.55-12.45</th><th class="slot-head-col">12.45-1.30</th><th class="slot-head-col">1.30-2.20</th><th class="slot-head-col">2.25-3.15</th><th class="slot-head-col">3.20-4.10</th><th class="slot-head-col">4.15-5.05</th></tr></thead><tbody><tr class="section-data-row"><td class="section-name">1st BCA A</td><td class="busy">FOC [SH3]</td><td class="busy">DISC.MATHS [SH3]</td><td colspan="2" class="busy lab-block">C LAB [Lab1+Lab2]</td><td class="slot-free">—</td><td class="busy">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5]</td><td class="busy">CONST [SH3]</td><td class="busy">SPORTS</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">1st BCA B</td><td class="busy">FOC [LH7]</td><td class="busy">DISC.MATHS [LH7]</td><td colspan="2" class="busy lab-block">FOC LAB [Lab5+MScLab]</td><td class="slot-free">—</td><td class="busy">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5]</td><td class="busy">CONST [LH7]</td><td class="busy">RESVD</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">1st BCA C(AIML)</td><td colspan="2" class="busy lab-block">C LAB [SLab2+SLab3]</td><td class="busy">COMP.MATHS [LH5]</td><td class="busy">FOC [LH5]</td><td class="slot-free">—</td><td class="busy">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5]</td><td class="busy">CONST [LH5]</td><td class="busy">LIB</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">1st BSc</td><td colspan="2" class="busy lab-block">F_C LAB [Lab5]</td><td class="slot-free">—</td><td class="busy">F_C [SH1]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">2nd BCA A</td><td class="busy">DBMS [LH4]</td><td class="busy">CN [LH4]</td><td class="busy">ENG [LH4]</td><td class="busy">C# [LH4]</td><td class="slot-free">—</td><td class="busy">RESVD</td><td class="busy">RESVD</td><td class="busy">RESVD</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">2nd BCA B</td><td class="busy">C# [LH6]</td><td class="busy">DBMS [LH6]</td><td class="busy">ENG [LH6]</td><td class="busy">CN [LH6]</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">C# LAB [Lab4]</td><td class="busy">RESVD</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">2nd BCA C</td><td class="busy">DBMS [SH4]</td><td class="busy">C# [SH4]</td><td class="busy">ENG [SH4]</td><td class="busy">CN [SH4]</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">DBMS LAB [Lab1+Lab2]</td><td class="busy">RESVD</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">2nd BSc</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">COA_EL [SH2]</td></tr><tr class="section-data-row stream-break"><td class="section-name">3rd BCA A</td><td class="busy">CRYPT [LH1]</td><td class="busy">WEB [LH1]</td><td colspan="2" class="busy lab-block">WEB LAB [Lab4]</td><td class="slot-free">—</td><td class="busy">SE [LH1]</td><td class="busy">CLOUD [LH1]</td><td class="busy">SPORTS</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">3rd BCA B</td><td class="busy">CRYPT [SH2]</td><td class="busy">R PROG [SH2]</td><td colspan="2" class="busy lab-block">WEB LAB [SLab2+SLab3]</td><td class="slot-free">—</td><td class="busy">SE [SH2]</td><td class="busy">CLOUD [SH2]</td><td class="busy">RESVD</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">3rd BCA C</td><td class="busy">DAA [SH1]</td><td class="busy">SE [SH1]</td><td class="busy">CRYPT [SH1]</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">WEB LAB [Lab5+MScLab]</td><td class="busy">R PROG [SH1]</td><td class="busy">RESVD</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">3rd BSc</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">OS [SH2]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">PYTHON [SH1]</td><td class="slot-free">—</td></tr></tbody></table></div></div><div class="sections-block sections-block--evening"><h3>Evening College</h3><p class="sections-scroll-hint">Swipe left for all time slots →</p><div class="sections-scroll-wrap"><table class="sections-grid-table"><thead><tr><th class="section-head-col">Section</th><th class="slot-head-col">1.30-2.15(3rdBCAOnly)</th><th class="slot-head-col">2:15-3</th><th class="slot-head-col">3-3:45</th><th class="slot-head-col">3:45-4:30</th><th class="slot-head-col">4:45-5:30</th><th class="slot-head-col">5:30-6:15</th></tr></thead><tbody><tr class="section-data-row"><td class="section-name">1st BCA A (Eve)</td><td class="slot-free">—</td><td class="busy">ENG [SKLR4]</td><td class="busy">PROG in C [SKLR4]</td><td class="busy">FOC [SKLR4]</td><td colspan="2" class="busy lab-block">FOC LAB [Lab5]</td></tr><tr class="section-data-row"><td class="section-name">1st BCA B (Eve)</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">C LAB [Lab5]</td><td class="busy">DISC.MATHS [SKLR3]</td><td class="busy">ENG [SKLR3]</td><td class="busy">PROG in C [SKLR3]</td></tr><tr class="section-data-row stream-break"><td class="section-name">2nd BCA A (Eve)</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">C# LAB [SLab2+SLab3]</td><td class="busy">DBMS [SKLR1]</td><td class="busy">ELECTIVE: KAN [SKLR1] · HND [SKLR2]</td><td class="busy">CN [SKLR1]</td></tr><tr class="section-data-row"><td class="section-name">2nd BCA B (Eve)</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">DBMS LAB [Lab2+Lab3]</td><td class="busy">DBMS [SKLR2]</td><td class="busy">ELECTIVE: KAN [SKLR1] · HND [SKLR2]</td><td class="busy">CN [SKLR2]</td></tr><tr class="section-data-row stream-break"><td class="section-name">3rd BCA A (Eve)</td><td class="busy lab-block">AITOOLS LAB [SLab2]</td><td class="busy">R PROG [LH4]</td><td class="busy">CRYPT [LH4]</td><td class="busy">CLOUD [LH4]</td><td colspan="2" class="busy lab-block">DAA LAB [SLab2+SLab3]</td></tr><tr class="section-data-row"><td class="section-name">3rd BCA B (Eve)</td><td class="busy lab-block">AITOOLS LAB [SLab3]</td><td class="busy">DAA [LH6]</td><td class="busy">CRYPT [LH6]</td><td class="busy">SE [LH6]</td><td colspan="2" class="busy lab-block">DAA LAB [Lab4]</td></tr></tbody></table></div></div></div>
         </div>
     </div>
 
@@ -1912,12 +2290,12 @@ COA_EL [SH2]</td><td class="slot-free slot-evening-start slot-evening-col">—</
             </div>
             <div class="form-group">
                 <label>Day</label>
-                <div id="leave_day_display" class="leave-day-display" aria-live="polite">Monday</div>
-                <input type="hidden" id="leave_day_value" value="Monday">
+                <div id="leave_day_display" class="leave-day-display" aria-live="polite">Wednesday</div>
+                <input type="hidden" id="leave_day_value" value="Wednesday">
             </div>
             <div class="form-group">
                 <label for="absent_faculty_select">Faculty unavailable</label>
-                <select id="absent_faculty_select" class="form-control"><option value="">-- Choose Faculty --</option><option value="ABJ">Abhijna (ABJ)</option><option value="AKN_E">AkshathaNayak (AKN_E)</option><option value="AKS">AkshathaShettigar (AKS)</option><option value="ANJ_E">Anjalin (ANJ_E)</option><option value="AA">Anupama (AA)</option><option value="ANV_E">Anvitha (ANV_E)</option><option value="DP">Damodar (DP)</option><option value="DK">Deepali (DK)</option><option value="JRP">Jayanthi (JRP)</option><option value="MIT">Mithun (MIT)</option><option value="NL1">NL1</option><option value="NL1_E">NL1_E</option><option value="PRJ">Prajnashree (PRJ)</option><option value="PRK">Prakash (PRK)</option><option value="RMR">Rajamoorthy (RMR)</option><option value="RAK">Rakshitha (RAK)</option><option value="RAM">Ramya (RAM)</option><option value="RAS">Rashmi (RAS)</option><option value="RNC">RekhaChandra (RNC)</option><option value="SAN">Sanath (SAN)</option><option value="SAJ_E">Sanjana (SAJ_E)</option><option value="SHI">Shilpa (SHI)</option><option value="SUSH">Sushma (SUSH)</option><option value="VAR_E">Varshini (VAR_E)</option><option value="MVP">Vishwanath (MVP)</option><option value="VVK">Vivek (VVK)</option></select>
+                <select id="absent_faculty_select" class="form-control"><option value="RMR">Rajamoorthy (RMR)</option></select>
             </div>
             <button type="button" class="btn-leave-primary" id="btn-analyze-leave">Analyze &amp; match staff</button>
         </div>
@@ -1968,6 +2346,39 @@ window.TimetableMobile = { activeDay: 'Monday' };
 (function () {
     const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const DAY_SHEET_MAP = { Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday', Fri: 'Friday', Sat: 'Saturday' };
+
+    function removeStaff(val) {
+        if (!val) return '';
+        return String(val).replace(/\s*\([^)]+\)/g, '');
+    }
+
+    function generateFacultyPin(code, secretKey) {
+        const input = ((code || '') + (secretKey || 'MGMCollege')).toUpperCase();
+        let hash = 0;
+        for (let i = 0; i < input.length; i++) {
+            const char = input.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash |= 0; // Convert to 32bit integer
+        }
+        let pin = Math.abs(hash) % 9000 + 1000;
+        return String(pin);
+    }
+
+    function hashPin(pin) {
+        const str = String(pin || '');
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            hash = ((hash << 5) - hash) + str.charCodeAt(i);
+            hash |= 0;
+        }
+        return String(hash);
+    }
+
+    function isEveningSection(sectionName, shift) {
+        if (shift === 'evening') return true;
+        if (shift === 'day') return false;
+        return !!(sectionName && (/Eve/i.test(sectionName) || isEveningSectionName(sectionName)));
+    }
 
     /** Section day-wise columns — match Excel / app.py slot lists */
     const SECTION_SLOT_SETS = {
@@ -2226,7 +2637,7 @@ window.TimetableMobile = { activeDay: 'Monday' };
         return html;
     }
 
-    function renderSaturdayEveningRowCells(dayCells, eveSlots, eveningColSpan) {
+    function renderSaturdayEveningRowCells(dayCells, eveSlots, eveningColSpan, facultyCode) {
         const eve = (eveSlots || []).filter(Boolean);
         const span = Math.max(eveningColSpan || 0, eve.length, 0);
         if (!span) return { html: '', hours: 0 };
@@ -2247,7 +2658,10 @@ window.TimetableMobile = { activeDay: 'Monday' };
             const slot = eve[ci];
             const labelTag = ci === 0 ? '<span class="slot-range-tag">Saturday</span> ' : '';
             const labelHtml = `<div class="faculty-sat-slot-label">${labelTag}${escapeHtml(slot)}</div>`;
-            const v = facultyCellValue(dayCells, slot);
+            let v = facultyCellValue(dayCells, slot);
+            if (v && facultyCode) {
+                v = appendRoomToFacultyCell(v, facultyCode, 'Saturday', slot);
+            }
             const labSpan = ci + 1 < eve.length && ci + 1 < span && isFacultyLabSpan(dayCells, eve, ci);
 
             if (labSpan) {
@@ -2409,7 +2823,7 @@ window.TimetableMobile = { activeDay: 'Monday' };
         return { html, hours };
     }
 
-    function facultyMappedRowCells(dayCells, columnSlots, activeSlots, dayKind, markSatDayEnd) {
+    function facultyMappedRowCells(dayCells, columnSlots, activeSlots, dayKind, markSatDayEnd, facultyCode, day) {
         const showDivider = markSatDayEnd && facultyShiftHasDivider(columnSlots, dayKind);
         let html = '';
         let hours = 0;
@@ -2426,7 +2840,10 @@ window.TimetableMobile = { activeDay: 'Monday' };
                 html += `<td class="slot-free slot-gap${bc}">—</td>`;
                 return;
             }
-            const v = facultyCellValue(dayCells, colSlot);
+            let v = facultyCellValue(dayCells, colSlot);
+            if (v && facultyCode && day) {
+                v = appendRoomToFacultyCell(v, facultyCode, day, colSlot);
+            }
             const nextActive = si + 1 < columnSlots.length && slotActiveInSet(columnSlots[si + 1], activeSlots);
             if (nextActive && isFacultyLabSpan(dayCells, columnSlots, si)) {
                 skipSlots.add(si + 1);
@@ -2471,14 +2888,12 @@ window.TimetableMobile = { activeDay: 'Monday' };
     }
 
     function isEveningSectionName(name) {
-        const norm = String(name || '').replace(/\s*\(Eve\)\s*$/i, '').trim();
+        if (!name) return false;
+        if (/Eve/i.test(name)) return true;
         return DAYS.some(day => {
             const dw = store.daywise[day];
             if (!dw) return false;
-            return (dw.eveningSections || []).some(s => {
-                const sn = String(s.name || '').replace(/\s*\(Eve\)\s*$/i, '').trim();
-                return sn === norm || s.name === name;
-            });
+            return (dw.eveningSections || []).some(s => s.name === name);
         });
     }
 
@@ -2542,7 +2957,7 @@ window.TimetableMobile = { activeDay: 'Monday' };
         ]);
     }
 
-    function sectionSlotCellsHtmlWeek(cells, slots, dayKind, suppressDayEnd) {
+    function sectionSlotCellsHtmlWeek(cells, slots, dayKind, suppressDayEnd, isEvening) {
         const showDivider = facultyShiftHasDivider(slots, dayKind);
         let html = '';
         const skipSlots = new Set();
@@ -2551,15 +2966,19 @@ window.TimetableMobile = { activeDay: 'Monday' };
             let bc = facultySlotBoundaryClasses(s, dayKind, showDivider, slots, si);
             if (suppressDayEnd) bc = bc.replace(/\s*slot-day-end/g, '');
             bc += slotEveningColClass(s, dayKind);
-            const v = cellForSection(cells, s);
+            let v = cellForSection(cells, s);
             if (isSectionLabSpan(cells, slots, si)) {
                 skipSlots.add(si + 1);
+                if (v) {
+                    v = removeStaff(v);
+                }
                 html += v
                     ? `<td colspan="2" class="busy lab-block${bc}">${escapeHtml(v)}</td>`
                     : `<td colspan="2" class="slot-free${bc}">—</td>`;
             } else if (!v || v === '—') {
                 html += `<td class="slot-free${bc}">—</td>`;
             } else {
+                v = removeStaff(v);
                 const cls = isLabSubject(sectionCellSubject(v)) ? 'busy lab-block' : 'busy';
                 html += `<td class="${cls}${bc}">${escapeHtml(v)}</td>`;
             }
@@ -2567,7 +2986,7 @@ window.TimetableMobile = { activeDay: 'Monday' };
         return { html };
     }
 
-    function sectionMappedRowCells(cells, columnSlots, activeSlots, dayKind, markSatDayEnd) {
+    function sectionMappedRowCells(cells, columnSlots, activeSlots, dayKind, markSatDayEnd, isEvening) {
         const showDivider = markSatDayEnd && facultyShiftHasDivider(columnSlots, dayKind);
         let html = '';
         const skipSlots = new Set();
@@ -2583,16 +3002,20 @@ window.TimetableMobile = { activeDay: 'Monday' };
                 html += `<td class="slot-free slot-gap${bc}">—</td>`;
                 return;
             }
-            const v = cellForSection(cells, colSlot);
+            let v = cellForSection(cells, colSlot);
             const nextActive = si + 1 < columnSlots.length && slotActiveInSet(columnSlots[si + 1], activeSlots);
             if (nextActive && isSectionLabSpan(cells, columnSlots, si)) {
                 skipSlots.add(si + 1);
+                if (v) {
+                    v = removeStaff(v);
+                }
                 html += v
                     ? `<td colspan="2" class="busy lab-block${bc}">${escapeHtml(v)}</td>`
                     : `<td colspan="2" class="slot-free${bc}">—</td>`;
             } else if (!v || v === '—') {
                 html += `<td class="slot-free${bc}">—</td>`;
             } else {
+                v = removeStaff(v);
                 const cls = isLabSubject(sectionCellSubject(v)) ? 'busy lab-block' : 'busy';
                 html += `<td class="${cls}${bc}">${escapeHtml(v)}</td>`;
             }
@@ -2602,6 +3025,7 @@ window.TimetableMobile = { activeDay: 'Monday' };
 
     function renderDaySectionWeekTable(sectionName, shift) {
         const cellShift = shift || 'day';
+        const isEvening = isEveningSection(sectionName, cellShift);
         const weekdayDaySlots = sectionDayWeekSlotList();
         const satDay = sectionSaturdayDayOnlySlots().filter(Boolean);
         if (!weekdayDaySlots.length && !satDay.length) {
@@ -2619,14 +3043,14 @@ window.TimetableMobile = { activeDay: 'Monday' };
             html += '<tbody>';
             ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].forEach(day => {
                 const cells = sectionCellsForDay(day, sectionName, cellShift);
-                const { html: rowCells } = sectionSlotCellsHtmlWeek(cells, weekdayDaySlots, 'weekday');
+                const { html: rowCells } = sectionSlotCellsHtmlWeek(cells, weekdayDaySlots, 'weekday', false, isEvening);
                 html += `<tr><td class="faculty-day-col">${day.slice(0, 3)}</td>${rowCells}</tr>`;
             });
             if (satDay.length) {
                 const satCells = sectionCellsForDay('Saturday', sectionName, cellShift);
                 const dayPart = parts.shared.length
-                    ? sectionMappedRowCells(satCells, parts.shared, satDay, 'saturday', false)
-                    : sectionSlotCellsHtmlWeek(satCells, satDay, 'saturday', true);
+                    ? sectionMappedRowCells(satCells, parts.shared, satDay, 'saturday', false, isEvening)
+                    : sectionSlotCellsHtmlWeek(satCells, satDay, 'saturday', true, isEvening);
                 const afternoonPad = facultySaturdayAfternoonPadCells(parts.afternoon);
                 html += `<tr class="faculty-sat-row"><td class="faculty-day-col faculty-sat-label">Saturday</td>${dayPart.html}${afternoonPad}</tr>`;
             }
@@ -2636,7 +3060,7 @@ window.TimetableMobile = { activeDay: 'Monday' };
             html += renderFacultySaturdayDayHeader(satDay, 'Day');
             html += '<tbody>';
             const satCells = sectionCellsForDay('Saturday', sectionName, cellShift);
-            const { html: dayPart } = sectionSlotCellsHtmlWeek(satCells, satDay, 'saturday', true);
+            const { html: dayPart } = sectionSlotCellsHtmlWeek(satCells, satDay, 'saturday', true, isEvening);
             html += `<tr class="faculty-sat-row"><td class="faculty-day-col faculty-sat-label">Saturday</td>${dayPart}</tr>`;
             html += '</tbody></table>';
         }
@@ -2646,6 +3070,7 @@ window.TimetableMobile = { activeDay: 'Monday' };
 
     function renderEveningSectionWeekTable(sectionName, shift) {
         const cellShift = shift || 'evening';
+        const isEvening = isEveningSection(sectionName, cellShift);
         const wdEve = sectionEveningWeekdaySlots();
         const satEve = sectionSaturdayEveningSlots().filter(Boolean);
         if (!wdEve.length && !satEve.length) {
@@ -2664,7 +3089,7 @@ window.TimetableMobile = { activeDay: 'Monday' };
             html += '</tr></thead><tbody>';
             ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].forEach(day => {
                 const cells = sectionCellsForDay(day, sectionName, cellShift);
-                const { html: rowCells } = sectionSlotCellsHtmlWeek(cells, wdEve, 'weekday');
+                const { html: rowCells } = sectionSlotCellsHtmlWeek(cells, wdEve, 'weekday', false, isEvening);
                 html += `<tr><td class="faculty-day-col">${day.slice(0, 3)}</td>${rowCells}</tr>`;
             });
             html += '</tbody></table></div>';
@@ -2679,7 +3104,7 @@ window.TimetableMobile = { activeDay: 'Monday' };
             });
             html += '</tr></thead><tbody>';
             const satCells = sectionCellsForDay('Saturday', sectionName, cellShift);
-            const { html: rowCells } = sectionSlotCellsHtmlWeek(satCells, satEve, 'saturday');
+            const { html: rowCells } = sectionSlotCellsHtmlWeek(satCells, satEve, 'saturday', false, isEvening);
             html += `<tr><td class="faculty-day-col faculty-sat-label">Sat</td>${rowCells}</tr>`;
             html += '</tbody></table></div>';
         }
@@ -2688,7 +3113,7 @@ window.TimetableMobile = { activeDay: 'Monday' };
     }
 
     function renderSectionWeekTable(sectionName, shift) {
-        if (shift === 'evening' || (!shift && isEveningSectionName(sectionName))) {
+        if (shift === 'evening' || (!shift && isEveningSectionName(sectionName)) || /Eve/i.test(sectionName)) {
             return renderEveningSectionWeekTable(sectionName, shift || 'evening');
         }
         return renderDaySectionWeekTable(sectionName, shift || 'day');
@@ -3142,16 +3567,20 @@ window.TimetableMobile = { activeDay: 'Monday' };
         return isLabSubject(sectionCellSubject(text));
     }
 
-    function sectionSlotCellHtml(cells, slots, si, skipSlots) {
+    function sectionSlotCellHtml(cells, slots, si, skipSlots, isEvening) {
         const s = slots[si];
-        const v = cellForSection(cells, s);
+        let v = cellForSection(cells, s);
         if (isSectionLabSpan(cells, slots, si)) {
             skipSlots.add(si + 1);
+            if (v) {
+                v = removeStaff(v);
+            }
             return v
                 ? `<td colspan="2" class="busy lab-block">${escapeHtml(v)}</td>`
                 : '<td colspan="2" class="slot-free">—</td>';
         }
         if (!v || v === '—') return '<td class="slot-free">—</td>';
+        v = removeStaff(v);
         const cls = isLabSubject(sectionCellSubject(v)) ? 'busy lab-block' : 'busy';
         return `<td class="${cls}">${escapeHtml(v)}</td>`;
     }
@@ -3164,7 +3593,87 @@ window.TimetableMobile = { activeDay: 'Monday' };
         return fac.slots || [];
     }
 
-    function facultySlotCellsHtml(dayCells, slots, dayKind, suppressDayEnd, opts) {
+    function parseStaffCodesLocal(raw) {
+        if (!raw) return [];
+        return String(raw)
+            .split(/[\/,+]/)
+            .map(s => s.trim())
+            .filter(Boolean);
+    }
+
+    function parseScheduleCellLocal(cellContent) {
+        const cell = String(cellContent || '').trim();
+        if (!cell || !cell.includes('(')) return null;
+        
+        const cellRoomMatch = cell.match(/\[([^\]]+)\]/);
+        const cellRoom = cellRoomMatch ? cellRoomMatch[1].trim() : 'N/A';
+        
+        const parsedSegments = [];
+        const regex = /([^().\/\[\]]+(?:[.\/][^().\/\[\]]+)*)\s*\(([^)]+)\)(?:\s*\.?\s*(?:\(([^)]+)\)|\[([^\]]+)\]))?/g;
+        
+        for (const match of cell.matchAll(regex)) {
+            const subject = match[1].replace(/^[\/\.\s&]+/, '').trim();
+            const staffStr = match[2].trim();
+            const roomStr = (match[3] || match[4]) ? (match[3] || match[4]).trim() : cellRoom;
+            
+            const staffCodes = parseStaffCodesLocal(staffStr);
+            staffCodes.forEach(code => {
+                parsedSegments.push({
+                    subject: subject,
+                    staff: code,
+                    room: roomStr || 'N/A'
+                });
+            });
+        }
+        
+        if (!parsedSegments.length) return null;
+        
+        const staffAll = parsedSegments.map(ps => ps.staff);
+        return {
+            subject: parsedSegments[0].subject,
+            staff: staffAll[0],
+            staffAll: staffAll,
+            room: parsedSegments[0].room,
+            segments: parsedSegments
+        };
+    }
+
+    function cleanFacultyCode(code) {
+        return String(code || '').trim().replace(/_E$/i, '').toUpperCase();
+    }
+
+    function appendRoomToFacultyCell(cellVal, facultyCode, day, slot) {
+        if (!cellVal || cellVal.includes('[')) return cellVal;
+        
+        const dayData = store.daywise && store.daywise[day];
+        if (!dayData) return cellVal;
+        
+        const allSecs = [...(dayData.sections || []), ...(dayData.eveningSections || [])];
+        const norm = normalizeSlotKey(slot);
+        
+        const cleanTarget = cleanFacultyCode(facultyCode);
+        
+        for (const sec of allSecs) {
+            const secCell = sec.cells && (sec.cells[slot] || sec.cells[norm]);
+            if (secCell) {
+                const parsed = parseScheduleCellLocal(secCell);
+                if (parsed) {
+                    const seg = parsed.segments && parsed.segments.find(ps => cleanFacultyCode(ps.staff) === cleanTarget);
+                    if (seg && seg.room && seg.room !== 'N/A') {
+                        return `${cellVal} [${seg.room}]`;
+                    }
+                    const staffList = parsed.staffAll || [parsed.staff];
+                    const cleanStaffList = staffList.map(cleanFacultyCode);
+                    if (cleanStaffList.includes(cleanTarget) && parsed.room && parsed.room !== 'N/A') {
+                        return `${cellVal} [${parsed.room}]`;
+                    }
+                }
+            }
+        }
+        return cellVal;
+    }
+
+    function facultySlotCellsHtml(dayCells, slots, dayKind, suppressDayEnd, opts, facultyCode, day) {
         const options = opts || {};
         const showDivider = facultyShiftHasDivider(slots, dayKind);
         const lastIdx = options.markTableEnd
@@ -3179,7 +3688,10 @@ window.TimetableMobile = { activeDay: 'Monday' };
             if (suppressDayEnd) bc = bc.replace(/\s*slot-day-end/g, '');
             bc += slotEveningColClass(s, dayKind);
             if (options.markTableEnd && si === lastIdx) bc += ' slot-table-end';
-            const v = facultyCellValue(dayCells, s);
+            let v = facultyCellValue(dayCells, s);
+            if (v && facultyCode && day) {
+                v = appendRoomToFacultyCell(v, facultyCode, day, s);
+            }
             if (isFacultyLabSpan(dayCells, slots, si)) {
                 skipSlots.add(si + 1);
                 if (v) hours += 2;
@@ -3216,8 +3728,8 @@ window.TimetableMobile = { activeDay: 'Monday' };
             html += '<table class="faculty-grid-table">';
             html += renderFacultySaturdayDayHeader(satDay);
             html += '<tbody>';
-            const { html: dayPart, hours: h1 } = facultySlotCellsHtml(dayCells, satDay, 'saturday');
-            const eveCells = renderSaturdayEveningRowCells(dayCells, satEve, Math.max(satEve.length, 1));
+            const { html: dayPart, hours: h1 } = facultySlotCellsHtml(dayCells, satDay, 'saturday', false, null, activeFaculty, 'Saturday');
+            const eveCells = renderSaturdayEveningRowCells(dayCells, satEve, Math.max(satEve.length, 1), activeFaculty);
             hours = h1 + eveCells.hours;
             html += `<tr><td class="faculty-day-col">Classes</td>${dayPart}${eveCells.html}</tr>`;
             html += '</tbody></table>';
@@ -3228,7 +3740,7 @@ window.TimetableMobile = { activeDay: 'Monday' };
                 return { html: '<p class="empty">No time slots in Excel for this day.</p>', hours: 0 };
             }
             const showDivider = facultyShiftHasDivider(slots, dayKind);
-            const { html: cells, hours: h } = facultySlotCellsHtml(dayCells, slots, dayKind);
+            const { html: cells, hours: h } = facultySlotCellsHtml(dayCells, slots, dayKind, false, null, activeFaculty, day);
             hours = h;
             html += '<table class="faculty-grid-table"><thead><tr>';
             html += '<th class="faculty-day-col">Time</th>';
@@ -3243,6 +3755,149 @@ window.TimetableMobile = { activeDay: 'Monday' };
         }
         html += '</div></div>';
         return { html, hours };
+    }
+
+    window.speechEnabled = false;
+
+    window.toggleSpeech = function() {
+        try {
+            window.speechEnabled = !window.speechEnabled;
+            const btn = document.getElementById('btn-speech-toggle');
+            const iconOn = document.getElementById('speech-icon-on');
+            const iconOff = document.getElementById('speech-icon-off');
+            const text = document.getElementById('speech-btn-text');
+            
+            if (btn) {
+                if (window.speechEnabled) {
+                    btn.classList.remove('secondary');
+                    btn.classList.add('btn-primary');
+                    if (iconOn) iconOn.style.display = 'block';
+                    if (iconOff) iconOff.style.display = 'none';
+                    if (text) text.textContent = 'Speech On';
+                    if (activeAppPanel === 'timetable' && facultyViewMode === 'day' && activeDay) {
+                        announceFacultyDay(activeFaculty, activeDay);
+                    }
+                } else {
+                    btn.classList.add('secondary');
+                    btn.classList.remove('btn-primary');
+                    if (iconOn) iconOn.style.display = 'none';
+                    if (iconOff) iconOff.style.display = 'block';
+                    if (text) text.textContent = 'Speech Off';
+                    if ('speechSynthesis' in window) {
+                        window.speechSynthesis.cancel();
+                    }
+                }
+            }
+        } catch (e) {
+            console.error("Speech toggle error: ", e);
+            alert("Speech toggle error: " + e.message);
+        }
+    };
+
+    function pronounceTime(slot) {
+        return String(slot)
+            .replace(/\b0+(\d)/g, '$1')
+            .replace(/[:.]00?\b/g, '')
+            .replace(/[:.](\d{2})\b/g, ' $1')
+            .replace(/\s*-\s*/g, ' to ');
+    }
+
+    let globalSubjectMap = {};
+    (async function fetchSubjectMap() {
+        try {
+            const res = await fetch('subject.json', { cache: 'no-store' });
+            if (res.ok) {
+                globalSubjectMap = await res.json();
+                console.log("Loaded subject map:", globalSubjectMap);
+            }
+        } catch(e) {
+            console.warn("Could not load subject.json:", e);
+        }
+    })();
+
+    window.announceFacultyDay = function(facultyCode, day) {
+        try {
+            if (!window.speechEnabled || !('speechSynthesis' in window)) return;
+            
+            window.speechSynthesis.cancel();
+            
+            const fac = store.faculty && store.faculty[facultyCode];
+            if (!fac) {
+                console.warn("announceFacultyDay: Faculty not found for code", facultyCode);
+                return;
+            }
+            
+            const dayCells = fac.days[day] || {};
+            let slots = [];
+            let isSaturday = day === 'Saturday';
+            
+            if (isSaturday) {
+                const { daySlots, eveningSlots } = facultySaturdaySlotSets(fac);
+                slots = [...daySlots.filter(Boolean), ...eveningSlots.filter(Boolean)];
+            } else {
+                slots = slotsForFacultyDay(fac, day);
+            }
+            
+            const facName = facultyDisplayName(facultyCode);
+            
+            if (!slots.length) {
+                speakText(`Timetable for ${facName} on ${day}. No classes scheduled.`);
+                return;
+            }
+            
+            let announcement = `Timetable for ${facName} on ${day}. `;
+            let hasClasses = false;
+            
+            const skipSlots = new Set();
+            
+            slots.forEach((s, si) => {
+                if (!s || skipSlots.has(si)) return;
+                let v = facultyCellValue(dayCells, s);
+                
+                if (v && v !== '—') {
+                    if (isFacultyLabSpan(dayCells, slots, si)) {
+                        skipSlots.add(si + 1);
+                    }
+                    
+                    const parsed = parseScheduleCellLocal(v);
+                    const rawSubj = parsed ? parsed.subject : String(v).split('(')[0].trim();
+                    const mappedSubj = globalSubjectMap[rawSubj] || rawSubj;
+                    
+                    v = appendRoomToFacultyCell(v, facultyCode, day, s);
+                    let spokenText = v;
+                    spokenText = spokenText.replace(rawSubj, mappedSubj);
+                    spokenText = spokenText.replace(/\[([^\]]+)\]/g, ' in room $1');
+                    spokenText = spokenText.replace(/\(([^)]+)\)/g, ''); // remove internal brackets if any
+                    spokenText = spokenText.replace(/\//g, ' or ');
+                    announcement += `${pronounceTime(s)}. ${spokenText}. `;
+                    hasClasses = true;
+                }
+            });
+            
+            if (!hasClasses) {
+                announcement += "No classes scheduled.";
+            }
+            
+            speakText(announcement);
+        } catch (e) {
+            console.error("announceFacultyDay error: ", e);
+            alert("Error announcing timetable: " + e.message);
+        }
+    };
+
+    function speakText(text) {
+        try {
+            console.log("Speaking: ", text);
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.9;
+            utterance.onerror = function(event) {
+                console.error("SpeechSynthesisUtterance error:", event.error);
+            };
+            window.speechSynthesis.speak(utterance);
+        } catch (e) {
+            console.error("speakText error: ", e);
+            alert("Error playing sound: " + e.message);
+        }
     }
 
     function renderFacultyWeekTable(fac) {
@@ -3278,7 +3933,7 @@ window.TimetableMobile = { activeDay: 'Monday' };
             ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].forEach(day => {
                 const dayCells = fac.days[day] || {};
                 const { html: cells, hours } = facultySlotCellsHtml(
-                    dayCells, weekdaySlots, 'weekday', false, { markTableEnd: !needsEvePad },
+                    dayCells, weekdaySlots, 'weekday', false, { markTableEnd: !needsEvePad }, activeFaculty, day
                 );
                 totalHours += hours;
                 html += `<tr><td class="faculty-day-col">${day.slice(0, 3)}</td>${cells}${evePad}</tr>`;
@@ -3286,11 +3941,11 @@ window.TimetableMobile = { activeDay: 'Monday' };
             if (hasSaturday) {
                 const satCells = fac.days.Saturday || {};
                 const dayPart = parts.shared.length
-                    ? facultyMappedRowCells(satCells, parts.shared, satDay, 'saturday', false)
-                    : facultySlotCellsHtml(satCells, satDay, 'saturday', true);
+                    ? facultyMappedRowCells(satCells, parts.shared, satDay, 'saturday', false, activeFaculty, 'Saturday')
+                    : facultySlotCellsHtml(satCells, satDay, 'saturday', true, null, activeFaculty, 'Saturday');
                 const afternoonPad = facultySaturdayAfternoonPadCells(parts.afternoon);
                 const eveCells = satEve.length
-                    ? renderSaturdayEveningRowCells(satCells, satEve, eveningColSpan)
+                    ? renderSaturdayEveningRowCells(satCells, satEve, eveningColSpan, activeFaculty)
                     : { html: '', hours: 0 };
                 const tailGap = !satEve.length && eveningColSpan
                     ? facultyWeekdayRowEveningPad([], eveningColSpan)
@@ -3300,8 +3955,8 @@ window.TimetableMobile = { activeDay: 'Monday' };
             }
         } else if (hasSaturday) {
             const satCells = fac.days.Saturday || {};
-            const { html: dayPart, hours: h1 } = facultySlotCellsHtml(satCells, satDay, 'saturday', true);
-            const eveCells = renderSaturdayEveningRowCells(satCells, satEve, Math.max(satEve.length, 1));
+            const { html: dayPart, hours: h1 } = facultySlotCellsHtml(satCells, satDay, 'saturday', true, null, activeFaculty, 'Saturday');
+            const eveCells = renderSaturdayEveningRowCells(satCells, satEve, Math.max(satEve.length, 1), activeFaculty);
             totalHours += h1 + eveCells.hours;
             html += `<tr class="faculty-sat-row"><td class="faculty-day-col faculty-sat-label">Saturday</td>${dayPart}${eveCells.html}</tr>`;
         }
@@ -3363,11 +4018,12 @@ window.TimetableMobile = { activeDay: 'Monday' };
 
     function renderSectionTableRow(sec, slots, rowClass) {
         const cls = rowClass || 'section-data-row';
+        const isEvening = sec.group === 'evening' || isEveningSection(sec.name);
         let row = `<tr class="${cls}"><td class="section-name">${escapeHtml(sec.name)}</td>`;
         const skipSlots = new Set();
         slots.forEach((s, si) => {
             if (!s || skipSlots.has(si)) return;
-            row += sectionSlotCellHtml(sec.cells, slots, si, skipSlots);
+            row += sectionSlotCellHtml(sec.cells, slots, si, skipSlots, isEvening);
         });
         return row + '</tr>';
     }
@@ -3653,6 +4309,10 @@ window.TimetableMobile = { activeDay: 'Monday' };
         if (filterSel) filterSel.value = '';
         paintDayTabs();
         renderAll();
+        
+        if (window.speechEnabled && facultyViewMode === 'day' && activeAppPanel === 'timetable') {
+            window.announceFacultyDay(activeFaculty, activeDay);
+        }
     }
 
     window.TimetableMobile.setDay = setActiveDay;
@@ -3700,11 +4360,72 @@ window.TimetableMobile = { activeDay: 'Monday' };
         document.addEventListener('touchend', onTab, { capture: true, passive: false });
     }
 
-    function buildFacultySelect() {
-        const sel = el('faculty-select');
+    function buildLoginDropdown() {
+        const sel = el('login-faculty-select');
+        if (!sel) return;
         const names = Object.keys(store.faculty).sort(compareFacultyCodes);
         sel.innerHTML = names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(facultyDisplayLabel(n))}</option>`).join('');
-        if (!activeFaculty || !names.includes(activeFaculty)) activeFaculty = names[0] || '';
+    }
+
+    function handleLogin() {
+        const sel = el('login-faculty-select');
+        const code = sel ? sel.value : '';
+        if (!code) return;
+        
+        const pinInput = el('login-pin-input');
+        const errEl = el('login-error-msg');
+        if (errEl) errEl.textContent = '';
+        
+        const facData = store.faculty[code];
+        if (facData && facData.pinHash) {
+            const enteredPin = pinInput ? pinInput.value.trim() : '';
+            if (!enteredPin) {
+                if (errEl) errEl.textContent = 'Please enter your 4-digit PIN.';
+                return;
+            }
+            if (hashPin(enteredPin) !== facData.pinHash) {
+                if (errEl) errEl.textContent = 'Incorrect PIN. Please try again.';
+                return;
+            }
+        }
+        
+        try {
+            localStorage.setItem('loggedInFaculty', code);
+        } catch (e) {}
+        activeFaculty = code;
+        try { localStorage.setItem('facultyMobileName', activeFaculty); } catch (e) {}
+        
+        if (pinInput) pinInput.value = '';
+        buildFacultySelect();
+        switchAppPanel('timetable');
+        renderAll();
+    }
+
+    function handleLogout() {
+        try {
+            localStorage.removeItem('loggedInFaculty');
+        } catch (e) {}
+        const pinInput = el('login-pin-input');
+        if (pinInput) pinInput.value = '';
+        const errEl = el('login-error-msg');
+        if (errEl) errEl.textContent = '';
+        buildLoginDropdown();
+        switchAppPanel('login');
+    }
+
+    function buildFacultySelect() {
+        const sel = el('faculty-select');
+        if (!sel) return;
+        const loggedIn = localStorage.getItem('loggedInFaculty');
+        let names = [];
+        if (loggedIn && store.faculty[loggedIn]) {
+            names = [loggedIn];
+            activeFaculty = loggedIn;
+        } else {
+            names = Object.keys(store.faculty).sort(compareFacultyCodes);
+            if (!activeFaculty || !names.includes(activeFaculty)) activeFaculty = names[0] || '';
+        }
+        sel.innerHTML = names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(facultyDisplayLabel(n))}</option>`).join('');
         sel.value = activeFaculty;
     }
 
@@ -3715,15 +4436,39 @@ window.TimetableMobile = { activeDay: 'Monday' };
     let activeAppPanel = 'timetable';
 
     function switchAppPanel(panel) {
-        activeAppPanel = panel;
+        const loggedIn = localStorage.getItem('loggedInFaculty');
+        const hasData = Object.keys(store.faculty).length && Object.keys(store.daywise).length;
+        
+        let targetPanel = panel;
+        if (hasData && !loggedIn) {
+            targetPanel = 'login';
+        }
+        
+        activeAppPanel = targetPanel;
         const pt = el('panel-timetable');
         const pl = el('panel-leave');
-        if (pt) pt.classList.toggle('hidden', panel !== 'timetable');
-        if (pl) pl.classList.toggle('hidden', panel !== 'leave');
+        const loginPanel = el('panel-login');
+        const dock = el('app-dock');
+        
+        if (targetPanel === 'login') {
+            if (pt) pt.classList.add('hidden');
+            if (pl) pl.classList.add('hidden');
+            if (loginPanel) loginPanel.classList.remove('hidden');
+            if (dock) dock.classList.add('hidden');
+            document.body.classList.remove('has-app-dock');
+            return;
+        }
+        
+        if (pt) pt.classList.toggle('hidden', targetPanel !== 'timetable');
+        if (pl) pl.classList.toggle('hidden', targetPanel !== 'leave');
+        if (loginPanel) loginPanel.classList.add('hidden');
+        if (dock) dock.classList.toggle('hidden', !hasData);
+        document.body.classList.toggle('has-app-dock', hasData);
+        
         document.querySelectorAll('.dock-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.getAttribute('data-panel') === panel);
+            btn.classList.toggle('active', btn.getAttribute('data-panel') === targetPanel);
         });
-        if (panel === 'leave') initLeaveModule();
+        if (targetPanel === 'leave') initLeaveModule();
     }
 
     function initLeaveModule() {
@@ -3762,7 +4507,15 @@ window.TimetableMobile = { activeDay: 'Monday' };
                 : 'Timetable · leave & substitution — tap tabs below';
         }
         initLeaveModule();
-        switchAppPanel(activeAppPanel);
+        
+        const loggedIn = localStorage.getItem('loggedInFaculty');
+        if (loggedIn && store.faculty[loggedIn]) {
+            activeFaculty = loggedIn;
+        } else {
+            buildLoginDropdown();
+        }
+        
+        switchAppPanel(loggedIn ? activeAppPanel : 'login');
         buildFacultySelect();
         buildDayTabs();
         restoreSectionsViewUi();
@@ -3875,6 +4628,10 @@ window.TimetableMobile = { activeDay: 'Monday' };
     function afterStoreLoaded() {
         applySectionSlotSetsFromDaywise(store.daywise || {});
         if (window.LeaveApp) LeaveApp.attachLeavePackToStore(store);
+        const secretKeyInput = el('admin-secret-key');
+        if (secretKeyInput && store.secretKey) {
+            secretKeyInput.value = store.secretKey;
+        }
     }
 
     function resolveTimetableJsonUrl() {
@@ -4008,6 +4765,9 @@ window.TimetableMobile = { activeDay: 'Monday' };
     bindClick('btn-faculty-view', () => {
         facultyViewMode = facultyViewMode === 'day' ? 'week' : 'day';
         renderMyTimetable();
+        if (window.speechEnabled && facultyViewMode === 'day' && activeAppPanel === 'timetable') {
+            window.announceFacultyDay(activeFaculty, activeDay);
+        }
     });
 
     const facultySel = el('faculty-select');
@@ -4016,8 +4776,46 @@ window.TimetableMobile = { activeDay: 'Monday' };
             activeFaculty = facultySel.value;
             try { localStorage.setItem('facultyMobileName', activeFaculty); } catch (e) {}
             renderAll();
+            if (window.speechEnabled && facultyViewMode === 'day' && activeAppPanel === 'timetable') {
+                window.announceFacultyDay(activeFaculty, activeDay);
+            }
         });
     }
+
+    function populatePinsTable() {
+        const tbody = el('pin-table-body');
+        if (!tbody) return;
+        if (!Object.keys(store.faculty).length) {
+            tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 20px; color: var(--muted);">Please build/upload data first.</td></tr>';
+            return;
+        }
+        const secretKey = (el('admin-secret-key').value || 'MGMCollege').trim();
+        const names = Object.keys(store.faculty).sort(compareFacultyCodes);
+        tbody.innerHTML = names.map(code => {
+            const label = facultyDisplayLabel(code);
+            const pin = generateFacultyPin(code, secretKey);
+            return `<tr>
+                <td style="padding: 10px; font-weight: 700; color: #1e293b; border-bottom: 1px solid #f1f5f9;">${escapeHtml(code)}</td>
+                <td style="padding: 10px; color: #475569; border-bottom: 1px solid #f1f5f9;">${escapeHtml(label)}</td>
+                <td style="padding: 10px; font-weight: 800; font-family: monospace; font-size: 15px; color: var(--primary); border-bottom: 1px solid #f1f5f9;">${escapeHtml(pin)}</td>
+            </tr>`;
+        }).join('');
+    }
+
+    bindClick('btn-show-pins', () => {
+        populatePinsTable();
+        const modal = el('pin-modal');
+        if (modal) modal.classList.remove('hidden');
+    });
+
+    bindClick('btn-close-pins', () => {
+        const modal = el('pin-modal');
+        if (modal) modal.classList.add('hidden');
+    });
+
+    bindClick('btn-print-pins', () => {
+        window.print();
+    });
 
     bindClick('btn-build', async () => {
         el('admin-error').textContent = '';
@@ -4035,6 +4833,13 @@ window.TimetableMobile = { activeDay: 'Monday' };
             store.daywise = parseDaywiseWorkbook(wbDay);
             store.staffNames = parseStaffNamesWorkbook(wbFac);
             applySectionSlotSetsFromDaywise(store.daywise);
+
+            const secretKey = (el('admin-secret-key').value || 'MGMCollege').trim();
+            store.secretKey = secretKey;
+            Object.keys(store.faculty).forEach(code => {
+                const pin = generateFacultyPin(code, secretKey);
+                store.faculty[code].pinHash = hashPin(pin);
+            });
             const nf = Object.keys(store.faculty).length;
             const nd = Object.keys(store.daywise).length;
             if (!nf || !nd) throw new Error('Could not read timetable data. Use files from Bulk Export ZIP.');
@@ -4084,6 +4889,9 @@ window.TimetableMobile = { activeDay: 'Monday' };
     document.querySelectorAll('.dock-btn').forEach(btn => {
         btn.addEventListener('click', () => switchAppPanel(btn.getAttribute('data-panel')));
     });
+
+    bindClick('btn-login-submit', handleLogin);
+    bindClick('btn-logout', handleLogout);
 
     bindClick('btn-analyze-leave', () => {
         if (!window.LeaveApp) {
