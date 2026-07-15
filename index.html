@@ -3801,10 +3801,18 @@ window.TimetableMobile = { activeDay: 'Monday' };
     }
 
     let globalSubjectMap = {};
+    function setNormalizedSubjectMap(rawMap) {
+        globalSubjectMap = {};
+        if (!rawMap) return;
+        for (const key in rawMap) {
+            globalSubjectMap[key.toUpperCase().trim()] = rawMap[key];
+        }
+    }
+
     try {
         const cachedMap = localStorage.getItem('timetableSubjectMap');
         if (cachedMap) {
-            globalSubjectMap = JSON.parse(cachedMap);
+            setNormalizedSubjectMap(JSON.parse(cachedMap));
             console.log("Loaded subject map from localStorage:", globalSubjectMap);
         }
     } catch(e) {}
@@ -3813,10 +3821,11 @@ window.TimetableMobile = { activeDay: 'Monday' };
         try {
             const res = await fetch('subject.json', { cache: 'no-store' });
             if (res.ok) {
-                globalSubjectMap = await res.json();
+                const rawMap = await res.json();
+                setNormalizedSubjectMap(rawMap);
                 console.log("Loaded subject map from network:", globalSubjectMap);
                 try {
-                    localStorage.setItem('timetableSubjectMap', JSON.stringify(globalSubjectMap));
+                    localStorage.setItem('timetableSubjectMap', JSON.stringify(rawMap));
                 } catch(e) {}
             }
         } catch(e) {
@@ -3870,7 +3879,7 @@ window.TimetableMobile = { activeDay: 'Monday' };
                     
                     const parsed = parseScheduleCellLocal(v);
                     const rawSubj = parsed ? parsed.subject : String(v).split('(')[0].trim();
-                    const mappedSubj = globalSubjectMap[rawSubj] || rawSubj;
+                    const mappedSubj = globalSubjectMap[rawSubj.toUpperCase().trim()] || rawSubj;
                     
                     v = appendRoomToFacultyCell(v, facultyCode, day, s);
                     let spokenText = v;
