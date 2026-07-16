@@ -3977,15 +3977,34 @@ window.TimetableMobile = { activeDay: 'Monday' };
             setTimeout(() => {
                 const utterance = new SpeechSynthesisUtterance(text);
                 utterance.rate = 0.9;
-                utterance.lang = 'en_IN'; // Force Indian English to avoid translation to default system languages
+                utterance.lang = 'en-IN'; // Force Indian English to avoid translation to default system languages
                 
                 // Select an English voice explicitly if available to guarantee pure Indian English / English voice
                 if (window.speechSynthesis && typeof window.speechSynthesis.getVoices === 'function') {
                     const voices = window.speechSynthesis.getVoices();
-                    const voice = voices.find(v => v.lang === 'en_IN' || v.lang.startsWith('en_IN')) ||
-                                  voices.find(v => v.lang === 'en_US' || v.lang.startsWith('en_US')) ||
-                                  voices.find(v => v.lang === 'en_GB' || v.lang.startsWith('en_GB')) ||
-                                  voices.find(v => v.lang.startsWith('en'));
+                    const isOffline = !navigator.onLine;
+                    
+                    const isEnglish = (v) => v.lang === 'en-IN' || v.lang.startsWith('en-IN') ||
+                                             v.lang === 'en-US' || v.lang.startsWith('en-US') ||
+                                             v.lang === 'en-GB' || v.lang.startsWith('en-GB') ||
+                                             v.lang.startsWith('en');
+                                             
+                    let englishVoices = voices.filter(isEnglish);
+                    
+                    // Offline check: remote cloud voices (like Google US English) fail offline
+                    if (isOffline) {
+                        englishVoices = englishVoices.filter(v => v.localService === true);
+                    }
+                    
+                    let voice = englishVoices.find(v => v.lang.startsWith('en_IN') && v.localService) ||
+                                englishVoices.find(v => v.lang.startsWith('en_IN')) ||
+                                englishVoices.find(v => v.lang.startsWith('en_US') && v.localService) ||
+                                englishVoices.find(v => v.lang.startsWith('en_US')) ||
+                                englishVoices.find(v => v.lang.startsWith('en_GB') && v.localService) ||
+                                englishVoices.find(v => v.lang.startsWith('en_GB')) ||
+                                englishVoices.find(v => v.localService) ||
+                                englishVoices[0];
+                                
                     if (voice) {
                         utterance.voice = voice;
                         utterance.lang = voice.lang;

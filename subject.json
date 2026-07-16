@@ -20,13 +20,13 @@
   "wcms": "Web content management system",
   "CLOUD": "cloud computing",
   "CRYPT": "cryptography and network security",
-  "DAA": "Design analysis and algorithm",
-  "DAA LAB": "Design analysis and algorithm LAB",
+  "DAA": "Design and  analysis of algorithm",
+  "DAA LAB": "Design and analysis of algorithm LAB",
   "R LAB": "R programming lab",
   "R PROG": "statistical and R programming",
   "SE": "Software engineering",
-  "WEB": "web development",
-  "WEB LAB": "web lab",
+  "WEB": "Dynamic web programming",
+  "WEB LAB": "Dynamic webprogramming lab",
   "F_C": "computer fundamentals  and programming in  C",
   "F_C LAB": "C programming lab",
   "COA_EL": "Computer organisation",
@@ -35,5 +35,5 @@
   "OS": "operating system",
   "PY_OS LAB": "python and Linux lab",
   "PYTHON": "python",
-" AI TOOLS LAB":"Artificial Intelligent tools lab"
+" AI TOOLS LAB":"AI tools and techniques lab"
 }
