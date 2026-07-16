@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'mgm-timetable-v6';
+const CACHE_VERSION = 'mgm-timetable-v7';
 const SHELL_CACHE = CACHE_VERSION + '-shell';
 
 const PRECACHE_ASSETS = [
@@ -7,12 +7,12 @@ const PRECACHE_ASSETS = [
     './manifest.json'
 ];
 
-function isBypassCacheJsonUrl(url) {
+function isNetworkFirstUrl(url) {
     try {
         const path = new URL(url, self.location.href).pathname;
-        return /\/(timetable|subject)\.json$/i.test(path) || path.endsWith('timetable.json') || path.endsWith('subject.json');
+        return /\.(html|json)$/i.test(path) || path.endsWith('/') || !path.includes('.');
     } catch (e) {
-        return String(url).includes('timetable.json') || String(url).includes('subject.json');
+        return true;
     }
 }
 
@@ -24,9 +24,20 @@ function isHtmlRequest(request) {
 
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(SHELL_CACHE)
-            .then((cache) => cache.addAll(PRECACHE_ASSETS))
-            .catch(() => {})
+        caches.open(SHELL_CACHE).then((cache) => {
+            const promises = PRECACHE_ASSETS.map((asset) => {
+                return fetch(asset)
+                    .then((response) => {
+                        if (response && response.ok) {
+                            return cache.put(asset, response);
+                        }
+                    })
+                    .catch((err) => {
+                        console.warn(`Failed to precache ${asset}:`, err);
+                    });
+            });
+            return Promise.all(promises);
+        })
     );
     self.skipWaiting();
 });
@@ -45,12 +56,7 @@ self.addEventListener('fetch', (event) => {
 
     const { request } = event;
 
-    if (isBypassCacheJsonUrl(request.url)) {
-        event.respondWith(fetch(request, { cache: 'no-store' }));
-        return;
-    }
-
-    if (isHtmlRequest(request)) {
+    if (isHtmlRequest(request) || isNetworkFirstUrl(request.url)) {
         event.respondWith(
             fetch(request)
                 .then((response) => {
@@ -60,7 +66,26 @@ self.addEventListener('fetch', (event) => {
                     }
                     return response;
                 })
-                .catch(() => caches.match(request))
+                .catch(() => {
+                    return caches.match(request).then((matching) => {
+                        if (matching) return matching;
+                        // Fallback logic for HTML pages
+                        if (isHtmlRequest(request)) {
+                            const fallbacks = ['/', '/index.html', '/mobile-timetable.html'];
+                            return caches.open(SHELL_CACHE).then((cache) => {
+                                return cache.keys().then((keys) => {
+                                    for (const fallback of fallbacks) {
+                                        const matchedKey = keys.find(k => {
+                                            const kUrl = new URL(k.url);
+                                            return kUrl.pathname === fallback || kUrl.pathname.endsWith(fallback);
+                                        });
+                                        if (matchedKey) return cache.match(matchedKey);
+                                    }
+                                });
+                            });
+                        }
+                    });
+                })
         );
         return;
     }

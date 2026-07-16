@@ -1,28 +1,28 @@
 {
   "name": "MGM College Mobile",
-  "short_name": "MGMCFTT",
+  "short_name": "MGMCS",
   "description": "Mobile timetable and leave management for MGM College",
-  "start_url": ".",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#f1f5f9",
   "theme_color": "#2563eb",
   "orientation": "portrait",
-  "scope": "/",
+  "scope": "./",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "./icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "./icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "./icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -34,10 +34,10 @@
       "name": "My Timetable",
       "short_name": "Timetable",
       "description": "View your personal timetable",
-      "url": "index.html",
+      "url": "./#timetable",
       "icons": [
         {
-          "src": "icon-192.png",
+          "src": "./icons/icon-192.png",
           "sizes": "192x192",
           "type": "image/png"
         }
@@ -47,10 +47,10 @@
       "name": "Leave Request",
       "short_name": "Leave",
       "description": "Submit leave request",
-      "url": "index.html#leave",
+      "url": "./#leave",
       "icons": [
         {
-          "src": "icon-192.png",
+          "src": "./icons/icon-192.png",
           "sizes": "192x192",
           "type": "image/png"
         }
