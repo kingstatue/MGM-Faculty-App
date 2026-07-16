@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'mgm-timetable-v13';
+const CACHE_VERSION = 'mgm-timetable-v17';
 const SHELL_CACHE = CACHE_VERSION + '-shell';
 
 const PRECACHE_ASSETS = [

@@ -2238,15 +2238,15 @@
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
                 <label for="faculty-select" style="margin-bottom: 0;">Faculty name</label>
                 <div style="display: flex; gap: 8px; align-items: center;">
-                    <button type="button" id="btn-speech-toggle" class="secondary" style="margin: 0; padding: 4px 10px; font-size: 10px; border-radius: 6px; width: auto; font-weight: 700; height: 24px; line-height: 1; display: flex; align-items: center; gap: 4px;" onclick="toggleSpeech()" aria-label="Toggle Speech">
-                        <svg id="speech-icon-off" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
-                        <svg id="speech-icon-on" style="display:none;" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-                        <span id="speech-btn-text">Speech Off</span>
+                    <button type="button" id="btn-speech-toggle" class="btn-primary" style="margin: 0; padding: 4px 10px; font-size: 10px; border-radius: 6px; width: auto; font-weight: 700; height: 24px; line-height: 1; display: flex; align-items: center; gap: 4px;" onclick="toggleSpeech()" aria-label="Toggle Speech">
+                        <svg id="speech-icon-off" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+                        <svg id="speech-icon-on" style="display: block;" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                        <span id="speech-btn-text">Speech On</span>
                     </button>
                     <button type="button" id="btn-logout" class="secondary" style="margin: 0; padding: 4px 10px; font-size: 10px; border-radius: 6px; width: auto; font-weight: 700; height: 24px; line-height: 1;">Log Out</button>
                 </div>
             </div>
-            <select id="faculty-select"><option value="RMR">Rajamoorthy (RMR)</option></select>
+            <select id="faculty-select"><option value="DK">Deepali (DK)</option></select>
             <label>Day</label>
             <div class="day-tabs" id="day-tabs"><button type="button" class="tab-btn active" data-day="Monday">Mon</button><button type="button" class="tab-btn" data-day="Tuesday">Tue</button><button type="button" class="tab-btn" data-day="Wednesday">Wed</button><button type="button" class="tab-btn" data-day="Thursday">Thu</button><button type="button" class="tab-btn" data-day="Friday">Fri</button><button type="button" class="tab-btn" data-day="Saturday">Sat</button></div>
             <select id="day-select" class="day-select" aria-hidden="true" tabindex="-1"><option value="Monday">Monday</option><option value="Tuesday">Tuesday</option><option value="Wednesday">Wednesday</option><option value="Thursday">Thursday</option><option value="Friday">Friday</option><option value="Saturday">Saturday</option></select>
@@ -2255,14 +2255,13 @@
 
         <div class="card">
             <div class="my-timetable-header">
-                <h2 id="my-title">Rajamoorthy (RMR) — Monday</h2>
+                <h2 id="my-title">Deepali (DK) — Monday</h2>
                 <button type="button" id="btn-faculty-view" class="view-toggle-btn" aria-pressed="false">Whole week</button>
             </div>
-            <div id="my-timetable"><div class="faculty-timetable-block"><div class="faculty-block-head">Monday</div><p class="sections-scroll-hint faculty-scroll-hint">Swipe left for all time slots →</p><div class="faculty-scroll-wrap"><table class="faculty-grid-table"><thead><tr><th class="faculty-day-col">Time</th><th class="slot-head-col faculty-head-day">9-9.50</th><th class="slot-head-col faculty-head-day">9.55-10.45</th><th class="slot-head-col faculty-head-day">11-11.50</th><th class="slot-head-col faculty-head-day">11.55-12.45</th><th class="slot-head-col faculty-head-day">12.45-1.30</th><th class="slot-head-col faculty-head-day">1.30-2.20</th><th class="slot-head-col faculty-head-day">2.25-3.15</th><th class="slot-head-col faculty-head-day">3.20-4.10</th><th class="slot-head-col faculty-head-day">4.15-5.05</th><th class="slot-head-col faculty-head-day slot-evening-start">1.30-2.15(3rdBCAOnly)</th><th class="slot-head-col faculty-head-day">2:15-3</th><th class="slot-head-col faculty-head-day">3-3:45</th><th class="slot-head-col faculty-head-day">3:45-4:30</th><th class="slot-head-col faculty-head-day">4:45-5:30</th><th class="slot-head-col faculty-head-day">5:30-6:15</th></tr></thead><tbody><tr><td class="faculty-day-col">Classes</td><td class="busy">2BCA C
-DBMS [SH4]</td><td class="slot-free">—</td><td class="busy">3BCA C
-CRYPT [SH1]</td><td class="slot-free">—</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">2BCA C
-DBMS LAB [Lab1+Lab2]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free slot-evening-start slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="busy slot-evening-col">2BCA A (Eve)
-DBMS [SKLR1]</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td></tr></tbody></table></div></div></div>
+            <div id="my-timetable"><div class="faculty-timetable-block"><div class="faculty-block-head">Monday</div><p class="sections-scroll-hint faculty-scroll-hint">Swipe left for all time slots →</p><div class="faculty-scroll-wrap"><table class="faculty-grid-table"><thead><tr><th class="faculty-day-col">Time</th><th class="slot-head-col faculty-head-day">9-9.50</th><th class="slot-head-col faculty-head-day">9.55-10.45</th><th class="slot-head-col faculty-head-day">11-11.50</th><th class="slot-head-col faculty-head-day">11.55-12.45</th><th class="slot-head-col faculty-head-day">12.45-1.30</th><th class="slot-head-col faculty-head-day">1.30-2.20</th><th class="slot-head-col faculty-head-day">2.25-3.15</th><th class="slot-head-col faculty-head-day">3.20-4.10</th><th class="slot-head-col faculty-head-day">4.15-5.05</th><th class="slot-head-col faculty-head-day slot-evening-start">1.30-2.15(3rdBCAOnly)</th><th class="slot-head-col faculty-head-day">2:15-3</th><th class="slot-head-col faculty-head-day">3-3:45</th><th class="slot-head-col faculty-head-day">3:45-4:30</th><th class="slot-head-col faculty-head-day">4:45-5:30</th><th class="slot-head-col faculty-head-day">5:30-6:15</th></tr></thead><tbody><tr><td class="faculty-day-col">Classes</td><td class="slot-free">—</td><td class="busy">2BCA C
+C# [SH4]</td><td class="slot-free">—</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">3BCA C
+WEB LAB [Lab5+MScLab]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free slot-evening-start slot-evening-col">—</td><td colspan="2" class="busy lab-block slot-evening-col">2BCA A (Eve)
+C# LAB [SLab2+SLab3]</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td></tr></tbody></table></div></div></div>
         </div>
 
         <div class="sections-picker-bar">
@@ -2295,7 +2294,7 @@ DBMS [SKLR1]</td><td class="slot-free slot-evening-col">—</td><td class="slot-
             </div>
             <div class="form-group">
                 <label for="absent_faculty_select">Faculty unavailable</label>
-                <select id="absent_faculty_select" class="form-control"><option value="RMR">Rajamoorthy (RMR)</option></select>
+                <select id="absent_faculty_select" class="form-control"><option value="DK">Deepali (DK)</option></select>
             </div>
             <button type="button" class="btn-leave-primary" id="btn-analyze-leave">Analyze &amp; match staff</button>
         </div>
@@ -3785,17 +3784,6 @@ window.TimetableMobile = { activeDay: 'Monday' };
                     if (iconOff) iconOff.style.display = 'none';
                     if (text) text.textContent = 'Speech On';
                     
-                    // Warm up speech synthesis immediately on user click gesture
-                    if ('speechSynthesis' in window) {
-                        try {
-                            const warmUpUtterance = new SpeechSynthesisUtterance('');
-                            warmUpUtterance.volume = 0;
-                            window.speechSynthesis.speak(warmUpUtterance);
-                        } catch (err) {
-                            console.warn("Speech warm-up failed:", err);
-                        }
-                    }
-                    
                     if (activeAppPanel === 'timetable' && facultyViewMode === 'day' && activeDay) {
                         announceFacultyDay(activeFaculty, activeDay);
                     }
@@ -3885,44 +3873,39 @@ window.TimetableMobile = { activeDay: 'Monday' };
                         nextSlot = slots[si + 1];
                     }
                     
-                    const parsed = parseScheduleCellLocal(v);
-                    
-                    // Extract subject code from faculty cell value (which can have newlines and prefixes)
-                    let rawSubj = '';
-                    if (parsed) {
-                        rawSubj = parsed.subject;
-                    } else {
-                        const lines = String(v).split('\n').map(l => l.trim()).filter(Boolean);
-                        if (lines.length > 1) {
-                            rawSubj = lines[1].split('[')[0].trim();
-                        } else {
-                            const firstLine = lines[0].split('[')[0].trim();
-                            const classMatch = firstLine.match(/^(?:\d(?:st|nd|rd)?\s*bca\b|\d(?:st|nd|rd)?\s*bsc\b)\s*/i);
-                            if (classMatch) {
-                                rawSubj = firstLine.substring(classMatch[0].length).trim();
-                            } else {
-                                rawSubj = firstLine;
-                            }
-                        }
-                    }
-                    const mappedSubj = globalSubjectMap[rawSubj] || rawSubj;
-                    
                     v = appendRoomToFacultyCell(v, facultyCode, day, s);
                     let spokenText = v;
-                    spokenText = spokenText.replace(rawSubj, mappedSubj);
                     
-                    // Replace any other subject codes that appear as whole words/lines
-                    for (const [code, name] of Object.entries(globalSubjectMap)) {
-                        const escapedCode = code.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-                        const regex = new RegExp('(?:\\b|\\s|^)' + escapedCode + '(?:\\b|\\s|$)', 'gi');
-                        spokenText = spokenText.replace(regex, (match) => {
-                            return match.replace(new RegExp(escapedCode, 'gi'), name);
+                    // Perform subject name replacement in a single pass to prevent recursive/nested replacement bugs
+                    const sortedSubjectKeys = Object.keys(globalSubjectMap).sort((a, b) => b.length - a.length);
+                    if (sortedSubjectKeys.length > 0) {
+                        const escapedKeys = sortedSubjectKeys.map(k => k.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'));
+                        const subjectRegex = new RegExp('(?:^|[^a-zA-Z0-9_#])(' + escapedKeys.join('|') + ')(?![a-zA-Z0-9_#])', 'gi');
+                        
+                        spokenText = spokenText.replace(subjectRegex, (match) => {
+                            for (const key of sortedSubjectKeys) {
+                                const idx = match.toLowerCase().indexOf(key.toLowerCase());
+                                if (idx !== -1) {
+                                    const before = match.substring(0, idx);
+                                    const after = match.substring(idx + key.length);
+                                    return before + globalSubjectMap[key] + after;
+                                }
+                            }
+                            return match;
                         });
                     }
 
                     spokenText = spokenText.replace(/\[([^\]]+)\]/g, ' in room $1');
                     spokenText = spokenText.replace(/\(([^)]+)\)/g, ''); // remove internal brackets if any
                     spokenText = spokenText.replace(/\//g, ' or ');
+                    
+                    // Format room names for natural speech
+                    const digitWords = { '1': 'one', '2': 'two', '3': 'three', '4': 'four', '5': 'five', '6': 'six' };
+                    spokenText = spokenText
+                        .replace(/msclab/gi, 'M S C Lab')
+                        .replace(/slab(\d)/gi, (m, d) => 'skill lab ' + (digitWords[d] || d))
+                        .replace(/sklr(\d)/gi, (m, d) => 'skill room ' + (digitWords[d] || d))
+                        .replace(/\+/g, ' and ');
                     
                     // Standardize class pronunciations (BCA and BSc) and add a comma pause
                     spokenText = spokenText
@@ -3977,16 +3960,15 @@ window.TimetableMobile = { activeDay: 'Monday' };
             setTimeout(() => {
                 const utterance = new SpeechSynthesisUtterance(text);
                 utterance.rate = 0.9;
-                utterance.lang = 'en-IN'; // Force Indian English to avoid translation to default system languages
                 
                 // Select an English voice explicitly if available to guarantee pure Indian English / English voice
                 if (window.speechSynthesis && typeof window.speechSynthesis.getVoices === 'function') {
                     const voices = window.speechSynthesis.getVoices();
                     const isOffline = !navigator.onLine;
                     
-                    const isEnglish = (v) => v.lang === 'en-IN' || v.lang.startsWith('en-IN') ||
-                                             v.lang === 'en-US' || v.lang.startsWith('en-US') ||
-                                             v.lang === 'en-GB' || v.lang.startsWith('en-GB') ||
+                    const isEnglish = (v) => v.lang === 'en-IN' || v.lang.startsWith('en_IN') ||
+                                             v.lang === 'en-US' || v.lang.startsWith('en_US') ||
+                                             v.lang === 'en-GB' || v.lang.startsWith('en_GB') ||
                                              v.lang.startsWith('en');
                                              
                     let englishVoices = voices.filter(isEnglish);
@@ -3996,12 +3978,12 @@ window.TimetableMobile = { activeDay: 'Monday' };
                         englishVoices = englishVoices.filter(v => v.localService === true);
                     }
                     
-                    let voice = englishVoices.find(v => v.lang.startsWith('en_IN') && v.localService) ||
-                                englishVoices.find(v => v.lang.startsWith('en_IN')) ||
-                                englishVoices.find(v => v.lang.startsWith('en_US') && v.localService) ||
-                                englishVoices.find(v => v.lang.startsWith('en_US')) ||
-                                englishVoices.find(v => v.lang.startsWith('en_GB') && v.localService) ||
-                                englishVoices.find(v => v.lang.startsWith('en_GB')) ||
+                    let voice = englishVoices.find(v => v.lang.startsWith('en-IN') && v.localService) ||
+                                englishVoices.find(v => v.lang.startsWith('en-IN')) ||
+                                englishVoices.find(v => v.lang.startsWith('en-US') && v.localService) ||
+                                englishVoices.find(v => v.lang.startsWith('en-US')) ||
+                                englishVoices.find(v => v.lang.startsWith('en-GB') && v.localService) ||
+                                englishVoices.find(v => v.lang.startsWith('en-GB')) ||
                                 englishVoices.find(v => v.localService) ||
                                 englishVoices[0];
                                 
