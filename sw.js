@@ -1,20 +1,18 @@
-const CACHE_VERSION = 'mgm-timetable-v4';
+const CACHE_VERSION = 'mgm-timetable-v6';
 const SHELL_CACHE = CACHE_VERSION + '-shell';
 
 const PRECACHE_ASSETS = [
-    './manifest.json',
-    'icon-192.png',
-    'icon-512.png',
-'index.html',
-'timetable.json'	
+    './',
+    './mobile-timetable.html',
+    './manifest.json'
 ];
 
-function isTimetableJsonUrl(url) {
+function isBypassCacheJsonUrl(url) {
     try {
         const path = new URL(url, self.location.href).pathname;
-        return /\/timetable\.json$/i.test(path) || path.endsWith('timetable.json');
+        return /\/(timetable|subject)\.json$/i.test(path) || path.endsWith('timetable.json') || path.endsWith('subject.json');
     } catch (e) {
-        return String(url).includes('timetable.json');
+        return String(url).includes('timetable.json') || String(url).includes('subject.json');
     }
 }
 
@@ -47,14 +45,22 @@ self.addEventListener('fetch', (event) => {
 
     const { request } = event;
 
-    if (isTimetableJsonUrl(request.url)) {
+    if (isBypassCacheJsonUrl(request.url)) {
         event.respondWith(fetch(request, { cache: 'no-store' }));
         return;
     }
 
     if (isHtmlRequest(request)) {
         event.respondWith(
-            fetch(request).catch(() => caches.match(request))
+            fetch(request)
+                .then((response) => {
+                    if (response && response.ok) {
+                        const copy = response.clone();
+                        caches.open(SHELL_CACHE).then((cache) => cache.put(request, copy));
+                    }
+                    return response;
+                })
+                .catch(() => caches.match(request))
         );
         return;
     }
