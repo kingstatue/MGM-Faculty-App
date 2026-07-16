@@ -1,19 +1,20 @@
-const CACHE_VERSION = 'mgm-timetable-v5';
+const CACHE_VERSION = 'mgm-timetable-v4';
 const SHELL_CACHE = CACHE_VERSION + '-shell';
 
 const PRECACHE_ASSETS = [
     './manifest.json',
     'icon-192.png',
     'icon-512.png',
-    'index.html'
+'index.html',
+'timetable.json'	
 ];
 
-function isBypassCacheJsonUrl(url) {
+function isTimetableJsonUrl(url) {
     try {
         const path = new URL(url, self.location.href).pathname;
-        return /\/(timetable|subject)\.json$/i.test(path) || path.endsWith('timetable.json') || path.endsWith('subject.json');
+        return /\/timetable\.json$/i.test(path) || path.endsWith('timetable.json');
     } catch (e) {
-        return String(url).includes('timetable.json') || String(url).includes('subject.json');
+        return String(url).includes('timetable.json');
     }
 }
 
@@ -46,7 +47,7 @@ self.addEventListener('fetch', (event) => {
 
     const { request } = event;
 
-    if (isBypassCacheJsonUrl(request.url)) {
+    if (isTimetableJsonUrl(request.url)) {
         event.respondWith(fetch(request, { cache: 'no-store' }));
         return;
     }
