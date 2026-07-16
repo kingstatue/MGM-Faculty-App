@@ -3,8 +3,9 @@ const SHELL_CACHE = CACHE_VERSION + '-shell';
 
 const PRECACHE_ASSETS = [
     './',
-    './mobile-timetable.html',
-    './manifest.json'
+    'index.html',
+    'manifest.json',
+'timetable.json'
 ];
 
 function isNetworkFirstUrl(url) {
