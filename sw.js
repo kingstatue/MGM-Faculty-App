@@ -1,11 +1,12 @@
-const CACHE_VERSION = 'mgm-timetable-v7';
+const CACHE_VERSION = 'mgm-timetable-v11';
 const SHELL_CACHE = CACHE_VERSION + '-shell';
 
 const PRECACHE_ASSETS = [
     './',
     'index.html',
     'manifest.json',
-'timetable.json'
+    'timetable.json',
+    'subject.json'
 ];
 
 function isNetworkFirstUrl(url) {
