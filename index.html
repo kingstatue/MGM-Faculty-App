@@ -4047,12 +4047,12 @@ window.TimetableMobile = { activeDay: 'Monday' };
                         englishVoices = englishVoices.filter(v => v.localService === true);
                     }
                     
-                    let voice = englishVoices.find(v => v.lang.startsWith('en-IN') && v.localService) ||
-                                englishVoices.find(v => v.lang.startsWith('en-IN')) ||
-                                englishVoices.find(v => v.lang.startsWith('en-US') && v.localService) ||
-                                englishVoices.find(v => v.lang.startsWith('en-US')) ||
-                                englishVoices.find(v => v.lang.startsWith('en-GB') && v.localService) ||
-                                englishVoices.find(v => v.lang.startsWith('en-GB')) ||
+                    let voice = englishVoices.find(v => v.lang.startsWith('en_IN') && v.localService) ||
+                                englishVoices.find(v => v.lang.startsWith('en_IN')) ||
+                                englishVoices.find(v => v.lang.startsWith('en_US') && v.localService) ||
+                                englishVoices.find(v => v.lang.startsWith('en_US')) ||
+                                englishVoices.find(v => v.lang.startsWith('en_GB') && v.localService) ||
+                                englishVoices.find(v => v.lang.startsWith('en_GB')) ||
                                 englishVoices.find(v => v.localService) ||
                                 englishVoices[0];
                                 
