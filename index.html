@@ -3182,6 +3182,9 @@ window.TimetableMobile = { activeDay: 'Monday' };
     let timetableJsonFromEmbed = false;
     let timetableJsonRefreshInFlight = false;
     let timetableJsonAutoRefresh = false;
+    let speechTimeoutId = null;
+    let lastSpokenText = '';
+    let lastSpokenTime = 0;
 
     const el = id => document.getElementById(id);
 
@@ -3894,6 +3897,10 @@ window.TimetableMobile = { activeDay: 'Monday' };
 
     window.announceFacultyDay = function(facultyCode, day) {
         try {
+            if (speechTimeoutId) {
+                clearTimeout(speechTimeoutId);
+                speechTimeoutId = null;
+            }
             if (!window.speechEnabled || !('speechSynthesis' in window)) return;
             
             window.speechSynthesis.cancel();
@@ -4022,12 +4029,22 @@ window.TimetableMobile = { activeDay: 'Monday' };
  
     function speakText(text) {
         try {
+            // Prevent repeating the exact same announcement within 3 seconds
+            const now = Date.now();
+            if (text === lastSpokenText && (now - lastSpokenTime) < 3000) {
+                console.log("Suppressing duplicate speech:", text);
+                return;
+            }
+            lastSpokenText = text;
+            lastSpokenTime = now;
+
             console.log("Speaking: ", text);
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
             }
             setTimeout(() => {
                 const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US'; // Set explicit English default fallback to prevent system default language override (e.g. Kannada)
                 utterance.rate = 0.9;
                 
                 // Select an English voice explicitly if available to guarantee pure Indian English / English voice
@@ -4035,9 +4052,9 @@ window.TimetableMobile = { activeDay: 'Monday' };
                     const voices = window.speechSynthesis.getVoices();
                     const isOffline = !navigator.onLine;
                     
-                    const isEnglish = (v) => v.lang === 'en_IN' || v.lang.startsWith('en_IN') ||
-                                             v.lang === 'en_US' || v.lang.startsWith('en_US') ||
-                                             v.lang === 'en_GB' || v.lang.startsWith('en_GB') ||
+                    const isEnglish = (v) => v.lang === 'en-IN' || v.lang.startsWith('en-IN') ||
+                                             v.lang === 'en-US' || v.lang.startsWith('en-US') ||
+                                             v.lang === 'en-GB' || v.lang.startsWith('en-GB') ||
                                              v.lang.startsWith('en');
                                              
                     let englishVoices = voices.filter(isEnglish);
@@ -4047,12 +4064,12 @@ window.TimetableMobile = { activeDay: 'Monday' };
                         englishVoices = englishVoices.filter(v => v.localService === true);
                     }
                     
-                    let voice = englishVoices.find(v => v.lang.startsWith('en_IN') && v.localService) ||
-                                englishVoices.find(v => v.lang.startsWith('en_IN')) ||
-                                englishVoices.find(v => v.lang.startsWith('en_US') && v.localService) ||
-                                englishVoices.find(v => v.lang.startsWith('en_US')) ||
-                                englishVoices.find(v => v.lang.startsWith('en_GB') && v.localService) ||
-                                englishVoices.find(v => v.lang.startsWith('en_GB')) ||
+                    let voice = englishVoices.find(v => v.lang.startsWith('en-IN') && v.localService) ||
+                                englishVoices.find(v => v.lang.startsWith('en-IN')) ||
+                                englishVoices.find(v => v.lang.startsWith('en-US') && v.localService) ||
+                                englishVoices.find(v => v.lang.startsWith('en-US')) ||
+                                englishVoices.find(v => v.lang.startsWith('en-GB') && v.localService) ||
+                                englishVoices.find(v => v.lang.startsWith('en-GB')) ||
                                 englishVoices.find(v => v.localService) ||
                                 englishVoices[0];
                                 
@@ -4729,8 +4746,13 @@ window.TimetableMobile = { activeDay: 'Monday' };
         renderAll();
         
         updateSpeechUi();
+        if (speechTimeoutId) {
+            clearTimeout(speechTimeoutId);
+            speechTimeoutId = null;
+        }
         if (window.speechEnabled && loggedIn && facultyViewMode === 'day' && activeAppPanel === 'timetable' && activeDay) {
-            setTimeout(() => {
+            speechTimeoutId = setTimeout(() => {
+                speechTimeoutId = null;
                 if (window.speechEnabled && activeAppPanel === 'timetable' && facultyViewMode === 'day' && activeDay) {
                     announceFacultyDay(activeFaculty, activeDay);
                 }
