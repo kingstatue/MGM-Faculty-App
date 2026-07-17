@@ -4052,7 +4052,7 @@ window.TimetableMobile = { activeDay: 'Monday' };
                     const voices = window.speechSynthesis.getVoices();
                     const isOffline = !navigator.onLine;
                     
-                    const isEnglish = (v) => v.lang === 'en-IN' || v.lang.startsWith('en-IN') ||
+                    const isEnglish = (v) => v.lang === 'en_IN' || v.lang.startsWith('en_IN') ||
                                              v.lang === 'en-US' || v.lang.startsWith('en-US') ||
                                              v.lang === 'en-GB' || v.lang.startsWith('en-GB') ||
                                              v.lang.startsWith('en');
