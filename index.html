@@ -2181,7 +2181,7 @@
     });
     </script>
 </head>
-<body class="">
+<body class="has-app-dock">
 <!-- TT_EMBED_MARKER -->
 <div class="wrap">
     <h1 id="college-title">College — MGM Mobile</h1>
@@ -2213,7 +2213,7 @@
     </div>
 
     <div id="faculty-app" class="">
-    <div id="panel-login" class="app-panel">
+    <div id="panel-login" class="app-panel hidden">
         <div class="login-container">
             <div class="login-card">
                 <div class="login-header">
@@ -2223,7 +2223,7 @@
                 </div>
                 <div class="login-body">
                     <label for="login-faculty-select">Faculty Profile</label>
-                    <select id="login-faculty-select" style="margin-bottom: 12px;"><option value="__admin__">Administrator (Admin)</option><option value="ABJ">Abhijna (ABJ)</option><option value="AKN_E">AkshathaNayak (AKN_E)</option><option value="AKS">AkshathaShettigar (AKS)</option><option value="ANJ_E">Anjalin (ANJ_E)</option><option value="AA">Anupama (AA)</option><option value="ANV_E">Anvitha (ANV_E)</option><option value="DP">Damodar (DP)</option><option value="DK">Deepali (DK)</option><option value="JRP">Jayanthi (JRP)</option><option value="MIT">Mithun (MIT)</option><option value="NL1">NL1</option><option value="NL1_E">NL1_E</option><option value="PRJ">Prajnashree (PRJ)</option><option value="PRK">Prakash (PRK)</option><option value="RMR">Rajamoorthy (RMR)</option><option value="RAK">Rakshitha (RAK)</option><option value="RAM">Ramya (RAM)</option><option value="RAS">Rashmi (RAS)</option><option value="RNC">RekhaChandra (RNC)</option><option value="SAN">Sanath (SAN)</option><option value="SAJ_E">Sanjana (SAJ_E)</option><option value="SHI">Shilpa (SHI)</option><option value="SUSH">Sushma (SUSH)</option><option value="VAR_E">Varshini (VAR_E)</option><option value="MVP">Vishwanath (MVP)</option><option value="VVK">Vivek (VVK)</option></select>
+                    <select id="login-faculty-select" style="margin-bottom: 12px;"></select>
                     <label for="login-pin-input">4-Digit PIN</label>
                     <input type="password" id="login-pin-input" maxlength="4" placeholder="Enter PIN" style="padding: 10px 12px; border-radius: 10px; border: 1px solid #cbd5e1; width: 100%; font-size: 15px; font-weight: 700; text-align: center; letter-spacing: 6px; background: #f8fafc; margin-bottom: 20px;">
                     <div id="login-error-msg" style="color: #dc2626; font-size: 12px; font-weight: 700; margin-bottom: 12px; min-height: 18px; text-align: center;"></div>
@@ -2233,7 +2233,7 @@
         </div>
     </div>
 
-    <div id="panel-timetable" class="app-panel hidden">
+    <div id="panel-timetable" class="app-panel">
         <div class="card controls-card">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
                 <label for="faculty-select" style="margin-bottom: 0;">Faculty name</label>
@@ -2258,11 +2258,11 @@
                 <h2 id="my-title">Abhijna (ABJ) — Monday</h2>
                 <button type="button" id="btn-faculty-view" class="view-toggle-btn" aria-pressed="false">Whole week</button>
             </div>
-            <div id="my-timetable"><div class="faculty-timetable-block"><div class="faculty-block-head">Monday</div><p class="sections-scroll-hint faculty-scroll-hint">Swipe left for all time slots →</p><div class="faculty-scroll-wrap"><table class="faculty-grid-table"><thead><tr><th class="faculty-day-col">Time</th><th class="slot-head-col faculty-head-day">9-9.50</th><th class="slot-head-col faculty-head-day">9.55-10.45</th><th class="slot-head-col faculty-head-day">11-11.50</th><th class="slot-head-col faculty-head-day">11.55-12.45</th><th class="slot-head-col faculty-head-day">12.45-1.30</th><th class="slot-head-col faculty-head-day">1.30-2.20</th><th class="slot-head-col faculty-head-day">2.25-3.15</th><th class="slot-head-col faculty-head-day">3.20-4.10</th><th class="slot-head-col faculty-head-day">4.15-5.05</th></tr></thead><tbody><tr><td class="faculty-day-col">Classes</td><td class="slot-free">—</td><td class="busy">1BCA B
+            <div id="my-timetable"><div class="faculty-timetable-block"><div class="faculty-block-head">Monday</div><p class="sections-scroll-hint faculty-scroll-hint">Swipe left for all time slots →</p><div class="faculty-scroll-wrap"><table class="faculty-grid-table"><thead><tr><th class="faculty-day-col">Time</th><th class="slot-head-col faculty-head-day">9-9.50</th><th class="slot-head-col faculty-head-day">9.55-10.45</th><th class="slot-head-col faculty-head-day">11-11.50</th><th class="slot-head-col faculty-head-day">11.55-12.45</th><th class="slot-head-col faculty-head-day">12.45-1.30</th><th class="slot-head-col faculty-head-day">1.30-2.20</th><th class="slot-head-col faculty-head-day">2.25-3.15</th><th class="slot-head-col faculty-head-day">3.20-4.10</th><th class="slot-head-col faculty-head-day">4.15-5.05</th><th class="slot-head-col faculty-head-day slot-evening-start">1.30-2.15(3rdBCAOnly)</th><th class="slot-head-col faculty-head-day">2:15-3</th><th class="slot-head-col faculty-head-day">3-3:45</th><th class="slot-head-col faculty-head-day">3:45-4:30</th><th class="slot-head-col faculty-head-day">4:45-5:30</th><th class="slot-head-col faculty-head-day">5:30-6:15</th></tr></thead><tbody><tr><td class="faculty-day-col">Classes</td><td class="slot-free">—</td><td class="busy">1BCA B
 DISC.MATHS [LH7]</td><td class="busy">1BCA C(AIML)
 COMP.MATHS [LH5]</td><td class="busy">2BCA A
 C# [LH4]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">2BSc
-COA_EL [SH2]</td></tr></tbody></table></div></div></div>
+COA_EL [SH2]</td><td class="slot-free slot-evening-start slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td><td class="slot-free slot-evening-col">—</td></tr></tbody></table></div></div></div>
         </div>
 
         <div class="sections-picker-bar">
@@ -2319,7 +2319,7 @@ COA_EL [SH2]</td></tr></tbody></table></div></div></div>
     </div>
     </div>
 
-    <nav id="app-dock" class="app-dock hidden" aria-label="App sections">
+    <nav id="app-dock" class="app-dock" aria-label="App sections">
         <button type="button" class="dock-btn active" data-panel="timetable" id="dock-timetable">
             <span class="dock-icon dock-icon--tt" aria-hidden="true">TT</span>
             <span>Timetable</span>
@@ -2524,54 +2524,14 @@ window.TimetableMobile = { activeDay: 'Monday' };
         };
     }
 
-    function getFacultyAssignmentShifts(fac) {
-        let hasDay = false;
-        let hasEvening = false;
-        if (fac && fac.days) {
-            for (const day of DAYS) {
-                const dayCells = fac.days[day] || {};
-                const dayKind = facultyDayKind(day);
-                for (const slot of Object.keys(dayCells)) {
-                    const cellVal = dayCells[slot];
-                    if (cellVal && cellVal.toLowerCase() !== 'free' && cellVal !== '—') {
-                        if (isEveningSlot(slot, dayKind)) {
-                            hasEvening = true;
-                        } else {
-                            hasDay = true;
-                        }
-                    }
-                }
-            }
-        }
-        return { hasDay, hasEvening };
-    }
-
-    function getFacultyShiftsToShow(fac) {
-        const shifts = getFacultyAssignmentShifts(fac);
-        let showDay = shifts.hasDay;
-        let showEvening = shifts.hasEvening;
-        if (!showDay && !showEvening) {
-            showDay = true;
-            showEvening = false;
-        }
-        return { showDay, showEvening };
-    }
-
     function facultySaturdaySlotSets(fac) {
-        let daySlots = [];
-        let eveningSlots = [];
         if (fac.saturdayDaySlots?.length || fac.saturdayEveningSlots?.length) {
-            daySlots = (fac.saturdayDaySlots || []).filter(Boolean);
-            eveningSlots = (fac.saturdayEveningSlots || []).filter(Boolean);
-        } else {
-            const split = splitFacultySlotsByCollege(fac.saturdaySlots || [], 'saturday');
-            daySlots = split.daySlots;
-            eveningSlots = split.eveningSlots;
+            return {
+                daySlots: (fac.saturdayDaySlots || []).filter(Boolean),
+                eveningSlots: (fac.saturdayEveningSlots || []).filter(Boolean),
+            };
         }
-        const show = getFacultyShiftsToShow(fac);
-        if (!show.showDay) daySlots = [];
-        if (!show.showEvening) eveningSlots = [];
-        return { daySlots, eveningSlots };
+        return splitFacultySlotsByCollege(fac.saturdaySlots || [], 'saturday');
     }
 
     function facultyCellValue(dayCells, slot) {
@@ -3182,9 +3142,6 @@ window.TimetableMobile = { activeDay: 'Monday' };
     let timetableJsonFromEmbed = false;
     let timetableJsonRefreshInFlight = false;
     let timetableJsonAutoRefresh = false;
-    let speechTimeoutId = null;
-    let lastSpokenText = '';
-    let lastSpokenTime = 0;
 
     const el = id => document.getElementById(id);
 
@@ -3629,21 +3586,11 @@ window.TimetableMobile = { activeDay: 'Monday' };
     }
 
     function slotsForFacultyDay(fac, day) {
-        let slots = [];
         if (day === 'Saturday' && fac.saturdaySlots && fac.saturdaySlots.length) {
-            slots = fac.saturdaySlots;
-        } else if (fac.weekdaySlots && fac.weekdaySlots.length) {
-            slots = fac.weekdaySlots;
-        } else {
-            slots = fac.slots || [];
+            return fac.saturdaySlots;
         }
-        const show = getFacultyShiftsToShow(fac);
-        const dayKind = facultyDayKind(day);
-        return slots.filter(s => {
-            const isEve = isEveningSlot(s, dayKind);
-            if (isEve) return show.showEvening;
-            return show.showDay;
-        });
+        if (fac.weekdaySlots && fac.weekdaySlots.length) return fac.weekdaySlots;
+        return fac.slots || [];
     }
 
     function parseStaffCodesLocal(raw) {
@@ -3897,10 +3844,6 @@ window.TimetableMobile = { activeDay: 'Monday' };
 
     window.announceFacultyDay = function(facultyCode, day) {
         try {
-            if (speechTimeoutId) {
-                clearTimeout(speechTimeoutId);
-                speechTimeoutId = null;
-            }
             if (!window.speechEnabled || !('speechSynthesis' in window)) return;
             
             window.speechSynthesis.cancel();
@@ -4029,22 +3972,12 @@ window.TimetableMobile = { activeDay: 'Monday' };
  
     function speakText(text) {
         try {
-            // Prevent repeating the exact same announcement within 3 seconds
-            const now = Date.now();
-            if (text === lastSpokenText && (now - lastSpokenTime) < 3000) {
-                console.log("Suppressing duplicate speech:", text);
-                return;
-            }
-            lastSpokenText = text;
-            lastSpokenTime = now;
-
             console.log("Speaking: ", text);
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
             }
             setTimeout(() => {
                 const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'en-US'; // Set explicit English default fallback to prevent system default language override (e.g. Kannada)
                 utterance.rate = 0.9;
                 
                 // Select an English voice explicitly if available to guarantee pure Indian English / English voice
@@ -4052,7 +3985,7 @@ window.TimetableMobile = { activeDay: 'Monday' };
                     const voices = window.speechSynthesis.getVoices();
                     const isOffline = !navigator.onLine;
                     
-                    const isEnglish = (v) => v.lang === 'en_IN' || v.lang.startsWith('en_IN') ||
+                    const isEnglish = (v) => v.lang === 'en-IN' || v.lang.startsWith('en-IN') ||
                                              v.lang === 'en-US' || v.lang.startsWith('en-US') ||
                                              v.lang === 'en-GB' || v.lang.startsWith('en-GB') ||
                                              v.lang.startsWith('en');
@@ -4091,13 +4024,7 @@ window.TimetableMobile = { activeDay: 'Monday' };
     }
 
     function renderFacultyWeekTable(fac) {
-        const show = getFacultyShiftsToShow(fac);
-        let weekdaySlots = (fac.weekdaySlots || fac.slots || []).filter(Boolean);
-        weekdaySlots = weekdaySlots.filter(s => {
-            const isEve = isEveningSlot(s, 'weekday');
-            if (isEve) return show.showEvening;
-            return show.showDay;
-        });
+        const weekdaySlots = (fac.weekdaySlots || fac.slots || []).filter(Boolean);
         const { daySlots: satDaySlots, eveningSlots: satEveSlots } = facultySaturdaySlotSets(fac);
         const satDay = satDaySlots.filter(Boolean);
         const satEve = satEveSlots.filter(Boolean);
@@ -4746,13 +4673,8 @@ window.TimetableMobile = { activeDay: 'Monday' };
         renderAll();
         
         updateSpeechUi();
-        if (speechTimeoutId) {
-            clearTimeout(speechTimeoutId);
-            speechTimeoutId = null;
-        }
         if (window.speechEnabled && loggedIn && facultyViewMode === 'day' && activeAppPanel === 'timetable' && activeDay) {
-            speechTimeoutId = setTimeout(() => {
-                speechTimeoutId = null;
+            setTimeout(() => {
                 if (window.speechEnabled && activeAppPanel === 'timetable' && facultyViewMode === 'day' && activeDay) {
                     announceFacultyDay(activeFaculty, activeDay);
                 }
