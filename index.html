@@ -1483,24 +1483,15 @@
         Object.keys(sec.cells || {}).forEach(slot => {
             const parsed = parseScheduleCell(sec.cells[slot]);
             if (!parsed) return;
-            const segments = (parsed.segments && parsed.segments.length)
-                ? parsed.segments
-                : [{ subject: parsed.subject, staff: parsed.staff, room: parsed.room }];
-            const subjectSet = new Set(segments
-                .map(seg => String(seg.subject || '').trim().toLowerCase())
-                .filter(Boolean));
-            const electiveGroup = subjectSet.size > 1;
-            segments.forEach(seg => {
-                const staffCode = seg.staff;
-                if (!staffCode) return;
+            const staffList = parsed.staffAll || [parsed.staff];
+            staffList.forEach(staffCode => {
                 db[dayKey].push({
                     section: sec.name,
                     slot,
-                    subject: seg.subject || parsed.subject,
+                    subject: parsed.subject,
                     staff: staffCode,
-                    room: seg.room || parsed.room,
+                    room: parsed.room,
                     shift: useShift,
-                    electiveGroup,
                 });
                 roster.add(staffCode);
             });
@@ -1971,9 +1962,9 @@
                 secondSlot = (currentSlotIdx !== -1 && currentSlotIdx + 1 < activeSlotsTimeline.length)
                     ? activeSlotsTimeline[currentSlotIdx + 1] : null;
             }
-            const activeRoomsThisHour = dailySchedule.filter(e => slotsOverlap(e.slot, firstSlot)).map(e => e.room);
+            const activeRoomsThisHour = dailySchedule.filter(e => e.slot === firstSlot).map(e => e.room);
             const activeRoomsNextHour = secondSlot
-                ? dailySchedule.filter(e => slotsOverlap(e.slot, secondSlot)).map(e => e.room) : [];
+                ? dailySchedule.filter(e => e.slot === secondSlot).map(e => e.room) : [];
 
             const openLabsTwoHourBlock = campusLabList.filter(lab => {
                 const busyNow = activeRoomsThisHour.some(r => r.toLowerCase().includes(lab.toLowerCase()));
@@ -1983,39 +1974,36 @@
 
             const matchingFacultyRosterList = [];
             const clsShift = shiftForLeaveEntry(cls);
-            const isMixedElectiveClass = !!cls.electiveGroup;
 
-            if (!isMixedElectiveClass) {
-                freeStaffList.forEach(teacher => {
-                    const teachesSameSectionToday = dailySchedule.some(e =>
-                        e.staff === teacher &&
-                        e.section === cls.section &&
-                        shiftForLeaveEntry(e) === clsShift &&
-                        isLabSubject(e.subject) === isTargetLab
-                    );
+            freeStaffList.forEach(teacher => {
+                const teachesSameSectionToday = dailySchedule.some(e =>
+                    e.staff === teacher &&
+                    e.section === cls.section &&
+                    shiftForLeaveEntry(e) === clsShift &&
+                    isLabSubject(e.subject) === isTargetLab
+                );
 
-                    let teachesSameSectionOtherDays = false;
-                    Object.keys(timetableDatabase).forEach(d => {
-                        if (d !== day) {
-                            const hasMatch = timetableDatabase[d].some(e =>
-                                e.staff === teacher &&
-                                e.section === cls.section &&
-                                shiftForLeaveEntry(e) === clsShift &&
-                                isLabSubject(e.subject) === isTargetLab
-                            );
-                            if (hasMatch) teachesSameSectionOtherDays = true;
-                        }
-                    });
-
-                    if (teachesSameSectionToday || teachesSameSectionOtherDays) {
-                        matchingFacultyRosterList.push({
-                            code: teacher,
-                            sameSecToday: teachesSameSectionToday,
-                            sameSecOtherDays: teachesSameSectionOtherDays
-                        });
+                let teachesSameSectionOtherDays = false;
+                Object.keys(timetableDatabase).forEach(d => {
+                    if (d !== day) {
+                        const hasMatch = timetableDatabase[d].some(e =>
+                            e.staff === teacher &&
+                            e.section === cls.section &&
+                            shiftForLeaveEntry(e) === clsShift &&
+                            isLabSubject(e.subject) === isTargetLab
+                        );
+                        if (hasMatch) teachesSameSectionOtherDays = true;
                     }
+                });
+
+                if (teachesSameSectionToday || teachesSameSectionOtherDays) {
+                    matchingFacultyRosterList.push({
+                        code: teacher,
+                        sameSecToday: teachesSameSectionToday,
+                        sameSecOtherDays: teachesSameSectionOtherDays
                     });
-            }
+                }
+            });
 
             matchingFacultyRosterList.sort((a, b) => {
                 if (a.sameSecToday && !b.sameSecToday) return -1;
@@ -2035,9 +2023,7 @@
                         data-subject="${escapeHtml(cls.subject)}" data-info-text="">
             `;
 
-            if (isMixedElectiveClass) {
-                rowHtml += '<p class="leave-empty-options">Mixed elective paper — staff replacement is not suggested for this slot.</p>';
-            } else if (matchingFacultyRosterList.length) {
+            if (matchingFacultyRosterList.length) {
                 rowHtml += `<div class="picker-section">
                     <div class="picker-label">Eligible staff</div>
                     <p class="leave-hint-text">
@@ -2272,10 +2258,10 @@
                 <h2 id="my-title">Abhijna (ABJ) — Monday</h2>
                 <button type="button" id="btn-faculty-view" class="view-toggle-btn" aria-pressed="false">Whole week</button>
             </div>
-            <div id="my-timetable"><div class="faculty-timetable-block"><div class="faculty-block-head">Monday</div><p class="sections-scroll-hint faculty-scroll-hint">Swipe left for all time slots →</p><div class="faculty-scroll-wrap"><table class="faculty-grid-table"><thead><tr><th class="faculty-day-col">Time</th><th class="slot-head-col faculty-head-day">9-9.50</th><th class="slot-head-col faculty-head-day">9.55-10.45</th><th class="slot-head-col faculty-head-day">11-11.50</th><th class="slot-head-col faculty-head-day">11.55-12.45</th><th class="slot-head-col faculty-head-day">12.45-1.30</th><th class="slot-head-col faculty-head-day">1.30-2.20</th><th class="slot-head-col faculty-head-day">2.25-3.15</th><th class="slot-head-col faculty-head-day">3.20-4.10</th><th class="slot-head-col faculty-head-day">4.15-5.05</th></tr></thead><tbody><tr><td class="faculty-day-col">Classes</td><td class="slot-free">—</td><td class="busy">1BCA B
+            <div id="my-timetable"><div class="faculty-timetable-block"><div class="faculty-block-head">Monday</div><p class="sections-scroll-hint faculty-scroll-hint">Swipe left for all time slots →</p><div class="faculty-scroll-wrap"><table class="faculty-grid-table"><thead><tr><th class="faculty-day-col">Time</th><th class="slot-head-col faculty-head-day">9-9.55</th><th class="slot-head-col faculty-head-day">10-10.55</th><th class="slot-head-col faculty-head-day">11.10-12.05</th><th class="slot-head-col faculty-head-day">12.10-1.05</th><th class="slot-head-col faculty-head-day">1.05-2</th><th class="slot-head-col faculty-head-day">2-2.55</th><th class="slot-head-col faculty-head-day">3-3.55</th><th class="slot-head-col faculty-head-day">4-4.55</th></tr></thead><tbody><tr><td class="faculty-day-col">Classes</td><td class="slot-free">—</td><td class="busy">1BCA B
 DISC.MATHS [LH7]</td><td class="busy">1BCA C(AIML)
 COMP.MATHS [LH5]</td><td class="busy">2BCA A
-C# [LH4]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">2BSc
+C# [LH4]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">2BSc
 COA_EL [SH2]</td></tr></tbody></table></div></div></div>
         </div>
 
@@ -2285,8 +2271,8 @@ COA_EL [SH2]</td></tr></tbody></table></div></div></div>
         </div>
 
         <div class="card sections-card">
-            <h2 class="sections-card-header" id="sections-title">Sections · Monday</h2>
-            <div id="sections-timetable" class="table-wrap"><div class="sections-block sections-block--day"><h3>Day College</h3><p class="sections-scroll-hint">Swipe left for all time slots →</p><div class="sections-scroll-wrap"><table class="sections-grid-table"><thead><tr><th class="section-head-col">Section</th><th class="slot-head-col">9-9.50</th><th class="slot-head-col">9.55-10.45</th><th class="slot-head-col">11-11.50</th><th class="slot-head-col">11.55-12.45</th><th class="slot-head-col">12.45-1.30</th><th class="slot-head-col">1.30-2.20</th><th class="slot-head-col">2.25-3.15</th><th class="slot-head-col">3.20-4.10</th><th class="slot-head-col">4.15-5.05</th></tr></thead><tbody><tr class="section-data-row"><td class="section-name">1st BCA A</td><td class="busy">FOC [SH3]</td><td class="busy">DISC.MATHS [SH3]</td><td colspan="2" class="busy lab-block">C LAB [Lab1+Lab2]</td><td class="slot-free">—</td><td class="busy">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4]</td><td class="busy">CONST [SH3]</td><td class="busy">SPORTS</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">1st BCA B</td><td class="busy">FOC [LH7]</td><td class="busy">DISC.MATHS [LH7]</td><td colspan="2" class="busy lab-block">FOC LAB [Lab5+MScLab]</td><td class="slot-free">—</td><td class="busy">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4]</td><td class="busy">CONST [LH7]</td><td class="busy">RESVD</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">1st BCA C(AIML)</td><td colspan="2" class="busy lab-block">C LAB [SLab2+SLab3]</td><td class="busy">COMP.MATHS [LH5]</td><td class="busy">FOC [LH5]</td><td class="slot-free">—</td><td class="busy">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4]</td><td class="busy">CONST [LH5]</td><td class="busy">LIB</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">1st BSc</td><td colspan="2" class="busy lab-block">F_C LAB [Lab5]</td><td class="slot-free">—</td><td class="busy">F_C [SH1]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">2nd BCA A</td><td class="busy">DBMS [LH4]</td><td class="busy">CN [LH4]</td><td class="busy">ENG [LH4]</td><td class="busy">C# [LH4]</td><td class="slot-free">—</td><td class="busy">RESVD</td><td class="busy">RESVD</td><td class="busy">RESVD</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">2nd BCA B</td><td class="busy">C# [LH6]</td><td class="busy">DBMS [LH6]</td><td class="busy">ENG [LH6]</td><td class="busy">CN [LH6]</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">C# LAB [Lab4]</td><td class="busy">RESVD</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">2nd BCA C</td><td class="busy">DBMS [SH4]</td><td class="busy">C# [SH4]</td><td class="busy">ENG [SH4]</td><td class="busy">CN [SH4]</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">DBMS LAB [Lab1+Lab2]</td><td class="busy">RESVD</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">2nd BSc</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">COA_EL [SH2]</td></tr><tr class="section-data-row stream-break"><td class="section-name">3rd BCA A</td><td class="busy">CRYPT [LH1]</td><td class="busy">WEB [LH1]</td><td colspan="2" class="busy lab-block">WEB LAB [Lab4]</td><td class="slot-free">—</td><td class="busy">SE [LH1]</td><td class="busy">CLOUD [LH1]</td><td class="busy">SPORTS</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">3rd BCA B</td><td class="busy">CRYPT [SH2]</td><td class="busy">R PROG [SH2]</td><td colspan="2" class="busy lab-block">WEB LAB [SLab2+SLab3]</td><td class="slot-free">—</td><td class="busy">SE [SH2]</td><td class="busy">CLOUD [SH2]</td><td class="busy">RESVD</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">3rd BCA C</td><td class="busy">DAA [SH1]</td><td class="busy">SE [SH1]</td><td class="busy">CRYPT [SH1]</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">WEB LAB [Lab5+MScLab]</td><td class="busy">R PROG [SH1]</td><td class="busy">RESVD</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">3rd BSc</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">OS [SH2]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">PYTHON [SH1]</td><td class="slot-free">—</td></tr></tbody></table></div></div><div class="sections-block sections-block--evening"><h3>Evening College</h3><p class="sections-scroll-hint">Swipe left for all time slots →</p><div class="sections-scroll-wrap"><table class="sections-grid-table"><thead><tr><th class="section-head-col">Section</th><th class="slot-head-col">1.30-2.15(3rdBCAOnly)</th><th class="slot-head-col">2:15-3</th><th class="slot-head-col">3-3:45</th><th class="slot-head-col">3:45-4:30</th><th class="slot-head-col">4:45-5:30</th><th class="slot-head-col">5:30-6:15</th></tr></thead><tbody><tr class="section-data-row"><td class="section-name">1st BCA A (Eve)</td><td class="slot-free">—</td><td class="busy">ENG [SKLR5]</td><td class="busy">PROG in C [SKLR5]</td><td class="busy">FOC [SKLR5]</td><td colspan="2" class="busy lab-block">FOC LAB [Lab5]</td></tr><tr class="section-data-row"><td class="section-name">1st BCA B (Eve)</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">C LAB [Lab5]</td><td class="busy">DISC.MATHS [SKLR6]</td><td class="busy">ENG [SKLR6]</td><td class="busy">PROG in C [SKLR6]</td></tr><tr class="section-data-row stream-break"><td class="section-name">2nd BCA A (Eve)</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">C# LAB [SLab2+SLab3]</td><td class="busy">DBMS [SKLR1]</td><td class="busy">ELECTIVE: KAN [SKLR1] · HND [SKLR2]</td><td class="busy">CN [SKLR1]</td></tr><tr class="section-data-row"><td class="section-name">2nd BCA B (Eve)</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">DBMS LAB [Lab2+Lab3]</td><td class="busy">DBMS [SKLR2]</td><td class="busy">ELECTIVE: KAN [SKLR1] · HND [SKLR2]</td><td class="busy">CN [SKLR2]</td></tr><tr class="section-data-row stream-break"><td class="section-name">3rd BCA A (Eve)</td><td class="busy lab-block">AITOOLS LAB</td><td class="busy">R PROG [LH4]</td><td class="busy">CRYPT [LH4]</td><td class="busy">CLOUD [LH4]</td><td colspan="2" class="busy lab-block">DAA LAB [SLab2+SLab3]</td></tr><tr class="section-data-row"><td class="section-name">3rd BCA B (Eve)</td><td class="busy lab-block">AITOOLS LAB</td><td class="busy">DAA [LH6]</td><td class="busy">CRYPT [LH6]</td><td class="busy">SE [LH6]</td><td colspan="2" class="busy lab-block">DAA LAB [Lab4]</td></tr></tbody></table></div></div></div>
+            <h2 class="sections-card-header" id="sections-title">1st BCA A — whole week</h2>
+            <div id="sections-timetable" class="table-wrap"><div class="faculty-timetable-block"><div class="faculty-block-head">1st BCA A — Day college · whole week</div><p class="sections-scroll-hint faculty-scroll-hint">Swipe left for all time slots →</p><div class="faculty-scroll-wrap"><table class="faculty-grid-table sections-grid-table"><thead><tr><th class="faculty-day-col" rowspan="2">Day</th><th class="faculty-weekday-day-band faculty-head-day" colspan="8">Day College</th></tr><tr><th class="slot-head-col faculty-head-day">9-9.55</th><th class="slot-head-col faculty-head-day">10-10.55</th><th class="slot-head-col faculty-head-day">11.10-12.05</th><th class="slot-head-col faculty-head-day">12.10-1.05</th><th class="slot-head-col faculty-head-day">1.05-2</th><th class="slot-head-col faculty-head-day">2-2.55</th><th class="slot-head-col faculty-head-day">3-3.55</th><th class="slot-head-col faculty-head-day">4-4.55</th></tr></thead><tbody><tr><td class="faculty-day-col">Mon</td><td class="busy">FOC [SH3]</td><td class="busy">DISC.MATHS [SH3]</td><td colspan="2" class="busy lab-block">C LAB [Lab1+Lab2]</td><td class="slot-free">—</td><td class="busy">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5]</td><td class="busy">CONST [SH3]</td><td class="slot-free">—</td></tr><tr><td class="faculty-day-col">Tue</td><td class="busy">PROG in C [SH3]</td><td class="busy">ENG [SH3]</td><td class="busy">DISC.MATHS [SH3]</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">FOC LAB [Lab1+Lab2]</td><td class="busy">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5]</td><td class="slot-free">—</td></tr><tr><td class="faculty-day-col">Wed</td><td class="busy">PROG in C [SH3]</td><td class="busy">DISC.MATHS [SH3]</td><td class="busy">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5]</td><td class="busy">FOC [SH3]</td><td class="slot-free">—</td><td class="busy">CONST [SH3]</td><td class="busy">ENG [SH3]</td><td class="slot-free">—</td></tr><tr><td class="faculty-day-col">Thu</td><td colspan="2" class="busy lab-block">FOC LAB [Lab5+MScLab]</td><td class="busy">ENG [SH3]</td><td class="busy">PROG in C [SH3]</td><td class="slot-free">—</td><td class="busy">LIB</td><td class="busy">SPORTS</td><td class="slot-free">—</td></tr><tr><td class="faculty-day-col">Fri</td><td class="busy">FOC [SH3]</td><td class="busy">PROG in C [SH3]</td><td colspan="2" class="busy lab-block">C LAB [Lab1+Lab2]</td><td class="slot-free">—</td><td class="busy">DISC.MATHS [SH3]</td><td class="busy">ENG [SH3]</td><td class="slot-free">—</td></tr><tr class="faculty-sat-row"><td class="faculty-day-col faculty-sat-label">Saturday</td><td class="busy">FOC [SH3]</td><td class="busy">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5]</td><td class="busy">CONST [SH3]</td><td class="busy">DISC.MATHS [SH3]</td><td class="slot-free slot-sat-afternoon-pad">—</td><td class="slot-free slot-sat-afternoon-pad">—</td><td class="slot-free slot-sat-afternoon-pad">—</td><td class="slot-free slot-sat-afternoon-pad slot-day-end">—</td></tr></tbody></table></div></div></div>
         </div>
     </div>
 
@@ -2304,12 +2290,12 @@ COA_EL [SH2]</td></tr></tbody></table></div></div></div>
             </div>
             <div class="form-group">
                 <label>Day</label>
-                <div id="leave_day_display" class="leave-day-display" aria-live="polite">Wednesday</div>
-                <input type="hidden" id="leave_day_value" value="Wednesday">
+                <div id="leave_day_display" class="leave-day-display" aria-live="polite">Friday</div>
+                <input type="hidden" id="leave_day_value" value="Friday">
             </div>
             <div class="form-group">
                 <label for="absent_faculty_select">Faculty unavailable</label>
-                <select id="absent_faculty_select" class="form-control"><option value="">-- Choose Faculty --</option><option value="ABJ">Abhijna (ABJ)</option><option value="AKN_E">AkshathaNayak (AKN_E)</option><option value="AKS">AkshathaShettigar (AKS)</option><option value="ANJ_E (Lab3">ANJ_E (Lab3</option><option value="ANJ_E">Anjalin (ANJ_E)</option><option value="AA">Anupama (AA)</option><option value="ANV_E">Anvitha (ANV_E)</option><option value="DP">Damodar (DP)</option><option value="DK">Deepali (DK)</option><option value="NL1_E">Harshith (NL1_E)</option><option value="JRP">Jayanthi (JRP)</option><option value="MIT">Mithun (MIT)</option><option value="PRJ">Prajnashree (PRJ)</option><option value="PRK">Prakash (PRK)</option><option value="NL1">Priya (NL1)</option><option value="RMR">Rajamoorthy (RMR)</option><option value="RAK">Rakshitha (RAK)</option><option value="RAM">Ramya (RAM)</option><option value="RAS">Rashmi (RAS)</option><option value="RNC">RekhaChandra (RNC)</option><option value="SAN">Sanath (SAN)</option><option value="SAJ_E">Sanjana (SAJ_E)</option><option value="SHI">Shilpa (SHI)</option><option value="SLab2">SLab2</option><option value="SLab3">SLab3</option><option value="SUSH">Sushma (SUSH)</option><option value="VAR_E">Varshini (VAR_E)</option><option value="MVP">Vishwanath (MVP)</option><option value="VVK">Vivek (VVK)</option></select>
+                <select id="absent_faculty_select" class="form-control"><option value="">-- Choose Faculty --</option><option value="ABJ">Abhijna (ABJ)</option><option value="AKN_E">AkshathaNayak (AKN_E)</option><option value="AKS">AkshathaShettigar (AKS)</option><option value="ANJ_E">Anjalin (ANJ_E)</option><option value="AA">Anupama (AA)</option><option value="ANV_E">Anvitha (ANV_E)</option><option value="DP">Damodar (DP)</option><option value="DK">Deepali (DK)</option><option value="NL1_E">Harshith (NL1_E)</option><option value="JRP">Jayanthi (JRP)</option><option value="MIT">Mithun (MIT)</option><option value="PRJ">Prajnashree (PRJ)</option><option value="PRK">Prakash (PRK)</option><option value="NL1">Priya (NL1)</option><option value="RMR">Rajamoorthy (RMR)</option><option value="RAK">Rakshitha (RAK)</option><option value="RAM">Ramya (RAM)</option><option value="RAS">Rashmi (RAS)</option><option value="RNC">RekhaChandra (RNC)</option><option value="SAN">Sanath (SAN)</option><option value="SAJ_E">Sanjana (SAJ_E)</option><option value="SHI">Shilpa (SHI)</option><option value="SUSH">Sushma (SUSH)</option><option value="VAR_E">Varshini (VAR_E)</option><option value="MVP">Vishwanath (MVP)</option><option value="VVK">Vivek (VVK)</option></select>
             </div>
             <button type="button" class="btn-leave-primary" id="btn-analyze-leave">Analyze &amp; match staff</button>
         </div>
@@ -2397,10 +2383,10 @@ window.TimetableMobile = { activeDay: 'Monday' };
     /** Section day-wise columns — match Excel / app.py slot lists */
     const SECTION_SLOT_SETS = {
         day_weekday: [
-            '9-9.50', '9.55-10.45', '11-11.50', '11.55-12.45',
-            '12.45-1.30', '1.30-2.20', '2.25-3.15', '3.20-4.10', '4.15-5.05',
+            '9-9.55', '10-10.55', '11.10-12.05', '12.10-1.05',
+            '2-2.55', '3-3.55', '4-4.55',
         ],
-        day_saturday: ['9-9.50', '9.55-10.45', '11-11.50', '11.55-12.45'],
+        day_saturday: ['9-9.55', '10-10.55', '11.10-12.05', '12.10-1.05'],
         evening_weekday: [
             '1.30-2.15(3rdBCAOnly)',
             '2:15-3', '3-3:45', '3:45-4:30', '4:45-5:30', '5:30-6:15',
@@ -2412,8 +2398,8 @@ window.TimetableMobile = { activeDay: 'Monday' };
     };
 
     const FACULTY_SHIFT_BOUNDARIES = {
-        weekday: { dayEnd: '4.15-5.05', eveningStart: '1.30-2.15(3rdBCAOnly)' },
-        saturday: { dayEnd: '11.55-12.45', eveningStart: '1-1.45' },
+        weekday: { dayEnd: '4-4.55', eveningStart: '1.30-2.15(3rdBCAOnly)' },
+        saturday: { dayEnd: '12.10-1.05', eveningStart: '1-1.45' },
     };
 
     function facultyEveningSlotSet(dayKind) {
@@ -5242,7 +5228,6 @@ window.TimetableMobile = { activeDay: 'Monday' };
     }
 })();
 </script>
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon="{&quot;version&quot;:&quot;2024.11.0&quot;,&quot;token&quot;:&quot;75124c326cb447fe934cde04713ae013&quot;,&quot;r&quot;:1,&quot;server_timing&quot;:{&quot;name&quot;:{&quot;cfCacheStatus&quot;:true,&quot;cfEdge&quot;:true,&quot;cfExtPri&quot;:true,&quot;cfL4&quot;:true,&quot;cfOrigin&quot;:true,&quot;cfSpeedBrain&quot;:true},&quot;location_startswith&quot;:null}}" crossorigin="anonymous"></script>
 
 
 </body></html>
