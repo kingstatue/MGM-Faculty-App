@@ -2259,26 +2259,23 @@
             </div>
             <select id="faculty-select"><option value="ABJ">Abhijna (ABJ)</option><option value="AKN_E">AkshathaNayak (AKN_E)</option><option value="AKS">AkshathaShettigar (AKS)</option><option value="ANJ_E">Anjalin (ANJ_E)</option><option value="AA">Anupama (AA)</option><option value="ANV_E">Anvitha (ANV_E)</option><option value="DP">Damodar (DP)</option><option value="DK">Deepali (DK)</option><option value="NL1_E">Harshith (NL1_E)</option><option value="JRP">Jayanthi (JRP)</option><option value="MIT">Mithun (MIT)</option><option value="PRJ">Prajnashree (PRJ)</option><option value="PRK">Prakash (PRK)</option><option value="NL1">Priya (NL1)</option><option value="RMR">Rajamoorthy (RMR)</option><option value="RAK">Rakshitha (RAK)</option><option value="RAM">Ramya (RAM)</option><option value="RAS">Rashmi (RAS)</option><option value="RNC">RekhaChandra (RNC)</option><option value="SAN">Sanath (SAN)</option><option value="SAJ_E">Sanjana (SAJ_E)</option><option value="NL2_E">Sharanya (NL2_E)</option><option value="SHI">Shilpa (SHI)</option><option value="SUSH">Sushma (SUSH)</option><option value="VAR_E">Varshini (VAR_E)</option><option value="MVP">Vishwanath (MVP)</option><option value="VVK">Vivek (VVK)</option></select>
             <label>Day</label>
-            <div class="day-tabs" id="day-tabs"><button type="button" class="tab-btn active" data-day="Monday">Mon</button><button type="button" class="tab-btn" data-day="Tuesday">Tue</button><button type="button" class="tab-btn" data-day="Wednesday">Wed</button><button type="button" class="tab-btn" data-day="Thursday">Thu</button><button type="button" class="tab-btn" data-day="Friday">Fri</button><button type="button" class="tab-btn" data-day="Saturday">Sat</button></div>
+            <div class="day-tabs" id="day-tabs"><button type="button" class="tab-btn" data-day="Monday">Mon</button><button type="button" class="tab-btn" data-day="Tuesday">Tue</button><button type="button" class="tab-btn" data-day="Wednesday">Wed</button><button type="button" class="tab-btn" data-day="Thursday">Thu</button><button type="button" class="tab-btn" data-day="Friday">Fri</button><button type="button" class="tab-btn active" data-day="Saturday">Sat</button></div>
             <select id="day-select" class="day-select" aria-hidden="true" tabindex="-1"><option value="Monday">Monday</option><option value="Tuesday">Tuesday</option><option value="Wednesday">Wednesday</option><option value="Thursday">Thursday</option><option value="Friday">Friday</option><option value="Saturday">Saturday</option></select>
-            <span class="pill" id="hours-pill">4 hr(s) on Monday</span>
+            <span class="pill" id="hours-pill">2 hr(s) on Saturday</span>
         </div>
 
         <div class="card">
             <div class="my-timetable-header">
-                <h2 id="my-title">Abhijna (ABJ) — Monday</h2>
+                <h2 id="my-title">Abhijna (ABJ) — Saturday</h2>
                 <button type="button" id="btn-faculty-view" class="view-toggle-btn" aria-pressed="false">Whole week</button>
             </div>
-            <div id="my-timetable"><div class="faculty-timetable-block"><div class="faculty-block-head">Monday</div><p class="sections-scroll-hint faculty-scroll-hint">Swipe left for all time slots →</p><div class="faculty-scroll-wrap"><table class="faculty-grid-table"><thead><tr><th class="faculty-day-col">Time</th><th class="slot-head-col faculty-head-day">9-9.55</th><th class="slot-head-col faculty-head-day">10-10.55</th><th class="slot-head-col faculty-head-day">11.10-12.05</th><th class="slot-head-col faculty-head-day">12.10-1.05</th><th class="slot-head-col faculty-head-day">1.05-2</th><th class="slot-head-col faculty-head-day">2-2.55</th><th class="slot-head-col faculty-head-day">3-3.55</th><th class="slot-head-col faculty-head-day">4-4.55</th></tr></thead><tbody><tr><td class="faculty-day-col">Classes</td><td class="busy">1BCA B
-DISC.MATHS [LH7]</td><td class="slot-free">—</td><td class="busy">1BCA C(AIML)
-COMP.MATHS [LH5]</td><td class="busy">2BCA A
-C# [LH4]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">2BSc
-COA_EL [SH2]</td></tr></tbody></table></div></div></div>
+            <div id="my-timetable"><div class="faculty-timetable-block"><div class="faculty-block-head">Saturday</div><p class="sections-scroll-hint faculty-scroll-hint">Swipe left for all time slots →</p><div class="faculty-scroll-wrap"><table class="faculty-grid-table"><thead><tr><th class="faculty-day-col">Time</th><th class="slot-head-col faculty-head-day">9-9.55</th><th class="slot-head-col faculty-head-day">10-10.55</th><th class="slot-head-col faculty-head-day">11.10-12.05</th><th class="slot-head-col faculty-head-day">12.10-1.05</th></tr></thead><tbody><tr><td class="faculty-day-col">Classes</td><td colspan="2" class="busy lab-block">2BCA A
+C# LAB [Lab4]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free slot-gap slot-sat-eve-pad slot-evening-col faculty-sat-eve-cell slot-evening-start slot-table-end"><div class="faculty-sat-slot-body">—</div></td></tr></tbody></table></div></div></div>
         </div>
 
         <div class="sections-picker-bar">
             <label for="sections-filter">Section timetable</label>
-            <select id="sections-filter" aria-label="Section timetable"><option value="">All sections · Monday</option><optgroup label="Whole week — day college"><option value="section:day:1st BCA A">1st BCA A</option><option value="section:day:1st BCA B">1st BCA B</option><option value="section:day:1st BCA C(AIML)">1st BCA C(AIML)</option><option value="section:day:1st BSc">1st BSc</option><option value="section:day:2nd BCA A">2nd BCA A</option><option value="section:day:2nd BCA B">2nd BCA B</option><option value="section:day:2nd BCA C">2nd BCA C</option><option value="section:day:2nd BSc">2nd BSc</option><option value="section:day:3rd BCA A">3rd BCA A</option><option value="section:day:3rd BCA B">3rd BCA B</option><option value="section:day:3rd BCA C">3rd BCA C</option><option value="section:day:3rd BSc">3rd BSc</option></optgroup><optgroup label="Whole week — evening college"><option value="section:evening:1st BCA A (Eve)">1st BCA A (Eve)</option><option value="section:evening:1st BCA B (Eve)">1st BCA B (Eve)</option><option value="section:evening:2nd BCA A (Eve)">2nd BCA A (Eve)</option><option value="section:evening:2nd BCA B (Eve)">2nd BCA B (Eve)</option><option value="section:evening:3rd BCA A (Eve)">3rd BCA A (Eve)</option><option value="section:evening:3rd BCA B (Eve)">3rd BCA B (Eve)</option></optgroup></select>
+            <select id="sections-filter" aria-label="Section timetable"><option value="">All sections · Saturday</option><optgroup label="Whole week — day college"><option value="section:day:1st BCA A">1st BCA A</option><option value="section:day:1st BCA B">1st BCA B</option><option value="section:day:1st BCA C(AIML)">1st BCA C(AIML)</option><option value="section:day:1st BSc">1st BSc</option><option value="section:day:2nd BCA A">2nd BCA A</option><option value="section:day:2nd BCA B">2nd BCA B</option><option value="section:day:2nd BCA C">2nd BCA C</option><option value="section:day:2nd BSc">2nd BSc</option><option value="section:day:3rd BCA A">3rd BCA A</option><option value="section:day:3rd BCA B">3rd BCA B</option><option value="section:day:3rd BCA C">3rd BCA C</option><option value="section:day:3rd BSc">3rd BSc</option></optgroup><optgroup label="Whole week — evening college"><option value="section:evening:1st BCA A (Eve)">1st BCA A (Eve)</option><option value="section:evening:1st BCA B (Eve)">1st BCA B (Eve)</option><option value="section:evening:2nd BCA A (Eve)">2nd BCA A (Eve)</option><option value="section:evening:2nd BCA B (Eve)">2nd BCA B (Eve)</option><option value="section:evening:3rd BCA A (Eve)">3rd BCA A (Eve)</option><option value="section:evening:3rd BCA B (Eve)">3rd BCA B (Eve)</option></optgroup></select>
         </div>
 
         <div class="card sections-card">
@@ -2301,8 +2298,8 @@ COA_EL [SH2]</td></tr></tbody></table></div></div></div>
             </div>
             <div class="form-group">
                 <label>Day</label>
-                <div id="leave_day_display" class="leave-day-display" aria-live="polite">Friday</div>
-                <input type="hidden" id="leave_day_value" value="Friday">
+                <div id="leave_day_display" class="leave-day-display" aria-live="polite">Saturday</div>
+                <input type="hidden" id="leave_day_value" value="Saturday">
             </div>
             <div class="form-group">
                 <label for="absent_faculty_select">Faculty unavailable</label>
@@ -2353,7 +2350,11 @@ COA_EL [SH2]</td></tr></tbody></table></div></div></div>
 </div>
 
 <script>
-window.TimetableMobile = { activeDay: 'Monday' };
+window.TimetableMobile = { activeDay: (function() {
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const todayName = dayNames[new Date().getDay()];
+    return ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].includes(todayName) ? todayName : 'Monday';
+})() };
 (function () {
     const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const DAY_SHEET_MAP = { Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday', Fri: 'Friday', Sat: 'Saturday' };
@@ -3179,7 +3180,7 @@ window.TimetableMobile = { activeDay: 'Monday' };
     }
 
     let store = { college: 'College', faculty: {}, daywise: {}, staffNames: {} };
-    let activeDay = 'Monday';
+    let activeDay = window.TimetableMobile.activeDay;
     let activeFaculty = '';
     let facultyViewMode = 'day';
     let sectionsFilter = '';
@@ -3200,7 +3201,9 @@ window.TimetableMobile = { activeDay: 'Monday' };
     const el = id => document.getElementById(id);
 
     function syncActiveDay(day) {
-        const d = DAYS.includes(day) ? day : 'Monday';
+        const todayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][new Date().getDay()];
+        const defaultDay = DAYS.includes(todayName) ? todayName : 'Monday';
+        const d = DAYS.includes(day) ? day : defaultDay;
         activeDay = d;
         window.TimetableMobile.activeDay = d;
         return d;
