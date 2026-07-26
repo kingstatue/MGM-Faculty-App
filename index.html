@@ -75,6 +75,21 @@
             color: #fff;
         }
         #my-timetable { margin: 0; }
+        .faculty-load-summary {
+            margin-top: 10px;
+            padding: 10px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.5;
+            color: #0f172a;
+            background: linear-gradient(135deg, #ecfeff 0%, #f0fdf4 100%);
+            border: 1px solid #99f6e4;
+            border-left: 4px solid #0f766e;
+            border-radius: 10px;
+            letter-spacing: 0.01em;
+            white-space: normal;
+            word-break: break-word;
+        }
         .faculty-timetable-block {
             border: 2px solid #1e293b;
             border-radius: 12px;
@@ -2259,28 +2274,30 @@
             </div>
             <select id="faculty-select"><option value="ABJ">Abhijna (ABJ)</option><option value="AKN_E">AkshathaNayak (AKN_E)</option><option value="AKS">AkshathaShettigar (AKS)</option><option value="ANJ_E">Anjalin (ANJ_E)</option><option value="AA">Anupama (AA)</option><option value="ANV_E">Anvitha (ANV_E)</option><option value="DP">Damodar (DP)</option><option value="DK">Deepali (DK)</option><option value="NL1_E">Harshith (NL1_E)</option><option value="JRP">Jayanthi (JRP)</option><option value="MIT">Mithun (MIT)</option><option value="PRJ">Prajnashree (PRJ)</option><option value="PRK">Prakash (PRK)</option><option value="NL1">Priya (NL1)</option><option value="RMR">Rajamoorthy (RMR)</option><option value="RAK">Rakshitha (RAK)</option><option value="RAM">Ramya (RAM)</option><option value="RAS">Rashmi (RAS)</option><option value="RNC">RekhaChandra (RNC)</option><option value="SAN">Sanath (SAN)</option><option value="SAJ_E">Sanjana (SAJ_E)</option><option value="NL2_E">Sharanya (NL2_E)</option><option value="SHI">Shilpa (SHI)</option><option value="SUSH">Sushma (SUSH)</option><option value="VAR_E">Varshini (VAR_E)</option><option value="MVP">Vishwanath (MVP)</option><option value="VVK">Vivek (VVK)</option></select>
             <label>Day</label>
-            <div class="day-tabs" id="day-tabs"><button type="button" class="tab-btn" data-day="Monday">Mon</button><button type="button" class="tab-btn" data-day="Tuesday">Tue</button><button type="button" class="tab-btn" data-day="Wednesday">Wed</button><button type="button" class="tab-btn" data-day="Thursday">Thu</button><button type="button" class="tab-btn" data-day="Friday">Fri</button><button type="button" class="tab-btn active" data-day="Saturday">Sat</button></div>
+            <div class="day-tabs" id="day-tabs"><button type="button" class="tab-btn active" data-day="Monday">Mon</button><button type="button" class="tab-btn" data-day="Tuesday">Tue</button><button type="button" class="tab-btn" data-day="Wednesday">Wed</button><button type="button" class="tab-btn" data-day="Thursday">Thu</button><button type="button" class="tab-btn" data-day="Friday">Fri</button><button type="button" class="tab-btn" data-day="Saturday">Sat</button></div>
             <select id="day-select" class="day-select" aria-hidden="true" tabindex="-1"><option value="Monday">Monday</option><option value="Tuesday">Tuesday</option><option value="Wednesday">Wednesday</option><option value="Thursday">Thursday</option><option value="Friday">Friday</option><option value="Saturday">Saturday</option></select>
-            <span class="pill" id="hours-pill">2 hr(s) on Saturday</span>
+            <span class="pill" id="hours-pill">3 hr(s) on Monday</span>
         </div>
 
         <div class="card">
             <div class="my-timetable-header">
-                <h2 id="my-title">Abhijna (ABJ) — Saturday</h2>
+                <h2 id="my-title">Abhijna (ABJ) — Monday</h2>
                 <button type="button" id="btn-faculty-view" class="view-toggle-btn" aria-pressed="false">Whole week</button>
             </div>
-            <div id="my-timetable"><div class="faculty-timetable-block"><div class="faculty-block-head">Saturday</div><p class="sections-scroll-hint faculty-scroll-hint">Swipe left for all time slots →</p><div class="faculty-scroll-wrap"><table class="faculty-grid-table"><thead><tr><th class="faculty-day-col">Time</th><th class="slot-head-col faculty-head-day">9-9.55</th><th class="slot-head-col faculty-head-day">10-10.55</th><th class="slot-head-col faculty-head-day">11.10-12.05</th><th class="slot-head-col faculty-head-day">12.10-1.05</th></tr></thead><tbody><tr><td class="faculty-day-col">Classes</td><td colspan="2" class="busy lab-block">2BCA A
-C# LAB [Lab4]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free slot-gap slot-sat-eve-pad slot-evening-col faculty-sat-eve-cell slot-evening-start slot-table-end"><div class="faculty-sat-slot-body">—</div></td></tr></tbody></table></div></div></div>
+            <div id="my-timetable"><div class="faculty-timetable-block"><div class="faculty-block-head">Monday</div><p class="sections-scroll-hint faculty-scroll-hint">Swipe left for all time slots →</p><div class="faculty-scroll-wrap"><table class="faculty-grid-table"><thead><tr><th class="faculty-day-col">Time</th><th class="slot-head-col faculty-head-day">9-9.55</th><th class="slot-head-col faculty-head-day">10-10.55</th><th class="slot-head-col faculty-head-day">11.10-12.05</th><th class="slot-head-col faculty-head-day">12.10-1.05</th><th class="slot-head-col faculty-head-day">1.05-2</th><th class="slot-head-col faculty-head-day">2-2.55</th><th class="slot-head-col faculty-head-day">3-3.55</th><th class="slot-head-col faculty-head-day">4-4.55</th></tr></thead><tbody><tr><td class="faculty-day-col">Classes</td><td class="busy">1BCA B
+DISC.MATHS [LH7]</td><td class="slot-free">—</td><td class="busy">1BCA C(AIML)
+COMP.MATHS [LH5]</td><td class="busy">2BCA A
+C# [LH4]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td></tr></tbody></table></div></div><div class="faculty-load-summary" aria-label="Weekly workload summary">Total: 15 hr(s)/week     |     Day: 11 theory + 4 lab = 15 hr(s)</div></div>
         </div>
 
         <div class="sections-picker-bar">
             <label for="sections-filter">Section timetable</label>
-            <select id="sections-filter" aria-label="Section timetable"><option value="">All sections · Saturday</option><optgroup label="Whole week — day college"><option value="section:day:1st BCA A">1st BCA A</option><option value="section:day:1st BCA B">1st BCA B</option><option value="section:day:1st BCA C(AIML)">1st BCA C(AIML)</option><option value="section:day:1st BSc">1st BSc</option><option value="section:day:2nd BCA A">2nd BCA A</option><option value="section:day:2nd BCA B">2nd BCA B</option><option value="section:day:2nd BCA C">2nd BCA C</option><option value="section:day:2nd BSc">2nd BSc</option><option value="section:day:3rd BCA A">3rd BCA A</option><option value="section:day:3rd BCA B">3rd BCA B</option><option value="section:day:3rd BCA C">3rd BCA C</option><option value="section:day:3rd BSc">3rd BSc</option></optgroup><optgroup label="Whole week — evening college"><option value="section:evening:1st BCA A (Eve)">1st BCA A (Eve)</option><option value="section:evening:1st BCA B (Eve)">1st BCA B (Eve)</option><option value="section:evening:2nd BCA A (Eve)">2nd BCA A (Eve)</option><option value="section:evening:2nd BCA B (Eve)">2nd BCA B (Eve)</option><option value="section:evening:3rd BCA A (Eve)">3rd BCA A (Eve)</option><option value="section:evening:3rd BCA B (Eve)">3rd BCA B (Eve)</option></optgroup></select>
+            <select id="sections-filter" aria-label="Section timetable"><option value="">All sections · Monday</option><optgroup label="Whole week — day college"><option value="section:day:1st BCA A">1st BCA A</option><option value="section:day:1st BCA B">1st BCA B</option><option value="section:day:1st BCA C(AIML)">1st BCA C(AIML)</option><option value="section:day:1st BSc">1st BSc</option><option value="section:day:2nd BCA A">2nd BCA A</option><option value="section:day:2nd BCA B">2nd BCA B</option><option value="section:day:2nd BCA C">2nd BCA C</option><option value="section:day:2nd BSc">2nd BSc</option><option value="section:day:3rd BCA A">3rd BCA A</option><option value="section:day:3rd BCA B">3rd BCA B</option><option value="section:day:3rd BCA C">3rd BCA C</option><option value="section:day:3rd BSc">3rd BSc</option></optgroup><optgroup label="Whole week — evening college"><option value="section:evening:1st BCA A (Eve)">1st BCA A (Eve)</option><option value="section:evening:1st BCA B (Eve)">1st BCA B (Eve)</option><option value="section:evening:2nd BCA A (Eve)">2nd BCA A (Eve)</option><option value="section:evening:2nd BCA B (Eve)">2nd BCA B (Eve)</option><option value="section:evening:3rd BCA A (Eve)">3rd BCA A (Eve)</option><option value="section:evening:3rd BCA B (Eve)">3rd BCA B (Eve)</option></optgroup></select>
         </div>
 
         <div class="card sections-card">
-            <h2 class="sections-card-header" id="sections-title">1st BCA A (Eve) — evening · whole week</h2>
-            <div id="sections-timetable" class="table-wrap"><div class="faculty-timetable-block sections-block sections-block--evening"><div class="faculty-block-head">1st BCA A (Eve) — Evening college · whole week</div><p class="sections-scroll-hint faculty-scroll-hint">Mon–Fri · swipe →</p><div class="faculty-scroll-wrap"><table class="faculty-grid-table sections-grid-table"><thead><tr><th class="faculty-day-col">Day</th><th class="slot-head-col faculty-head-evening slot-evening-col">1.30-2.15(3rdBCAOnly)</th><th class="slot-head-col faculty-head-evening slot-evening-col">2:15-3</th><th class="slot-head-col faculty-head-evening slot-evening-col">3-3:45</th><th class="slot-head-col faculty-head-evening slot-evening-col">3:45-4:30</th><th class="slot-head-col faculty-head-evening slot-evening-col">4:45-5:30</th><th class="slot-head-col faculty-head-evening slot-evening-col">5:30-6:15</th></tr></thead><tbody><tr><td class="faculty-day-col">Mon</td><td class="slot-free slot-evening-col">—</td><td class="busy slot-evening-col">ENG [SKLR5]</td><td class="busy slot-evening-col">PROG in C [SKLR5]</td><td class="busy slot-evening-col">FOC [SKLR5]</td><td colspan="2" class="busy lab-block slot-evening-col">FOC LAB [Lab5]</td></tr><tr><td class="faculty-day-col">Tue</td><td class="slot-free slot-evening-col">—</td><td class="busy slot-evening-col">ELECTIVE: HND [SKLR6] · KAN [SKLR5]</td><td colspan="2" class="busy lab-block slot-evening-col">C LAB [Lab2]</td><td class="busy slot-evening-col">ENG [SKLR5]</td><td class="busy slot-evening-col">COMP.MATHS [SKLR5]</td></tr><tr><td class="faculty-day-col">Wed</td><td class="slot-free slot-evening-col">—</td><td class="busy slot-evening-col">FOC [SKLR5]</td><td class="busy slot-evening-col">CONST [SKLR6]</td><td class="busy slot-evening-col">ELECTIVE: HND [SKLR6] · KAN [SKLR5]</td><td class="busy slot-evening-col">PROG in C [SKLR5]</td><td class="busy slot-evening-col">COMP.MATHS [SKLR5]</td></tr><tr><td class="faculty-day-col">Thu</td><td class="slot-free slot-evening-col">—</td><td class="busy slot-evening-col">ENG [SKLR5]</td><td class="busy slot-evening-col">COMP.MATHS [SKLR5]</td><td class="busy slot-evening-col">FOC [SKLR5]</td><td colspan="2" class="busy lab-block slot-evening-col">FOC LAB [MScLab]</td></tr><tr><td class="faculty-day-col">Fri</td><td class="slot-free slot-evening-col">—</td><td class="busy slot-evening-col">CONST [SKLR6]</td><td class="busy slot-evening-col">COMP.MATHS [SKLR5]</td><td class="busy slot-evening-col">PROG in C [SKLR5]</td><td class="busy slot-evening-col">ELECTIVE: HND [SKLR6] · KAN [SKLR5]</td><td class="busy slot-evening-col">PROG in C [SKLR5]</td></tr></tbody></table></div><p class="sections-scroll-hint faculty-scroll-hint">Saturday · swipe →</p><div class="faculty-scroll-wrap"><table class="faculty-grid-table sections-grid-table"><thead><tr><th class="faculty-day-col">Day</th><th class="slot-head-col faculty-head-evening slot-evening-col">1-1.45</th><th class="slot-head-col faculty-head-evening slot-evening-col">1.45-2.30</th><th class="slot-head-col faculty-head-evening slot-evening-col">2.30-3.15</th><th class="slot-head-col faculty-head-evening slot-evening-col">3.15-4</th><th class="slot-head-col faculty-head-evening slot-evening-col">4.15-5</th><th class="slot-head-col faculty-head-evening slot-evening-col">5-5.45</th></tr></thead><tbody><tr><td class="faculty-day-col faculty-sat-label">Sat</td><td colspan="2" class="busy lab-block slot-evening-col">C LAB [Lab2]</td><td class="busy slot-evening-col">COMP.MATHS [SKLR5]</td><td class="busy slot-evening-col">ELECTIVE: HND [SKLR6] · KAN [SKLR5]</td><td class="busy slot-evening-col">FOC [SKLR5]</td><td class="busy slot-evening-col">ENG [SKLR5]</td></tr></tbody></table></div></div></div>
+            <h2 class="sections-card-header" id="sections-title">3rd BSc — whole week</h2>
+            <div id="sections-timetable" class="table-wrap"><div class="faculty-timetable-block"><div class="faculty-block-head">3rd BSc — Day college · whole week</div><p class="sections-scroll-hint faculty-scroll-hint">Swipe left for all time slots →</p><div class="faculty-scroll-wrap"><table class="faculty-grid-table sections-grid-table"><thead><tr><th class="faculty-day-col" rowspan="2">Day</th><th class="faculty-weekday-day-band faculty-head-day" colspan="8">Day College</th></tr><tr><th class="slot-head-col faculty-head-day">9-9.55</th><th class="slot-head-col faculty-head-day">10-10.55</th><th class="slot-head-col faculty-head-day">11.10-12.05</th><th class="slot-head-col faculty-head-day">12.10-1.05</th><th class="slot-head-col faculty-head-day">1.05-2</th><th class="slot-head-col faculty-head-day">2-2.55</th><th class="slot-head-col faculty-head-day">3-3.55</th><th class="slot-head-col faculty-head-day">4-4.55</th></tr></thead><tbody><tr><td class="faculty-day-col">Mon</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">OS [SH2]</td><td class="slot-free">—</td><td class="busy">AI Tools lb</td><td class="busy">AI Tools lb</td><td class="slot-free">—</td></tr><tr><td class="faculty-day-col">Tue</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">AI Tools lb</td></tr><tr><td class="faculty-day-col">Wed</td><td class="busy">OS [SH1]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">PYTHON [LH4]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr><td class="faculty-day-col">Thu</td><td class="busy">PYTHON [LH5]</td><td class="slot-free">—</td><td class="busy">OS [LH4]</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">PY_OS LAB [Lab4]</td><td colspan="2" class="busy lab-block">PY_OS LAB [Lab4]</td></tr><tr><td class="faculty-day-col">Fri</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="faculty-sat-row"><td class="faculty-day-col faculty-sat-label">Saturday</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">PYTHON [SH1]</td><td class="slot-free">—</td><td class="slot-free slot-sat-afternoon-pad">—</td><td class="slot-free slot-sat-afternoon-pad">—</td><td class="slot-free slot-sat-afternoon-pad">—</td><td class="slot-free slot-sat-afternoon-pad slot-day-end">—</td></tr></tbody></table></div></div></div>
         </div>
     </div>
 
@@ -2291,15 +2308,15 @@ C# LAB [Lab4]</td><td class="slot-free">—</td><td class="slot-free">—</td><t
         <div class="card card--accent">
             <h3 class="panel-heading"><span class="panel-heading-badge panel-heading-badge--leave">Leave</span> Faculty leave</h3>
             <p class="sub" style="margin:0 0 12px;">Match substitutes for absent staff — uses the same timetable data.</p>
-            <div id="leave_status" class="leave-status leave-status--ok" role="status" aria-live="polite" style="display: none;"></div>
+            <div id="leave_status" class="leave-status leave-status--err" role="status" aria-live="polite" style="display: block;">Sunday has no college timetable. Choose a Mon–Sat date.</div>
             <div class="form-group">
                 <label for="leave_date_input">Leave date</label>
                 <input type="date" id="leave_date_input" class="form-control">
             </div>
             <div class="form-group">
                 <label>Day</label>
-                <div id="leave_day_display" class="leave-day-display" aria-live="polite">Saturday</div>
-                <input type="hidden" id="leave_day_value" value="Saturday">
+                <div id="leave_day_display" class="leave-day-display leave-day-display--off" aria-live="polite">Sunday (no timetable)</div>
+                <input type="hidden" id="leave_day_value" value="">
             </div>
             <div class="form-group">
                 <label for="absent_faculty_select">Faculty unavailable</label>
@@ -3345,6 +3362,33 @@ window.TimetableMobile = { activeDay: (function() {
         return out;
     }
 
+    function extractFacultyLoadSummary(matrix) {
+        // Scan every cell for lines starting with "Total:" — the workload
+        // summary line stamped below each faculty's timetable in the Excel.
+        // Also captures the accompanying "Day:" and "Evening:" breakdown lines
+        // whether they are inside a single cell (multi-line / pipe-joined) or
+        // spread across adjacent cells further down the sheet.
+        const parts = { total: '', day: '', evening: '' };
+        const seen = new Set();
+        for (let r = 0; r < matrix.length; r++) {
+            const row = matrix[r] || [];
+            for (let c = 0; c < row.length; c++) {
+                const raw = String(row[c] ?? '').trim();
+                if (!raw) continue;
+                if (seen.has(raw)) continue;
+                seen.add(raw);
+                const lines = raw.split(/\r?\n|\s*\|\s*/).map(s => s.trim()).filter(Boolean);
+                lines.forEach(line => {
+                    if (!parts.total && /^total\s*:/i.test(line)) parts.total = line;
+                    else if (!parts.day && /^day\s*:/i.test(line)) parts.day = line;
+                    else if (!parts.evening && /^evening\s*:/i.test(line)) parts.evening = line;
+                });
+            }
+        }
+        if (!parts.total && !parts.day && !parts.evening) return '';
+        return [parts.total, parts.day, parts.evening].filter(Boolean).join('     |     ');
+    }
+
     function parseFacultySheet(matrix) {
         const dayHeaders = findAllHeaderRows(matrix, 'Day');
         let weekdaySlots = [];
@@ -3383,7 +3427,8 @@ window.TimetableMobile = { activeDay: (function() {
             });
         }
 
-        return { weekdaySlots, saturdaySlots, saturdayDaySlots, saturdayEveningSlots, days };
+        const loadSummary = extractFacultyLoadSummary(matrix);
+        return { weekdaySlots, saturdaySlots, saturdayDaySlots, saturdayEveningSlots, days, loadSummary };
     }
 
     function facultyDisplayName(code) {
@@ -4219,7 +4264,11 @@ window.TimetableMobile = { activeDay: (function() {
         const result = weekMode
             ? renderFacultyWeekTable(fac)
             : renderFacultyDayTable(fac, activeDay);
-        host.innerHTML = result.html;
+        let summaryHtml = '';
+        if (fac.loadSummary) {
+            summaryHtml = `<div class="faculty-load-summary" aria-label="Weekly workload summary">${escapeHtml(fac.loadSummary)}</div>`;
+        }
+        host.innerHTML = result.html + summaryHtml;
         if (pillEl) {
             if (weekMode) {
                 pillEl.textContent = result.hours
@@ -5242,6 +5291,7 @@ window.TimetableMobile = { activeDay: (function() {
     }
 })();
 </script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon="{&quot;version&quot;:&quot;2024.11.0&quot;,&quot;token&quot;:&quot;75124c326cb447fe934cde04713ae013&quot;,&quot;r&quot;:1}" crossorigin="anonymous"></script>
 
 
 </body></html>
