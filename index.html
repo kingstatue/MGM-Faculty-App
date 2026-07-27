@@ -511,6 +511,231 @@
             color: #94a3b8;
             text-align: center;
         }
+        .designer-credit {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: #0f766e;
+            background: linear-gradient(135deg, #ccfbf1 0%, #e0f2fe 100%);
+            border: 1px solid #99f6e4;
+            border-radius: 999px;
+            display: inline-block;
+            padding: 3px 10px;
+            margin-bottom: 12px;
+        }
+        .toast-notification {
+            position: fixed;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: #0f172a;
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 90vw;
+        }
+        .toast-notification.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        .toast-notification button {
+            margin: 0;
+            padding: 4px 10px;
+            font-size: 11px;
+            border-radius: 6px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            width: auto;
+        }
+        .room-schedule-block {
+            margin-bottom: 14px;
+            border: 2px solid #1e293b;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+        }
+        .room-schedule-block h3 {
+            margin: 0;
+            padding: 10px 14px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            border-bottom: 2px solid #1e293b;
+            color: #fff;
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+        }
+        .room-schedule-block--evening h3 {
+            background: linear-gradient(135deg, #334155 0%, #475569 55%, #64748b 100%);
+        }
+        .room-schedule-grid-table {
+            border-collapse: collapse;
+            margin: 0;
+            width: max-content;
+            min-width: 100%;
+            font-size: 10px;
+        }
+        .room-schedule-grid-table th.slot-head-col,
+        .room-schedule-grid-table tbody td:not(.room-col) {
+            min-width: 100px;
+            max-width: 160px;
+        }
+        .room-schedule-grid-table thead th {
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            padding: 9px 6px;
+            font-size: 9px;
+            font-weight: 700;
+            text-align: center;
+            white-space: nowrap;
+            border: 1px solid #334155;
+        }
+        .room-schedule-grid-table th.room-col,
+        .room-schedule-grid-table td.room-col {
+            border-left: 2px solid #1e293b;
+            border-right: 2px solid #1e293b;
+            text-align: left;
+            font-size: 10px;
+            font-weight: 800;
+            color: #0f172a;
+            background: #f1f5f9;
+            padding: 8px 10px;
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            box-shadow: 3px 0 6px rgba(15, 23, 42, 0.07);
+        }
+        .room-schedule-grid-table thead th.room-col {
+            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+            color: #fff;
+            z-index: 3;
+        }
+        .room-schedule-grid-table tbody td {
+            border: 1px solid #e2e8f0;
+            padding: 7px 6px;
+            vertical-align: top;
+        }
+        .room-occ-chip {
+            display: block;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 3px 6px;
+            border-radius: 6px;
+            background: #eff6ff;
+            color: #1e3a8a;
+            border: 1px solid #bfdbfe;
+            line-height: 1.35;
+        }
+        .room-occ-chip .sec-tag {
+            display: block;
+            font-size: 7.5px;
+            font-weight: 600;
+            color: #475569;
+        }
+        .free-rooms-block {
+            margin-bottom: 14px;
+            border: 2px solid #1e293b;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+        }
+        .free-rooms-block:last-child { margin-bottom: 0; }
+        .free-rooms-block h3 {
+            margin: 0;
+            padding: 10px 14px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            border-bottom: 2px solid #1e293b;
+            color: #fff;
+            background: linear-gradient(135deg, #0f766e 0%, #0d9488 55%, #14b8a6 100%);
+        }
+        .free-rooms-block--evening h3 {
+            background: linear-gradient(135deg, #334155 0%, #475569 55%, #64748b 100%);
+        }
+        .free-rooms-grid-table {
+            border-collapse: collapse;
+            margin: 0;
+            width: max-content;
+            min-width: 100%;
+            font-size: 10px;
+        }
+        .free-rooms-grid-table th.slot-head-col,
+        .free-rooms-grid-table tbody td:not(.category-col) {
+            min-width: 90px;
+            max-width: 150px;
+        }
+        .free-rooms-grid-table thead th {
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            padding: 9px 6px;
+            font-size: 9px;
+            font-weight: 700;
+            text-align: center;
+            white-space: nowrap;
+            border: 1px solid #334155;
+        }
+        .free-rooms-grid-table th.category-col,
+        .free-rooms-grid-table td.category-col {
+            border-left: 2px solid #1e293b;
+            border-right: 2px solid #1e293b;
+            text-align: left;
+            font-size: 10px;
+            font-weight: 800;
+            color: #0f172a;
+            background: #f1f5f9;
+            padding: 8px 10px;
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            box-shadow: 3px 0 6px rgba(15, 23, 42, 0.07);
+        }
+        .free-rooms-grid-table thead th.category-col {
+            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+            color: #fff;
+            z-index: 3;
+        }
+        .free-rooms-grid-table tbody td {
+            border: 1px solid #e2e8f0;
+            padding: 7px 6px;
+            vertical-align: top;
+        }
+        .free-rooms-chip {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 5px;
+            margin: 1px;
+            white-space: nowrap;
+        }
+        .free-rooms-chip--room {
+            background: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+        }
+        .free-rooms-chip--lab {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+        }
+        .free-rooms-none {
+            color: #94a3b8;
+            font-style: italic;
+            font-size: 9px;
+            text-align: center;
+        }
         #sections-timetable { padding: 12px; background: #f8fafc; }
         #sections-timetable > .table-wrap { margin: 0; }
         .sections-scroll-hint {
@@ -2209,9 +2434,14 @@
 </head>
 <body class="has-app-dock">
 <!-- TT_EMBED_MARKER -->
+<div id="toast-banner" class="toast-notification" role="status">
+    <span id="toast-msg">✨ Timetable updated!</span>
+    <button type="button" id="btn-toast-dismiss">OK</button>
+</div>
 <div class="wrap">
     <h1 id="college-title">College — MGM Mobile</h1>
     <p class="sub" id="college-sub">Timetable · leave &amp; substitution — tap tabs below</p>
+    <div class="designer-credit">Designed by <strong>kingstatue</strong></div>
 
     <div id="pin-modal" class="modal hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 16px;">
         <div class="card" style="max-width: 480px; width: 100%; max-height: 80vh; overflow-y: auto; padding: 24px; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); background: #ffffff; display: flex; flex-direction: column;">
@@ -2296,8 +2526,18 @@ C# [LH4]</td><td class="slot-free">—</td><td class="slot-free">—</td><td cla
         </div>
 
         <div class="card sections-card">
-            <h2 class="sections-card-header" id="sections-title">3rd BSc — whole week</h2>
-            <div id="sections-timetable" class="table-wrap"><div class="faculty-timetable-block"><div class="faculty-block-head">3rd BSc — Day college · whole week</div><p class="sections-scroll-hint faculty-scroll-hint">Swipe left for all time slots →</p><div class="faculty-scroll-wrap"><table class="faculty-grid-table sections-grid-table"><thead><tr><th class="faculty-day-col" rowspan="2">Day</th><th class="faculty-weekday-day-band faculty-head-day" colspan="8">Day College</th></tr><tr><th class="slot-head-col faculty-head-day">9-9.55</th><th class="slot-head-col faculty-head-day">10-10.55</th><th class="slot-head-col faculty-head-day">11.10-12.05</th><th class="slot-head-col faculty-head-day">12.10-1.05</th><th class="slot-head-col faculty-head-day">1.05-2</th><th class="slot-head-col faculty-head-day">2-2.55</th><th class="slot-head-col faculty-head-day">3-3.55</th><th class="slot-head-col faculty-head-day">4-4.55</th></tr></thead><tbody><tr><td class="faculty-day-col">Mon</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">OS [SH2]</td><td class="slot-free">—</td><td class="busy">AI Tools lb</td><td class="busy">AI Tools lb</td><td class="slot-free">—</td></tr><tr><td class="faculty-day-col">Tue</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">AI Tools lb</td></tr><tr><td class="faculty-day-col">Wed</td><td class="busy">OS [SH1]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">PYTHON [LH4]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr><td class="faculty-day-col">Thu</td><td class="busy">PYTHON [LH5]</td><td class="slot-free">—</td><td class="busy">OS [LH4]</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">PY_OS LAB [Lab4]</td><td colspan="2" class="busy lab-block">PY_OS LAB [Lab4]</td></tr><tr><td class="faculty-day-col">Fri</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="faculty-sat-row"><td class="faculty-day-col faculty-sat-label">Saturday</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">PYTHON [SH1]</td><td class="slot-free">—</td><td class="slot-free slot-sat-afternoon-pad">—</td><td class="slot-free slot-sat-afternoon-pad">—</td><td class="slot-free slot-sat-afternoon-pad">—</td><td class="slot-free slot-sat-afternoon-pad slot-day-end">—</td></tr></tbody></table></div></div></div>
+            <h2 class="sections-card-header" id="sections-title">Sections · Monday</h2>
+            <div id="sections-timetable" class="table-wrap"><div class="sections-block sections-block--day"><h3>Day College</h3><p class="sections-scroll-hint">Swipe left for all time slots →</p><div class="sections-scroll-wrap"><table class="sections-grid-table"><thead><tr><th class="section-head-col">Section</th><th class="slot-head-col">9-9.55</th><th class="slot-head-col">10-10.55</th><th class="slot-head-col">11.10-12.05</th><th class="slot-head-col">12.10-1.05</th><th class="slot-head-col">1.05-2</th><th class="slot-head-col">2-2.55</th><th class="slot-head-col">3-3.55</th><th class="slot-head-col">4-4.55</th></tr></thead><tbody><tr class="section-data-row"><td class="section-name">1st BCA A</td><td class="busy">FOC [SH3]</td><td class="busy">DISC.MATHS [SH3]</td><td colspan="2" class="busy lab-block">C LAB [Lab1+Lab2]</td><td class="slot-free">—</td><td class="busy">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4]</td><td class="busy">CONST [SH3]</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">1st BCA B</td><td class="busy">DISC.MATHS [LH7]</td><td class="busy">FOC [LH7]</td><td colspan="2" class="busy lab-block">FOC LAB [Lab5+MScLab]</td><td class="slot-free">—</td><td class="busy">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4]</td><td class="busy">CONST [LH7]</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">1st BCA C(AIML)</td><td colspan="2" class="busy lab-block">C LAB [Lab4]</td><td class="busy">COMP.MATHS [LH5]</td><td class="busy">FOC [LH5]</td><td class="slot-free">—</td><td class="busy">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4]</td><td class="busy">CONST [LH5]</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">1st BSc</td><td colspan="2" class="busy lab-block">F_C LAB [Lab5]</td><td class="slot-free">—</td><td class="busy">F_C [SH1]</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">2nd BCA A</td><td class="busy">DBMS [LH4]</td><td class="busy">CN [LH4]</td><td class="busy">ENG [LH4]</td><td class="busy">C# [LH4]</td><td class="slot-free">—</td><td class="busy">SPORTS</td><td class="busy">RESVD</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">2nd BCA B</td><td class="busy">C# [LH6]</td><td class="busy">DBMS [LH6]</td><td class="busy">ENG [LH6]</td><td class="busy">CN [LH6]</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">C# LAB [Lab4]</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">2nd BCA C</td><td class="busy">DBMS [SH4]</td><td class="busy">C# [SH4]</td><td class="busy">ENG [SH4]</td><td class="busy">CN [SH4]</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">DBMS LAB [Lab1+Lab2]</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">2nd BSc</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">3rd BCA A</td><td class="busy">CRYPT [LH1]</td><td class="busy">WEB [LH1]</td><td colspan="2" class="busy lab-block">WEB LAB [Lab4]</td><td class="slot-free">—</td><td class="busy">SE [LH1]</td><td class="busy">CLOUD [LH1]</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">3rd BCA B</td><td class="busy">CRYPT [SH2]</td><td class="busy">SE [SH2]</td><td colspan="2" class="busy lab-block">WEB LAB [SLab2+SLab3]</td><td class="slot-free">—</td><td class="busy">R PROG [SH2]</td><td class="busy">CLOUD [SH2]</td><td class="slot-free">—</td></tr><tr class="section-data-row"><td class="section-name">3rd BCA C</td><td class="busy">DAA [SH1]</td><td class="busy">SE [SH1]</td><td class="busy">CRYPT [SH1]</td><td class="slot-free">—</td><td colspan="2" class="busy lab-block">WEB LAB [Lab5+MScLab]</td><td class="busy">CLOUD [SH1]</td><td class="slot-free">—</td></tr><tr class="section-data-row stream-break"><td class="section-name">3rd BSc</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="slot-free">—</td><td class="busy">OS [SH2]</td><td class="slot-free">—</td><td class="busy">AI Tools lb</td><td class="busy">AI Tools lb</td><td class="slot-free">—</td></tr></tbody></table></div></div><div class="sections-block sections-block--evening"><h3>Evening College</h3><p class="sections-scroll-hint">Swipe left for all time slots →</p><div class="sections-scroll-wrap"><table class="sections-grid-table"><thead><tr><th class="section-head-col">Section</th><th class="slot-head-col">1.30-2.15(3rdBCAOnly)</th><th class="slot-head-col">2:15-3</th><th class="slot-head-col">3-3:45</th><th class="slot-head-col">3:45-4:30</th><th class="slot-head-col">4:45-5:30</th><th class="slot-head-col">5:30-6:15</th></tr></thead><tbody><tr class="section-data-row"><td class="section-name">1st BCA A (Eve)</td><td class="slot-free">—</td><td class="busy">ENG [SKLR5]</td><td class="busy">PROG in C [SKLR5]</td><td class="busy">FOC [SKLR5]</td><td colspan="2" class="busy lab-block">FOC LAB [Lab2]</td></tr><tr class="section-data-row"><td class="section-name">1st BCA B (Eve)</td><td class="slot-free">—</td><td class="busy">DISC.MATHS [SKLR6]</td><td colspan="2" class="busy lab-block">C LAB [MScLab]</td><td class="busy">ENG [SKLR6]</td><td class="busy">PROG in C [SKLR6]</td></tr><tr class="section-data-row stream-break"><td class="section-name">2nd BCA A (Eve)</td><td class="slot-free">—</td><td class="busy">CN [LH3]</td><td colspan="2" class="busy lab-block">C# LAB [SLab2+SLab3]</td><td class="busy">ELECTIVE: KAN [SKLR1] · HND [SKLR2]</td><td class="busy">DEVOPS [SKLR1]</td></tr><tr class="section-data-row"><td class="section-name">2nd BCA B (Eve)</td><td class="slot-free">—</td><td class="busy">DBMS [LH2]</td><td colspan="2" class="busy lab-block">DBMS LAB [Lab5]</td><td class="busy">ELECTIVE: KAN [SKLR1] · HND [SKLR2]</td><td class="busy">CN [SKLR2]</td></tr><tr class="section-data-row stream-break"><td class="section-name">3rd BCA A (Eve)</td><td class="slot-free">—</td><td class="busy">R PROG [LH4]</td><td class="busy">CRYPT [LH4]</td><td class="busy">SE [LH4]</td><td colspan="2" class="busy lab-block">R LAB [SLab2+SLab3]</td></tr><tr class="section-data-row"><td class="section-name">3rd BCA B (Eve)</td><td class="slot-free">—</td><td class="busy">DAA [LH6]</td><td class="busy">CRYPT [LH6]</td><td class="busy">SE [LH6]</td><td colspan="2" class="busy lab-block">DAA LAB [Lab4]</td></tr></tbody></table></div></div></div>
+        </div>
+
+        <details class="card sections-card" id="free-rooms-card" style="margin-top: 14px;">
+            <summary class="sections-card-header" id="free-rooms-title" style="cursor: pointer; user-select: none; display: flex; align-items: center; justify-content: space-between;"><span>Free Rooms &amp; Free Labs · Monday</span><span style="font-size: 11px; font-weight: normal; opacity: 0.85;">Tap to view ▾</span></summary>
+            <div id="free-rooms-grid" class="table-wrap" style="padding: 12px; background: #f8fafc;"><div class="free-rooms-block free-rooms-block--day"><h3>Day College Slots</h3><p class="sections-scroll-hint">Swipe left for all time slots →</p><div class="sections-scroll-wrap"><table class="free-rooms-grid-table"><thead><tr><th class="category-col">Availability</th><th class="slot-head-col">9-9.55</th><th class="slot-head-col">10-10.55</th><th class="slot-head-col">11.10-12.05</th><th class="slot-head-col">12.10-1.05</th><th class="slot-head-col">1.05-2</th><th class="slot-head-col">2-2.55</th><th class="slot-head-col">3-3.55</th><th class="slot-head-col">4-4.55</th></tr></thead><tbody><tr><td class="category-col">Free Rooms</td><td><span class="free-rooms-chip free-rooms-chip--room">LH2</span><span class="free-rooms-chip free-rooms-chip--room">LH3</span><span class="free-rooms-chip free-rooms-chip--room">LH5</span><span class="free-rooms-chip free-rooms-chip--room">SKLR1</span><span class="free-rooms-chip free-rooms-chip--room">SKLR2</span><span class="free-rooms-chip free-rooms-chip--room">SKLR5</span><span class="free-rooms-chip free-rooms-chip--room">SKLR6</span></td><td><span class="free-rooms-chip free-rooms-chip--room">LH2</span><span class="free-rooms-chip free-rooms-chip--room">LH3</span><span class="free-rooms-chip free-rooms-chip--room">LH5</span><span class="free-rooms-chip free-rooms-chip--room">SKLR1</span><span class="free-rooms-chip free-rooms-chip--room">SKLR2</span><span class="free-rooms-chip free-rooms-chip--room">SKLR5</span><span class="free-rooms-chip free-rooms-chip--room">SKLR6</span></td><td><span class="free-rooms-chip free-rooms-chip--room">LH1</span><span class="free-rooms-chip free-rooms-chip--room">LH2</span><span class="free-rooms-chip free-rooms-chip--room">LH3</span><span class="free-rooms-chip free-rooms-chip--room">LH7</span><span class="free-rooms-chip free-rooms-chip--room">SH2</span><span class="free-rooms-chip free-rooms-chip--room">SH3</span><span class="free-rooms-chip free-rooms-chip--room">SKLR1</span><span class="free-rooms-chip free-rooms-chip--room">SKLR2</span><span class="free-rooms-chip free-rooms-chip--room">SKLR5</span><span class="free-rooms-chip free-rooms-chip--room">SKLR6</span></td><td><span class="free-rooms-chip free-rooms-chip--room">LH1</span><span class="free-rooms-chip free-rooms-chip--room">LH2</span><span class="free-rooms-chip free-rooms-chip--room">LH3</span><span class="free-rooms-chip free-rooms-chip--room">LH7</span><span class="free-rooms-chip free-rooms-chip--room">SH3</span><span class="free-rooms-chip free-rooms-chip--room">SKLR1</span><span class="free-rooms-chip free-rooms-chip--room">SKLR2</span><span class="free-rooms-chip free-rooms-chip--room">SKLR5</span><span class="free-rooms-chip free-rooms-chip--room">SKLR6</span></td><td><span class="free-rooms-chip free-rooms-chip--room">LH1</span><span class="free-rooms-chip free-rooms-chip--room">LH2</span><span class="free-rooms-chip free-rooms-chip--room">LH3</span><span class="free-rooms-chip free-rooms-chip--room">LH4</span><span class="free-rooms-chip free-rooms-chip--room">LH5</span><span class="free-rooms-chip free-rooms-chip--room">LH6</span><span class="free-rooms-chip free-rooms-chip--room">LH7</span><span class="free-rooms-chip free-rooms-chip--room">SH1</span><span class="free-rooms-chip free-rooms-chip--room">SH2</span><span class="free-rooms-chip free-rooms-chip--room">SH3</span><span class="free-rooms-chip free-rooms-chip--room">SH4</span><span class="free-rooms-chip free-rooms-chip--room">SKLR1</span><span class="free-rooms-chip free-rooms-chip--room">SKLR2</span><span class="free-rooms-chip free-rooms-chip--room">SKLR5</span><span class="free-rooms-chip free-rooms-chip--room">SKLR6</span></td><td><span class="free-rooms-chip free-rooms-chip--room">SH1</span><span class="free-rooms-chip free-rooms-chip--room">SKLR1</span><span class="free-rooms-chip free-rooms-chip--room">SKLR2</span></td><td><span class="free-rooms-chip free-rooms-chip--room">LH2</span><span class="free-rooms-chip free-rooms-chip--room">LH3</span><span class="free-rooms-chip free-rooms-chip--room">SH4</span><span class="free-rooms-chip free-rooms-chip--room">SKLR1</span><span class="free-rooms-chip free-rooms-chip--room">SKLR2</span><span class="free-rooms-chip free-rooms-chip--room">SKLR6</span></td><td><span class="free-rooms-chip free-rooms-chip--room">LH1</span><span class="free-rooms-chip free-rooms-chip--room">LH2</span><span class="free-rooms-chip free-rooms-chip--room">LH3</span><span class="free-rooms-chip free-rooms-chip--room">LH5</span><span class="free-rooms-chip free-rooms-chip--room">LH7</span><span class="free-rooms-chip free-rooms-chip--room">SH1</span><span class="free-rooms-chip free-rooms-chip--room">SH2</span><span class="free-rooms-chip free-rooms-chip--room">SH3</span><span class="free-rooms-chip free-rooms-chip--room">SH4</span></td></tr><tr><td class="category-col">Free Labs</td><td><span class="free-rooms-chip free-rooms-chip--lab">Lab1</span><span class="free-rooms-chip free-rooms-chip--lab">Lab2</span><span class="free-rooms-chip free-rooms-chip--lab">Lab3</span><span class="free-rooms-chip free-rooms-chip--lab">MScLab</span><span class="free-rooms-chip free-rooms-chip--lab">SLab1</span><span class="free-rooms-chip free-rooms-chip--lab">SLab2</span><span class="free-rooms-chip free-rooms-chip--lab">SLab3</span></td><td><span class="free-rooms-chip free-rooms-chip--lab">Lab1</span><span class="free-rooms-chip free-rooms-chip--lab">Lab2</span><span class="free-rooms-chip free-rooms-chip--lab">Lab3</span><span class="free-rooms-chip free-rooms-chip--lab">MScLab</span><span class="free-rooms-chip free-rooms-chip--lab">SLab1</span><span class="free-rooms-chip free-rooms-chip--lab">SLab2</span><span class="free-rooms-chip free-rooms-chip--lab">SLab3</span></td><td><span class="free-rooms-chip free-rooms-chip--lab">Lab3</span><span class="free-rooms-chip free-rooms-chip--lab">SLab1</span></td><td><span class="free-rooms-chip free-rooms-chip--lab">Lab3</span><span class="free-rooms-chip free-rooms-chip--lab">SLab1</span></td><td><span class="free-rooms-chip free-rooms-chip--lab">Lab1</span><span class="free-rooms-chip free-rooms-chip--lab">Lab2</span><span class="free-rooms-chip free-rooms-chip--lab">Lab3</span><span class="free-rooms-chip free-rooms-chip--lab">Lab4</span><span class="free-rooms-chip free-rooms-chip--lab">SLab1</span><span class="free-rooms-chip free-rooms-chip--lab">SLab2</span><span class="free-rooms-chip free-rooms-chip--lab">SLab3</span></td><td><span class="free-rooms-chip free-rooms-chip--lab">Lab3</span><span class="free-rooms-chip free-rooms-chip--lab">SLab1</span><span class="free-rooms-chip free-rooms-chip--lab">SLab2</span><span class="free-rooms-chip free-rooms-chip--lab">SLab3</span></td><td><span class="free-rooms-chip free-rooms-chip--lab">Lab3</span><span class="free-rooms-chip free-rooms-chip--lab">SLab1</span></td><td><span class="free-rooms-chip free-rooms-chip--lab">Lab1</span><span class="free-rooms-chip free-rooms-chip--lab">Lab3</span><span class="free-rooms-chip free-rooms-chip--lab">SLab1</span></td></tr></tbody></table></div></div><div class="free-rooms-block free-rooms-block--evening"><h3>Evening College Slots</h3><p class="sections-scroll-hint">Swipe left for all time slots →</p><div class="sections-scroll-wrap"><table class="free-rooms-grid-table"><thead><tr><th class="category-col">Availability</th><th class="slot-head-col">1.30-2.15(3rdBCAOnly)</th><th class="slot-head-col">2:15-3</th><th class="slot-head-col">3-3:45</th><th class="slot-head-col">3:45-4:30</th><th class="slot-head-col">4:45-5:30</th><th class="slot-head-col">5:30-6:15</th></tr></thead><tbody><tr><td class="category-col">Free Rooms</td><td><span class="free-rooms-chip free-rooms-chip--room">LH2</span><span class="free-rooms-chip free-rooms-chip--room">LH3</span><span class="free-rooms-chip free-rooms-chip--room">LH4</span><span class="free-rooms-chip free-rooms-chip--room">LH6</span><span class="free-rooms-chip free-rooms-chip--room">SH1</span><span class="free-rooms-chip free-rooms-chip--room">SKLR1</span><span class="free-rooms-chip free-rooms-chip--room">SKLR2</span><span class="free-rooms-chip free-rooms-chip--room">SKLR5</span><span class="free-rooms-chip free-rooms-chip--room">SKLR6</span></td><td><span class="free-rooms-chip free-rooms-chip--room">SH1</span><span class="free-rooms-chip free-rooms-chip--room">SKLR1</span><span class="free-rooms-chip free-rooms-chip--room">SKLR2</span></td><td><span class="free-rooms-chip free-rooms-chip--room">LH2</span><span class="free-rooms-chip free-rooms-chip--room">LH3</span><span class="free-rooms-chip free-rooms-chip--room">SH4</span><span class="free-rooms-chip free-rooms-chip--room">SKLR1</span><span class="free-rooms-chip free-rooms-chip--room">SKLR2</span><span class="free-rooms-chip free-rooms-chip--room">SKLR6</span></td><td><span class="free-rooms-chip free-rooms-chip--room">LH2</span><span class="free-rooms-chip free-rooms-chip--room">LH3</span><span class="free-rooms-chip free-rooms-chip--room">SH4</span><span class="free-rooms-chip free-rooms-chip--room">SKLR1</span><span class="free-rooms-chip free-rooms-chip--room">SKLR2</span><span class="free-rooms-chip free-rooms-chip--room">SKLR6</span></td><td><span class="free-rooms-chip free-rooms-chip--room">LH1</span><span class="free-rooms-chip free-rooms-chip--room">LH2</span><span class="free-rooms-chip free-rooms-chip--room">LH3</span><span class="free-rooms-chip free-rooms-chip--room">LH4</span><span class="free-rooms-chip free-rooms-chip--room">LH5</span><span class="free-rooms-chip free-rooms-chip--room">LH6</span><span class="free-rooms-chip free-rooms-chip--room">LH7</span><span class="free-rooms-chip free-rooms-chip--room">SH1</span><span class="free-rooms-chip free-rooms-chip--room">SH2</span><span class="free-rooms-chip free-rooms-chip--room">SH3</span><span class="free-rooms-chip free-rooms-chip--room">SH4</span><span class="free-rooms-chip free-rooms-chip--room">SKLR5</span></td><td><span class="free-rooms-chip free-rooms-chip--room">LH1</span><span class="free-rooms-chip free-rooms-chip--room">LH2</span><span class="free-rooms-chip free-rooms-chip--room">LH3</span><span class="free-rooms-chip free-rooms-chip--room">LH4</span><span class="free-rooms-chip free-rooms-chip--room">LH5</span><span class="free-rooms-chip free-rooms-chip--room">LH6</span><span class="free-rooms-chip free-rooms-chip--room">LH7</span><span class="free-rooms-chip free-rooms-chip--room">SH1</span><span class="free-rooms-chip free-rooms-chip--room">SH2</span><span class="free-rooms-chip free-rooms-chip--room">SH3</span><span class="free-rooms-chip free-rooms-chip--room">SH4</span><span class="free-rooms-chip free-rooms-chip--room">SKLR5</span></td></tr><tr><td class="category-col">Free Labs</td><td><span class="free-rooms-chip free-rooms-chip--lab">Lab3</span><span class="free-rooms-chip free-rooms-chip--lab">SLab1</span><span class="free-rooms-chip free-rooms-chip--lab">SLab2</span><span class="free-rooms-chip free-rooms-chip--lab">SLab3</span></td><td><span class="free-rooms-chip free-rooms-chip--lab">Lab3</span><span class="free-rooms-chip free-rooms-chip--lab">SLab1</span><span class="free-rooms-chip free-rooms-chip--lab">SLab2</span><span class="free-rooms-chip free-rooms-chip--lab">SLab3</span></td><td><span class="free-rooms-chip free-rooms-chip--lab">Lab3</span><span class="free-rooms-chip free-rooms-chip--lab">SLab1</span></td><td><span class="free-rooms-chip free-rooms-chip--lab">Lab3</span><span class="free-rooms-chip free-rooms-chip--lab">SLab1</span></td><td><span class="free-rooms-chip free-rooms-chip--lab">Lab1</span><span class="free-rooms-chip free-rooms-chip--lab">Lab3</span><span class="free-rooms-chip free-rooms-chip--lab">Lab5</span><span class="free-rooms-chip free-rooms-chip--lab">MScLab</span><span class="free-rooms-chip free-rooms-chip--lab">SLab1</span></td><td><span class="free-rooms-chip free-rooms-chip--lab">Lab1</span><span class="free-rooms-chip free-rooms-chip--lab">Lab3</span><span class="free-rooms-chip free-rooms-chip--lab">Lab5</span><span class="free-rooms-chip free-rooms-chip--lab">MScLab</span><span class="free-rooms-chip free-rooms-chip--lab">SLab1</span></td></tr></tbody></table></div></div></div>
+        </details>
+
+        <div class="card sections-card" id="room-schedule-card" style="margin-top: 14px;">
+            <h2 class="sections-card-header" id="room-schedule-title">Room Schedule (Admin) · Monday</h2>
+            <div id="room-schedule-grid" class="table-wrap" style="padding: 12px; background: #f8fafc;"><div class="room-schedule-block room-schedule-block--day"><h3>Day College Slots</h3><p class="sections-scroll-hint">Swipe left for all time slots →</p><div class="sections-scroll-wrap"><table class="room-schedule-grid-table"><thead><tr><th class="room-col">Room / Lab</th><th class="slot-head-col">9-9.55</th><th class="slot-head-col">10-10.55</th><th class="slot-head-col">11.10-12.05</th><th class="slot-head-col">12.10-1.05</th><th class="slot-head-col">1.05-2</th><th class="slot-head-col">2-2.55</th><th class="slot-head-col">3-3.55</th><th class="slot-head-col">4-4.55</th></tr></thead><tbody><tr><td class="room-col">LH1</td><td><div class="room-occ-chip"><strong>Prajnashree</strong><span class="sec-tag">CRYPT · 3rd BCA A</span></div></td><td><div class="room-occ-chip"><strong>Priya</strong><span class="sec-tag">WEB · 3rd BCA A</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Jayanthi</strong><span class="sec-tag">SE · 3rd BCA A</span></div></td><td><div class="room-occ-chip"><strong>Rashmi</strong><span class="sec-tag">CLOUD · 3rd BCA A</span></div></td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">LH2</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Sanjana</strong><span class="sec-tag">DBMS · 2nd BCA B (Eve)</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">LH3</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Shilpa</strong><span class="sec-tag">CN · 2nd BCA A (Eve)</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">LH4</td><td><div class="room-occ-chip"><strong>RekhaChandra</strong><span class="sec-tag">DBMS · 2nd BCA A</span></div></td><td><div class="room-occ-chip"><strong>Mithun</strong><span class="sec-tag">CN · 2nd BCA A</span></div></td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ENG [LH4] · 2nd BCA A</span></div></td><td><div class="room-occ-chip"><strong>Abhijna</strong><span class="sec-tag">C# · 2nd BCA A</span></div></td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Anvitha</strong><span class="sec-tag">R PROG · 3rd BCA A (Eve)</span></div></td><td><div class="room-occ-chip"><strong>AkshathaNayak</strong><span class="sec-tag">CRYPT · 3rd BCA A (Eve)</span></div><div class="room-occ-chip"><strong>Varshini</strong><span class="sec-tag">SE · 3rd BCA A (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Varshini</strong><span class="sec-tag">SE · 3rd BCA A (Eve)</span></div></td></tr><tr><td class="room-col">LH5</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Abhijna</strong><span class="sec-tag">COMP.MATHS · 1st BCA C(AIML)</span></div></td><td><div class="room-occ-chip"><strong>Sanath</strong><span class="sec-tag">FOC · 1st BCA C(AIML)</span></div></td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA A</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA B</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA C(AIML)</span></div></td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">CONST [LH5] · 1st BCA C(AIML)</span></div></td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">LH6</td><td><div class="room-occ-chip"><strong>AkshathaShettigar</strong><span class="sec-tag">C# · 2nd BCA B</span></div></td><td><div class="room-occ-chip"><strong>Anupama</strong><span class="sec-tag">DBMS · 2nd BCA B</span></div></td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ENG [LH6] · 2nd BCA B</span></div></td><td><div class="room-occ-chip"><strong>Rakshitha</strong><span class="sec-tag">CN · 2nd BCA B</span></div></td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Varshini</strong><span class="sec-tag">DAA · 3rd BCA B (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Anvitha</strong><span class="sec-tag">CRYPT · 3rd BCA B (Eve)</span></div><div class="room-occ-chip"><strong>Sushma</strong><span class="sec-tag">SE · 3rd BCA B (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Sushma</strong><span class="sec-tag">SE · 3rd BCA B (Eve)</span></div></td></tr><tr><td class="room-col">LH7</td><td><div class="room-occ-chip"><strong>Abhijna</strong><span class="sec-tag">DISC.MATHS · 1st BCA B</span></div></td><td><div class="room-occ-chip"><strong>Rashmi</strong><span class="sec-tag">FOC · 1st BCA B</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA A</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA B</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA C(AIML)</span></div></td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">CONST [LH7] · 1st BCA B</span></div></td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">SH1</td><td><div class="room-occ-chip"><strong>Prakash</strong><span class="sec-tag">DAA · 3rd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Sushma</strong><span class="sec-tag">SE · 3rd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Rajamoorthy</strong><span class="sec-tag">CRYPT · 3rd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Ramya</strong><span class="sec-tag">F_C · 1st BSc</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Sanath</strong><span class="sec-tag">CLOUD · 3rd BCA C</span></div></td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">SH2</td><td><div class="room-occ-chip"><strong>Sushma</strong><span class="sec-tag">CRYPT · 3rd BCA B</span></div></td><td><div class="room-occ-chip"><strong>Vishwanath</strong><span class="sec-tag">SE · 3rd BCA B</span></div></td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Prajnashree</strong><span class="sec-tag">OS · 3rd BSc</span></div></td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Rashmi</strong><span class="sec-tag">R PROG · 3rd BCA B</span></div></td><td><div class="room-occ-chip"><strong>Prakash</strong><span class="sec-tag">CLOUD · 3rd BCA B</span></div></td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">SH3</td><td><div class="room-occ-chip"><strong>Rakshitha</strong><span class="sec-tag">FOC · 1st BCA A</span></div></td><td><div class="room-occ-chip"><strong>AkshathaShettigar</strong><span class="sec-tag">DISC.MATHS · 1st BCA A</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA A</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA B</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA C(AIML)</span></div></td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">CONST [SH3] · 1st BCA A</span></div></td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">SH4</td><td><div class="room-occ-chip"><strong>Rajamoorthy</strong><span class="sec-tag">DBMS · 2nd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Deepali</strong><span class="sec-tag">C# · 2nd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ENG [SH4] · 2nd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Shilpa</strong><span class="sec-tag">CN · 2nd BCA C</span></div></td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA A</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA B</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA C(AIML)</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">SKLR1</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: KAN [SKLR1] · HND [SKLR2] · 2nd BCA A (Eve)</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: KAN [SKLR1] · HND [SKLR2] · 2nd BCA B (Eve)</span></div></td></tr><tr><td class="room-col">SKLR2</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: KAN [SKLR1] · HND [SKLR2] · 2nd BCA A (Eve)</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: KAN [SKLR1] · HND [SKLR2] · 2nd BCA B (Eve)</span></div></td></tr><tr><td class="room-col">SKLR5</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ENG [SKLR5] · 1st BCA A (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Varshini</strong><span class="sec-tag">PROG in C · 1st BCA A (Eve)</span></div><div class="room-occ-chip"><strong>AkshathaNayak</strong><span class="sec-tag">FOC · 1st BCA A (Eve)</span></div></td><td><div class="room-occ-chip"><strong>AkshathaNayak</strong><span class="sec-tag">FOC · 1st BCA A (Eve)</span></div></td></tr><tr><td class="room-col">SKLR6</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Ramya</strong><span class="sec-tag">DISC.MATHS · 1st BCA B (Eve)</span></div></td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ENG [SKLR6] · 1st BCA B (Eve)</span></div></td></tr><tr><td class="room-col">Lab1</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>RekhaChandra</strong><span class="sec-tag">C LAB · 1st BCA A</span></div></td><td><div class="room-occ-chip"><strong>RekhaChandra</strong><span class="sec-tag">C LAB · 1st BCA A</span></div></td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Rajamoorthy</strong><span class="sec-tag">DBMS LAB · 2nd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Rajamoorthy</strong><span class="sec-tag">DBMS LAB · 2nd BCA C</span></div></td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">Lab2</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>RekhaChandra</strong><span class="sec-tag">C LAB · 1st BCA A</span></div></td><td><div class="room-occ-chip"><strong>RekhaChandra</strong><span class="sec-tag">C LAB · 1st BCA A</span></div></td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Rajamoorthy</strong><span class="sec-tag">DBMS LAB · 2nd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Rajamoorthy</strong><span class="sec-tag">DBMS LAB · 2nd BCA C</span></div></td><td><div class="room-occ-chip"><strong>AkshathaNayak</strong><span class="sec-tag">FOC LAB · 1st BCA A (Eve)</span></div></td></tr><tr><td class="room-col">Lab3</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">Lab4</td><td><div class="room-occ-chip"><strong>Jayanthi</strong><span class="sec-tag">C LAB · 1st BCA C(AIML)</span></div></td><td><div class="room-occ-chip"><strong>Jayanthi</strong><span class="sec-tag">C LAB · 1st BCA C(AIML)</span></div></td><td><div class="room-occ-chip"><strong>Priya</strong><span class="sec-tag">WEB LAB · 3rd BCA A</span></div></td><td><div class="room-occ-chip"><strong>Priya</strong><span class="sec-tag">WEB LAB · 3rd BCA A</span></div></td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>AkshathaShettigar</strong><span class="sec-tag">C# LAB · 2nd BCA B</span></div></td><td><div class="room-occ-chip"><strong>AkshathaShettigar</strong><span class="sec-tag">C# LAB · 2nd BCA B</span></div></td><td><div class="room-occ-chip"><strong>Varshini, AkshathaShettigar</strong><span class="sec-tag">DAA LAB · 3rd BCA B (Eve)</span></div></td></tr><tr><td class="room-col">Lab5</td><td><div class="room-occ-chip"><strong>Ramya</strong><span class="sec-tag">F_C LAB · 1st BSc</span></div></td><td><div class="room-occ-chip"><strong>Ramya</strong><span class="sec-tag">F_C LAB · 1st BSc</span></div></td><td><div class="room-occ-chip"><strong>Rashmi</strong><span class="sec-tag">FOC LAB · 1st BCA B</span></div></td><td><div class="room-occ-chip"><strong>Rashmi</strong><span class="sec-tag">FOC LAB · 1st BCA B</span></div></td><td><div class="room-occ-chip"><strong>Deepali</strong><span class="sec-tag">WEB LAB · 3rd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Deepali</strong><span class="sec-tag">WEB LAB · 3rd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Anupama, Sanjana</strong><span class="sec-tag">DBMS LAB · 2nd BCA B (Eve)</span></div><div class="room-occ-chip"><strong>Anupama, Sanjana</strong><span class="sec-tag">DBMS LAB · 2nd BCA B (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Anupama, Sanjana</strong><span class="sec-tag">DBMS LAB · 2nd BCA B (Eve)</span></div></td></tr><tr><td class="room-col">MScLab</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Rashmi</strong><span class="sec-tag">FOC LAB · 1st BCA B</span></div></td><td><div class="room-occ-chip"><strong>Rashmi</strong><span class="sec-tag">FOC LAB · 1st BCA B</span></div></td><td><div class="room-occ-chip"><strong>Deepali</strong><span class="sec-tag">WEB LAB · 3rd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Deepali</strong><span class="sec-tag">WEB LAB · 3rd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Damodar</strong><span class="sec-tag">C LAB · 1st BCA B (Eve)</span></div><div class="room-occ-chip"><strong>Damodar</strong><span class="sec-tag">C LAB · 1st BCA B (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Damodar</strong><span class="sec-tag">C LAB · 1st BCA B (Eve)</span></div></td></tr><tr><td class="room-col">SLab1</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">SLab2</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Mithun</strong><span class="sec-tag">WEB LAB · 3rd BCA B</span></div></td><td><div class="room-occ-chip"><strong>Mithun</strong><span class="sec-tag">WEB LAB · 3rd BCA B</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Anjalin, Deepali</strong><span class="sec-tag">C# LAB · 2nd BCA A (Eve)</span></div><div class="room-occ-chip"><strong>Anjalin, Deepali</strong><span class="sec-tag">C# LAB · 2nd BCA A (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Anjalin, Deepali</strong><span class="sec-tag">C# LAB · 2nd BCA A (Eve)</span></div><div class="room-occ-chip"><strong>Anvitha</strong><span class="sec-tag">R LAB · 3rd BCA A (Eve)</span></div></td></tr><tr><td class="room-col">SLab3</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Mithun</strong><span class="sec-tag">WEB LAB · 3rd BCA B</span></div></td><td><div class="room-occ-chip"><strong>Mithun</strong><span class="sec-tag">WEB LAB · 3rd BCA B</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Anjalin, Deepali</strong><span class="sec-tag">C# LAB · 2nd BCA A (Eve)</span></div><div class="room-occ-chip"><strong>Anjalin, Deepali</strong><span class="sec-tag">C# LAB · 2nd BCA A (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Anjalin, Deepali</strong><span class="sec-tag">C# LAB · 2nd BCA A (Eve)</span></div><div class="room-occ-chip"><strong>Anvitha</strong><span class="sec-tag">R LAB · 3rd BCA A (Eve)</span></div></td></tr></tbody></table></div></div><div class="room-schedule-block room-schedule-block--evening"><h3>Evening College Slots</h3><p class="sections-scroll-hint">Swipe left for all time slots →</p><div class="sections-scroll-wrap"><table class="room-schedule-grid-table"><thead><tr><th class="room-col">Room / Lab</th><th class="slot-head-col">1.30-2.15(3rdBCAOnly)</th><th class="slot-head-col">2:15-3</th><th class="slot-head-col">3-3:45</th><th class="slot-head-col">3:45-4:30</th><th class="slot-head-col">4:45-5:30</th><th class="slot-head-col">5:30-6:15</th></tr></thead><tbody><tr><td class="room-col">LH1</td><td><div class="room-occ-chip"><strong>Jayanthi</strong><span class="sec-tag">SE · 3rd BCA A</span></div></td><td><div class="room-occ-chip"><strong>Jayanthi</strong><span class="sec-tag">SE · 3rd BCA A</span></div></td><td><div class="room-occ-chip"><strong>Rashmi</strong><span class="sec-tag">CLOUD · 3rd BCA A</span></div></td><td><div class="room-occ-chip"><strong>Rashmi</strong><span class="sec-tag">CLOUD · 3rd BCA A</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">LH2</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Sanjana</strong><span class="sec-tag">DBMS · 2nd BCA B (Eve)</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">LH3</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Shilpa</strong><span class="sec-tag">CN · 2nd BCA A (Eve)</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">LH4</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Anvitha</strong><span class="sec-tag">R PROG · 3rd BCA A (Eve)</span></div></td><td><div class="room-occ-chip"><strong>AkshathaNayak</strong><span class="sec-tag">CRYPT · 3rd BCA A (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Varshini</strong><span class="sec-tag">SE · 3rd BCA A (Eve)</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">LH5</td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA A</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA B</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA C(AIML)</span></div></td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA A</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA B</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA C(AIML)</span></div></td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">CONST [LH5] · 1st BCA C(AIML)</span></div></td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">CONST [LH5] · 1st BCA C(AIML)</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">LH6</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Varshini</strong><span class="sec-tag">DAA · 3rd BCA B (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Anvitha</strong><span class="sec-tag">CRYPT · 3rd BCA B (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Sushma</strong><span class="sec-tag">SE · 3rd BCA B (Eve)</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">LH7</td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA A</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA B</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA C(AIML)</span></div></td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA A</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA B</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA C(AIML)</span></div></td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">CONST [LH7] · 1st BCA B</span></div></td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">CONST [LH7] · 1st BCA B</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">SH1</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Sanath</strong><span class="sec-tag">CLOUD · 3rd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Sanath</strong><span class="sec-tag">CLOUD · 3rd BCA C</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">SH2</td><td><div class="room-occ-chip"><strong>Rashmi</strong><span class="sec-tag">R PROG · 3rd BCA B</span></div></td><td><div class="room-occ-chip"><strong>Rashmi</strong><span class="sec-tag">R PROG · 3rd BCA B</span></div></td><td><div class="room-occ-chip"><strong>Prakash</strong><span class="sec-tag">CLOUD · 3rd BCA B</span></div></td><td><div class="room-occ-chip"><strong>Prakash</strong><span class="sec-tag">CLOUD · 3rd BCA B</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">SH3</td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA A</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA B</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA C(AIML)</span></div></td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA A</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA B</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA C(AIML)</span></div></td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">CONST [SH3] · 1st BCA A</span></div></td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">CONST [SH3] · 1st BCA A</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">SH4</td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA A</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA B</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA C(AIML)</span></div></td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA A</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA B</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: SANS [SH3] · HND [LH7] · KAN [LH5,SH4] · 1st BCA C(AIML)</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">SKLR1</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: KAN [SKLR1] · HND [SKLR2] · 2nd BCA A (Eve)</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: KAN [SKLR1] · HND [SKLR2] · 2nd BCA B (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Sanjana</strong><span class="sec-tag">DEVOPS · 2nd BCA A (Eve)</span></div></td></tr><tr><td class="room-col">SKLR2</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: KAN [SKLR1] · HND [SKLR2] · 2nd BCA A (Eve)</span></div><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ELECTIVE: KAN [SKLR1] · HND [SKLR2] · 2nd BCA B (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Vishwanath</strong><span class="sec-tag">CN · 2nd BCA B (Eve)</span></div></td></tr><tr><td class="room-col">SKLR5</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ENG [SKLR5] · 1st BCA A (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Varshini</strong><span class="sec-tag">PROG in C · 1st BCA A (Eve)</span></div></td><td><div class="room-occ-chip"><strong>AkshathaNayak</strong><span class="sec-tag">FOC · 1st BCA A (Eve)</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">SKLR6</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Ramya</strong><span class="sec-tag">DISC.MATHS · 1st BCA B (Eve)</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Faculty</strong><span class="sec-tag">ENG [SKLR6] · 1st BCA B (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Damodar</strong><span class="sec-tag">PROG in C · 1st BCA B (Eve)</span></div></td></tr><tr><td class="room-col">Lab1</td><td><div class="room-occ-chip"><strong>Rajamoorthy</strong><span class="sec-tag">DBMS LAB · 2nd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Rajamoorthy</strong><span class="sec-tag">DBMS LAB · 2nd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Rajamoorthy</strong><span class="sec-tag">DBMS LAB · 2nd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Rajamoorthy</strong><span class="sec-tag">DBMS LAB · 2nd BCA C</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">Lab2</td><td><div class="room-occ-chip"><strong>Rajamoorthy</strong><span class="sec-tag">DBMS LAB · 2nd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Rajamoorthy</strong><span class="sec-tag">DBMS LAB · 2nd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Rajamoorthy</strong><span class="sec-tag">DBMS LAB · 2nd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Rajamoorthy</strong><span class="sec-tag">DBMS LAB · 2nd BCA C</span></div></td><td><div class="room-occ-chip"><strong>AkshathaNayak</strong><span class="sec-tag">FOC LAB · 1st BCA A (Eve)</span></div></td><td><div class="room-occ-chip"><strong>AkshathaNayak</strong><span class="sec-tag">FOC LAB · 1st BCA A (Eve)</span></div></td></tr><tr><td class="room-col">Lab3</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">Lab4</td><td><div class="room-occ-chip"><strong>AkshathaShettigar</strong><span class="sec-tag">C# LAB · 2nd BCA B</span></div></td><td><div class="room-occ-chip"><strong>AkshathaShettigar</strong><span class="sec-tag">C# LAB · 2nd BCA B</span></div></td><td><div class="room-occ-chip"><strong>AkshathaShettigar</strong><span class="sec-tag">C# LAB · 2nd BCA B</span></div></td><td><div class="room-occ-chip"><strong>AkshathaShettigar</strong><span class="sec-tag">C# LAB · 2nd BCA B</span></div></td><td><div class="room-occ-chip"><strong>Varshini, AkshathaShettigar</strong><span class="sec-tag">DAA LAB · 3rd BCA B (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Varshini, AkshathaShettigar</strong><span class="sec-tag">DAA LAB · 3rd BCA B (Eve)</span></div></td></tr><tr><td class="room-col">Lab5</td><td><div class="room-occ-chip"><strong>Deepali</strong><span class="sec-tag">WEB LAB · 3rd BCA C</span></div><div class="room-occ-chip"><strong>Deepali</strong><span class="sec-tag">WEB LAB · 3rd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Deepali</strong><span class="sec-tag">WEB LAB · 3rd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Anupama, Sanjana</strong><span class="sec-tag">DBMS LAB · 2nd BCA B (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Anupama, Sanjana</strong><span class="sec-tag">DBMS LAB · 2nd BCA B (Eve)</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">MScLab</td><td><div class="room-occ-chip"><strong>Deepali</strong><span class="sec-tag">WEB LAB · 3rd BCA C</span></div><div class="room-occ-chip"><strong>Deepali</strong><span class="sec-tag">WEB LAB · 3rd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Deepali</strong><span class="sec-tag">WEB LAB · 3rd BCA C</span></div></td><td><div class="room-occ-chip"><strong>Damodar</strong><span class="sec-tag">C LAB · 1st BCA B (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Damodar</strong><span class="sec-tag">C LAB · 1st BCA B (Eve)</span></div></td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">SLab1</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td></tr><tr><td class="room-col">SLab2</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Anjalin, Deepali</strong><span class="sec-tag">C# LAB · 2nd BCA A (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Anjalin, Deepali</strong><span class="sec-tag">C# LAB · 2nd BCA A (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Anvitha</strong><span class="sec-tag">R LAB · 3rd BCA A (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Anvitha</strong><span class="sec-tag">R LAB · 3rd BCA A (Eve)</span></div></td></tr><tr><td class="room-col">SLab3</td><td class="free-rooms-none">—</td><td class="free-rooms-none">—</td><td><div class="room-occ-chip"><strong>Anjalin, Deepali</strong><span class="sec-tag">C# LAB · 2nd BCA A (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Anjalin, Deepali</strong><span class="sec-tag">C# LAB · 2nd BCA A (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Anvitha</strong><span class="sec-tag">R LAB · 3rd BCA A (Eve)</span></div></td><td><div class="room-occ-chip"><strong>Anvitha</strong><span class="sec-tag">R LAB · 3rd BCA A (Eve)</span></div></td></tr></tbody></table></div></div></div>
         </div>
     </div>
 
@@ -2308,15 +2548,15 @@ C# [LH4]</td><td class="slot-free">—</td><td class="slot-free">—</td><td cla
         <div class="card card--accent">
             <h3 class="panel-heading"><span class="panel-heading-badge panel-heading-badge--leave">Leave</span> Faculty leave</h3>
             <p class="sub" style="margin:0 0 12px;">Match substitutes for absent staff — uses the same timetable data.</p>
-            <div id="leave_status" class="leave-status leave-status--err" role="status" aria-live="polite" style="display: block;">Sunday has no college timetable. Choose a Mon–Sat date.</div>
+            <div id="leave_status" class="leave-status leave-status--ok" role="status" aria-live="polite" style="display: none;"></div>
             <div class="form-group">
                 <label for="leave_date_input">Leave date</label>
                 <input type="date" id="leave_date_input" class="form-control">
             </div>
             <div class="form-group">
                 <label>Day</label>
-                <div id="leave_day_display" class="leave-day-display leave-day-display--off" aria-live="polite">Sunday (no timetable)</div>
-                <input type="hidden" id="leave_day_value" value="">
+                <div id="leave_day_display" class="leave-day-display" aria-live="polite">Monday</div>
+                <input type="hidden" id="leave_day_value" value="Monday">
             </div>
             <div class="form-group">
                 <label for="absent_faculty_select">Faculty unavailable</label>
@@ -4480,6 +4720,8 @@ window.TimetableMobile = { activeDay: (function() {
         const filterSel = el('sections-filter');
         sectionsFilter = filterSel?.value || '';
         renderSectionsDaywise();
+        renderFreeRoomsAndLabsGrid();
+        renderRoomScheduleGrid();
     }
 
     function orderedSectionsFromItems(items) {
@@ -4555,6 +4797,380 @@ window.TimetableMobile = { activeDay: (function() {
         });
     }
 
+    function extractRoomsFromCell(cellContent) {
+        if (!cellContent) return [];
+        const rooms = new Set();
+        const matches = String(cellContent).matchAll(/\[([^\]]+)\]/g);
+        for (const match of matches) {
+            const inside = match[1];
+            const parts = inside.split(/[\+,\/·&]+/);
+            for (let p of parts) {
+                p = p.trim();
+                if (p && p !== 'N/A') {
+                    rooms.add(p);
+                }
+            }
+        }
+        return Array.from(rooms);
+    }
+
+    const KNOWN_MASTER_ROOMS = ['LH1', 'LH2', 'LH3', 'LH4', 'LH5', 'LH6', 'LH7', 'SH1', 'SH2', 'SH3', 'SH4', 'SKLR1', 'SKLR2', 'SKLR5', 'SKLR6'];
+    const KNOWN_MASTER_LABS = ['Lab1', 'Lab2', 'Lab3', 'Lab4', 'Lab5', 'SLab1', 'SLab2', 'SLab3', 'MScLab'];
+
+    function isLabRoom(roomName) {
+        const r = String(roomName || '').toLowerCase();
+        return r.includes('lab') || r.includes('slab') || r.includes('msclab');
+    }
+
+    function compareRoomNames(a, b) {
+        return String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' });
+    }
+
+    function getMasterRoomsAndLabs() {
+        const roomsSet = new Set(KNOWN_MASTER_ROOMS);
+        const labsSet = new Set(KNOWN_MASTER_LABS);
+
+        if (store && store.daywise) {
+            Object.values(store.daywise).forEach(dw => {
+                const scanSecs = [...(dw.sections || []), ...(dw.eveningSections || [])];
+                scanSecs.forEach(sec => {
+                    Object.values(sec.cells || {}).forEach(cellVal => {
+                        const extracted = extractRoomsFromCell(cellVal);
+                        extracted.forEach(r => {
+                            if (isLabRoom(r)) labsSet.add(r);
+                            else roomsSet.add(r);
+                        });
+                    });
+                });
+            });
+        }
+
+        const rooms = Array.from(roomsSet).sort(compareRoomNames);
+        const labs = Array.from(labsSet).sort(compareRoomNames);
+        return { rooms, labs };
+    }
+
+    function parseTimeToMinutes(timeStr) {
+        const s = String(timeStr || '').replace(/\./g, ':').trim();
+        const parts = s.split(':');
+        let hour = parseInt(parts[0], 10);
+        let min = parts[1] ? parseInt(parts[1], 10) : 0;
+        if (isNaN(hour)) return null;
+        if (isNaN(min)) min = 0;
+        if (hour >= 1 && hour <= 8) {
+            hour += 12;
+        }
+        return hour * 60 + min;
+    }
+
+    function parseTimeRange(slot) {
+        let clean = String(slot || '').split('(')[0].replace(/\s+/g, '');
+        if (!clean) return null;
+        const parts = clean.split('-');
+        if (parts.length !== 2) return null;
+        const start = parseTimeToMinutes(parts[0]);
+        const end = parseTimeToMinutes(parts[1]);
+        if (start === null || end === null) return null;
+        return { start, end };
+    }
+
+    function slotsOverlap(slotA, slotB) {
+        if (slotA === slotB) return true;
+        if (slotA.includes(' to ')) {
+            return slotA.split(' to ').some(part => slotsOverlap(part, slotB));
+        }
+        if (slotB.includes(' to ')) {
+            return slotB.split(' to ').some(part => slotsOverlap(slotA, part));
+        }
+        const rangeA = parseTimeRange(slotA);
+        const rangeB = parseTimeRange(slotB);
+        if (!rangeA || !rangeB) return false;
+        return rangeA.start < rangeB.end && rangeB.start < rangeA.end;
+    }
+
+    function getOccupiedRoomsForSlot(day, targetSlot) {
+        const dw = store.daywise && store.daywise[day];
+        const occupied = new Set();
+        if (!dw || !targetSlot) return occupied;
+
+        const checkCell = (cellVal, slot) => {
+            if (!cellVal || cellVal === '—') return;
+            if (slotsOverlap(slot, targetSlot)) {
+                const rms = extractRoomsFromCell(cellVal);
+                rms.forEach(r => occupied.add(r));
+            }
+        };
+
+        // 1. Check Day sections
+        (dw.sections || []).forEach(sec => {
+            Object.entries(sec.cells || {}).forEach(([slot, cellVal]) => {
+                checkCell(cellVal, slot);
+            });
+        });
+
+        // 2. Check Evening sections
+        (dw.eveningSections || []).forEach(sec => {
+            Object.entries(sec.cells || {}).forEach(([slot, cellVal]) => {
+                checkCell(cellVal, slot);
+            });
+        });
+
+        // 3. Check Faculty schedules
+        Object.keys(store.faculty || {}).forEach(facCode => {
+            const fac = store.faculty[facCode];
+            const dayCells = fac && fac.days && fac.days[day];
+            if (dayCells) {
+                Object.entries(dayCells).forEach(([slot, cellVal]) => {
+                    if (!cellVal || cellVal === '—') return;
+                    const withRoom = appendRoomToFacultyCell(cellVal, facCode, day, slot);
+                    checkCell(withRoom, slot);
+                });
+            }
+        });
+
+        return occupied;
+    }
+
+    function renderFreeRoomsBlock(groupTitle, slots, groupClass) {
+        if (!slots || !slots.length) return '';
+        const { rooms: masterRooms, labs: masterLabs } = getMasterRoomsAndLabs();
+
+        const freeRoomsPerSlot = [];
+        const freeLabsPerSlot = [];
+
+        slots.forEach(slot => {
+            const occupied = getOccupiedRoomsForSlot(activeDay, slot);
+            const freeRooms = masterRooms.filter(r => !occupied.has(r));
+            const freeLabs = masterLabs.filter(r => !occupied.has(r));
+            freeRoomsPerSlot.push(freeRooms);
+            freeLabsPerSlot.push(freeLabs);
+        });
+
+        let html = `<div class="free-rooms-block ${groupClass || ''}">`;
+        html += `<h3>${escapeHtml(groupTitle)}</h3>`;
+        html += '<p class="sections-scroll-hint">Swipe left for all time slots →</p>';
+        html += '<div class="sections-scroll-wrap">';
+        html += '<table class="free-rooms-grid-table"><thead><tr>';
+        html += '<th class="category-col">Availability</th>';
+        slots.forEach(s => { html += `<th class="slot-head-col">${escapeHtml(s)}</th>`; });
+        html += '</tr></thead><tbody>';
+
+        // Free Rooms Row
+        html += '<tr><td class="category-col">Free Rooms</td>';
+        slots.forEach((s, idx) => {
+            const freeRms = freeRoomsPerSlot[idx];
+            if (freeRms.length) {
+                const chips = freeRms.map(r => `<span class="free-rooms-chip free-rooms-chip--room">${escapeHtml(r)}</span>`).join('');
+                html += `<td>${chips}</td>`;
+            } else {
+                html += '<td class="free-rooms-none">None</td>';
+            }
+        });
+        html += '</tr>';
+
+        // Free Labs Row
+        html += '<tr><td class="category-col">Free Labs</td>';
+        slots.forEach((s, idx) => {
+            const freeLbs = freeLabsPerSlot[idx];
+            if (freeLbs.length) {
+                const chips = freeLbs.map(r => `<span class="free-rooms-chip free-rooms-chip--lab">${escapeHtml(r)}</span>`).join('');
+                html += `<td>${chips}</td>`;
+            } else {
+                html += '<td class="free-rooms-none">None</td>';
+            }
+        });
+        html += '</tr>';
+
+        html += '</tbody></table></div></div>';
+        return html;
+    }
+
+    function showToast(msg) {
+        const toast = el('toast-banner');
+        const msgEl = el('toast-msg');
+        if (msgEl) msgEl.textContent = msg;
+        if (toast) {
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 6000);
+        }
+        if ('Notification' in window && Notification.permission === 'granted') {
+            try { new Notification('MGM College Timetable', { body: msg }); } catch(e){}
+        }
+    }
+
+    function getRoomAssignmentsForSlot(day, roomName, slot) {
+        const dw = store.daywise && store.daywise[day];
+        if (!dw || !roomName || !slot) return [];
+
+        const assignments = [];
+
+        const checkCell = (cellVal, cellSlot, secName, shift) => {
+            if (!cellVal || cellVal === '—') return;
+            if (slotsOverlap(cellSlot, slot)) {
+                const rms = extractRoomsFromCell(cellVal);
+                if (rms.includes(roomName)) {
+                    const parsed = parseScheduleCellLocal(cellVal);
+                    const staffCode = parsed
+                        ? (parsed.staffAll ? parsed.staffAll.map(facultyDisplayName).join(', ') : facultyDisplayName(parsed.staff))
+                        : '';
+                    const subject = parsed ? parsed.subject : cellVal.split('\n')[0];
+                    assignments.push({
+                        section: secName,
+                        subject: subject,
+                        staff: staffCode || 'Faculty',
+                        shift: shift
+                    });
+                }
+            }
+        };
+
+        (dw.sections || []).forEach(sec => {
+            Object.entries(sec.cells || {}).forEach(([cellSlot, cellVal]) => {
+                checkCell(cellVal, cellSlot, sec.name, 'day');
+            });
+        });
+
+        (dw.eveningSections || []).forEach(sec => {
+            Object.entries(sec.cells || {}).forEach(([cellSlot, cellVal]) => {
+                checkCell(cellVal, cellSlot, sec.name, 'evening');
+            });
+        });
+
+        Object.keys(store.faculty || {}).forEach(facCode => {
+            const fac = store.faculty[facCode];
+            const dayCells = fac && fac.days && fac.days[day];
+            if (dayCells) {
+                Object.entries(dayCells).forEach(([cellSlot, cellVal]) => {
+                    if (!cellVal || cellVal === '—') return;
+                    const withRoom = appendRoomToFacultyCell(cellVal, facCode, day, cellSlot);
+                    if (slotsOverlap(cellSlot, slot)) {
+                        const rms = extractRoomsFromCell(withRoom);
+                        if (rms.includes(roomName)) {
+                            const facLabel = facultyDisplayName(facCode);
+                            if (!assignments.some(a => (a.staff || '').includes(facLabel))) {
+                                const subject = String(cellVal || '').split('\n')[0];
+                                assignments.push({
+                                    section: 'Faculty schedule',
+                                    subject: subject,
+                                    staff: facLabel,
+                                    shift: 'day'
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
+        return assignments;
+    }
+
+    function renderRoomScheduleBlock(groupTitle, slots, groupClass) {
+        if (!slots || !slots.length) return '';
+        const { rooms: masterRooms, labs: masterLabs } = getMasterRoomsAndLabs();
+        const allRooms = [...masterRooms, ...masterLabs];
+
+        let html = `<div class="room-schedule-block ${groupClass || ''}">`;
+        html += `<h3>${escapeHtml(groupTitle)}</h3>`;
+        html += '<p class="sections-scroll-hint">Swipe left for all time slots →</p>';
+        html += '<div class="sections-scroll-wrap">';
+        html += '<table class="room-schedule-grid-table"><thead><tr>';
+        html += '<th class="room-col">Room / Lab</th>';
+        slots.forEach(s => { html += `<th class="slot-head-col">${escapeHtml(s)}</th>`; });
+        html += '</tr></thead><tbody>';
+
+        allRooms.forEach(room => {
+            html += `<tr><td class="room-col">${escapeHtml(room)}</td>`;
+            slots.forEach(slot => {
+                const assign = getRoomAssignmentsForSlot(activeDay, room, slot);
+                if (assign.length) {
+                    const chips = assign.map(a => 
+                        `<div class="room-occ-chip"><strong>${escapeHtml(a.staff)}</strong><span class="sec-tag">${escapeHtml(a.subject)} · ${escapeHtml(a.section)}</span></div>`
+                    ).join('');
+                    html += `<td>${chips}</td>`;
+                } else {
+                    html += '<td class="free-rooms-none">—</td>';
+                }
+            });
+            html += '</tr>';
+        });
+
+        html += '</tbody></table></div></div>';
+        return html;
+    }
+
+    function updateAdminCardVisibility() {
+        const loggedIn = localStorage.getItem('loggedInFaculty');
+        const isAdmin = loggedIn === '__admin__';
+        const roomCard = el('room-schedule-card');
+        if (roomCard) {
+            roomCard.classList.toggle('hidden', !isAdmin);
+        }
+    }
+
+    function renderRoomScheduleGrid() {
+        updateAdminCardVisibility();
+        const loggedIn = localStorage.getItem('loggedInFaculty');
+        if (loggedIn !== '__admin__') return;
+
+        const host = el('room-schedule-grid');
+        const titleEl = el('room-schedule-title');
+        if (titleEl) titleEl.textContent = `Room Schedule (Admin) · ${activeDay}`;
+        if (!host) return;
+
+        try {
+            const dw = store.daywise && store.daywise[activeDay];
+            if (!dw) {
+                host.innerHTML = '<p class="empty">No timetable data for this day.</p>';
+                return;
+            }
+
+            const daySlots = slotsForSectionGroup(dw, 'day');
+            const eveningSlots = slotsForSectionGroup(dw, 'evening');
+
+            let html = '';
+            if (daySlots && daySlots.length) {
+                html += renderRoomScheduleBlock('Day College Slots', daySlots, 'room-schedule-block--day');
+            }
+            if (eveningSlots && eveningSlots.length) {
+                html += renderRoomScheduleBlock('Evening College Slots', eveningSlots, 'room-schedule-block--evening');
+            }
+
+            host.innerHTML = html || '<p class="empty">No time slots available for this day.</p>';
+        } catch (err) {
+            console.error('Room schedule rendering error:', err);
+            host.innerHTML = `<p class="err">Could not show room schedule: ${escapeHtml(err.message || err)}</p>`;
+        }
+    }
+
+    function renderFreeRoomsAndLabsGrid() {
+        const host = el('free-rooms-grid');
+        const titleEl = el('free-rooms-title');
+        if (titleEl) {
+            titleEl.innerHTML = `<span>Free Rooms &amp; Free Labs · ${escapeHtml(activeDay)}</span><span style="font-size: 11px; font-weight: normal; opacity: 0.85;">Tap to view ▾</span>`;
+        }
+        if (!host) return;
+
+        const dw = store.daywise && store.daywise[activeDay];
+        if (!dw) {
+            host.innerHTML = '<p class="empty">No timetable data for this day.</p>';
+            return;
+        }
+
+        const daySlots = slotsForSectionGroup(dw, 'day');
+        const eveningSlots = slotsForSectionGroup(dw, 'evening');
+
+        let html = '';
+        if (daySlots && daySlots.length) {
+            html += renderFreeRoomsBlock('Day College Slots', daySlots, 'free-rooms-block--day');
+        }
+        if (eveningSlots && eveningSlots.length) {
+            html += renderFreeRoomsBlock('Evening College Slots', eveningSlots, 'free-rooms-block--evening');
+        }
+
+        host.innerHTML = html || '<p class="empty">No time slots available for this day.</p>';
+    }
+
     let sectionsRenderToken = 0;
 
     function renderAll() {
@@ -4565,7 +5181,11 @@ window.TimetableMobile = { activeDay: (function() {
             if (sectionsHost) sectionsHost.innerHTML = '<p class="empty">Loading sections…</p>';
             setTimeout(() => {
                 if (token !== sectionsRenderToken) return;
-                try { renderSectionsDaywise(); } catch (e) { console.error(e); }
+                try { 
+                    renderSectionsDaywise(); 
+                    renderFreeRoomsAndLabsGrid();
+                    renderRoomScheduleGrid();
+                } catch (e) { console.error(e); }
             }, 0);
         } catch (err) {
             console.error(err);
@@ -5006,6 +5626,7 @@ window.TimetableMobile = { activeDay: (function() {
             if (prevFaculty && store.faculty[prevFaculty]) activeFaculty = prevFaculty;
             try { localStorage.setItem('timetableMobileData', JSON.stringify(store)); } catch (e) {}
             showFacultyApp();
+            showToast('✨ Timetable updated! Latest schedule loaded.');
         }
         return true;
     }
@@ -5049,6 +5670,7 @@ window.TimetableMobile = { activeDay: (function() {
         };
         document.addEventListener('visibilitychange', onAppBecameActive);
         window.addEventListener('pageshow', onAppBecameActive);
+        setInterval(() => { refreshTimetableJsonIfChanged(); }, 30000);
     }
 
     function loadEmbeddedData() {
@@ -5214,6 +5836,10 @@ window.TimetableMobile = { activeDay: (function() {
 
     bindClick('btn-login-submit', handleLogin);
     bindClick('btn-logout', handleLogout);
+    bindClick('btn-toast-dismiss', () => {
+        const toast = el('toast-banner');
+        if (toast) toast.classList.remove('show');
+    });
 
     bindClick('btn-analyze-leave', () => {
         if (!window.LeaveApp) {
